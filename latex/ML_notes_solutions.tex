@@ -328,7 +328,7 @@ The solution is
 	p(\vect{x}) = \frac{1}{\left(2 \pi \right)^\frac{3}{2} 21^{\frac{1}{2}}} \exp \left( -\frac{1}{2} \vect{w}^T \vect{\Sigma}^{-1} \vect{w}\right)
 	= \frac{1}{\left(2 \pi \right)^\frac{3}{2} 21^{\frac{1}{2}}} \exp \left( -\frac{1}{2} \frac{1}{21} \frac{69}{4}\right).
 \end{equation*}
-# The eigenvectors of $\vect{\Sigma}$ are $\lambda_1 = 3$, $\lambda_1 = 7$ and $\lambda_1 = 21$.
+# The eigenvalues of $\vect{\Sigma}$ are $\lambda_1 = 3$, $\lambda_1 = 7$ and $\lambda_1 = 21$.
 The corresponding eigenvectors are
 $\vect{v}_1 = (0, 1, -1)^T / \sqrt{2}$, 
 $\vect{v}_2 = (0, 1, 1)^T / \sqrt{2}$ and 
@@ -573,17 +573,85 @@ This is what the problem asked us to show.
 	# sdf
 \end{easylist}
 
+\subsubsection*{Problem 3.16}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The trick is to multiply both terms by $\vect{I}$, expanding the identity and using $\left(\vect{A} \vect{B}\right)^{-1} = \vect{B}^{-1} \vect{A}^{-1}$. 
+	We prove the theorem by writing
+	\begin{align*}
+	\left( \vect{A}^{-1} + \vect{B}^{-1}\right)^{-1} &=
+		\left( \vect{A}^{-1} \vect{I} + \vect{I}\vect{B}^{-1}\right)^{-1} =
+		\left( \vect{A}^{-1} \vect{B} \vect{B}^{-1} + \vect{A}^{-1} \vect{A}\vect{B}^{-1}\right)^{-1} \\
+		&=  \left( \vect{A}^{-1} \left( \vect{B} + \vect{A} \right) \vect{B}^{-1} \right)^{-1} = 
+		 \vect{B}\left( \vect{A} + \vect{B} \right)^{-1} \vect{A}.
+	\end{align*}
+	Replacing the second equality by $\vect{I} \vect{A}^{-1}  + \vect{B}^{-1} \vect{I} = \vect{B}^{-1} \vect{B}  \vect{A}^{-1} + \vect{B}^{-1} \vect{A} \vect{A}^{-1}$ would yield the second quality in the theorem as stated in the problem.
+	
+	# The matrices must be square, since we use $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the first equality, and $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the second. The same logic applies to $\vect{B}$.
+	In other words, we require that $\vect{A}$ has a left-inverse and a right-inverse, and must therefore be square.
+	
+	The second equality in the theorem, as stated in the problem, also implies that $\vect{A}$ must have a left and right inverse.
+	It must therefore be square, since no non-square matrix has a left-inverse and right-inverse.
+	
+	# The staring point is
+	\begin{equation*}
+		\vect{\Sigma}_n^{-1} = n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1}
+		\quad \text{ and } \quad
+		\vect{\Sigma}_n^{-1} \vect{\mu}_n 
+		=n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\vect{\Sigma}^{-1}_0 + \vect{\mu}_0,
+	\end{equation*}
+	and we wish to solve these equations with respect to $\vect{\Sigma}_n$ and $\vect{\mu}_n$. 
+	In other words, we want the functional dependence to be$\vect{\Sigma}_n = f \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
+	and $\vect{\mu}_n = \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$.
+	
+	We start with the covariance matrix. 
+	To solve for $\vect{\Sigma}_n$, we write
+	\begin{align*}
+		\vect{\Sigma}_n = \left(\vect{\Sigma}_n^{-1}\right)^{-1} = \left(  n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1} \right)^{-1} = 
+		\vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1} \frac{1}{n} \vect{\Sigma},
+	\end{align*}
+	where the last equality comes from using 
+	\begin{equation*}
+		\left( \vect{A}^{-1} + \vect{B}^{-1}\right)^{-1} =
+		\vect{B}^{-1} \left( \vect{B} + \vect{A} \right)^{-1} \vect{A}^{-1}.
+	\end{equation*}
+	
+	To solve for the mean $\vect{\mu}_n$, we write
+	\begin{align*}
+		\vect{\mu}_n 
+		&= \vect{\Sigma}_n n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\vect{\Sigma}_n \vect{\Sigma}^{-1}_0  \vect{\mu}_0
+		\\ &=
+		\left[ \vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1} \frac{1}{n} \vect{\Sigma} \right] n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\left[  \frac{1}{n} \vect{\Sigma} \left(  \frac{1}{n}  \vect{\Sigma} + \vect{\Sigma}_0  \right)^{-1}  \vect{\Sigma}_0 \right] \vect{\Sigma}^{-1}_0  \vect{\mu}_0 \\
+		& = 
+		 \vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1}  \hat{\vect{\mu}}_n 
+		+
+		 \frac{1}{n} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma}  \right)^{-1}   \vect{\mu}_0 
+	\end{align*}
+	Where we made use of both equalities given in the theorem from subproblem a).
+	
+\end{easylist}
+
 \subsubsection*{Problem 3.18}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 3.23}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Problem 3.24}
+We wish to find the maximum likelihood estimate of $\theta$ in the distribution
+\begin{equation*}
+	p (x | \theta) = 
+	\begin{dcases*}
+	2 \theta x \exp \left( -\theta x^2 \right) & if $x \geq 0$ \\
+	0 & otherwise
+	\end{dcases*}
+\end{equation*}
 
 \subsubsection*{Problem 3.30}
 \begin{easylist}[enumerate]
