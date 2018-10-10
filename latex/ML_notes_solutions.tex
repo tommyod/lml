@@ -535,6 +535,69 @@ Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}
 	# sdf
 \end{easylist}
 
+\subsubsection*{Problem 3.16}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The trick is to multiply both terms by $\vect{I}$, expanding the identity and using $\left(\vect{A} \vect{B}\right)^{-1} = \vect{B}^{-1} \vect{A}^{-1}$. 
+	We prove the theorem by writing
+	\begin{align*}
+	\left( \vect{A}^{-1} + \vect{B}^{-1}\right)^{-1} &=
+		\left( \vect{A}^{-1} \vect{I} + \vect{I}\vect{B}^{-1}\right)^{-1} =
+		\left( \vect{A}^{-1} \vect{B} \vect{B}^{-1} + \vect{A}^{-1} \vect{A}\vect{B}^{-1}\right)^{-1} \\
+		&=  \left( \vect{A}^{-1} \left( \vect{B} + \vect{A} \right) \vect{B}^{-1} \right)^{-1} = 
+		 \vect{B}\left( \vect{A} + \vect{B} \right)^{-1} \vect{A}.
+	\end{align*}
+	Replacing the second equality by $\vect{I} \vect{A}^{-1}  + \vect{B}^{-1} \vect{I} = \vect{B}^{-1} \vect{B}  \vect{A}^{-1} + \vect{B}^{-1} \vect{A} \vect{A}^{-1}$ would yield the second quality in the theorem as stated in the problem.
+	
+	# The matrices must be square, since we use $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the first equality, and $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the second. The same logic applies to $\vect{B}$.
+	In other words, we require that $\vect{A}$ has a left-inverse and a right-inverse, and must therefore be square.
+	
+	The second equality in the theorem, as stated in the problem, also implies that $\vect{A}$ must have a left and right inverse.
+	It must therefore be square, since no non-square matrix has a left-inverse and right-inverse.
+	
+	# The staring point is
+	\begin{equation*}
+		\vect{\Sigma}_n^{-1} = n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1}
+		\quad \text{ and } \quad
+		\vect{\Sigma}_n^{-1} \vect{\mu}_n 
+		=n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\vect{\Sigma}^{-1}_0 + \vect{\mu}_0.
+	\end{equation*}
+	We wish to write $\vect{\Sigma}_n = f \left( \vect{\mu}, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
+	and $\vect{\mu}_n = \left( \vect{\mu}, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$.
+	
+	We start with the covariance matrix. 
+	To solve for $\vect{\Sigma}_n^{-1}$, we write
+	\begin{align*}
+		\vect{\Sigma}_n^{-1} = \left(\vect{\Sigma}_n^{-1}\right)^{-1} = \left(  n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1} \right)^{-1} = 
+		\vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1} \frac{1}{n} \vect{\Sigma},
+	\end{align*}
+	where the last equality comes from using 
+	\begin{equation*}
+		\left( \vect{A}^{-1} + \vect{B}^{-1}\right)^{-1} =
+		\vect{B}^{-1} \left( \vect{B} + \vect{A} \right)^{-1} \vect{A}^{-1}.
+	\end{equation*}
+	
+	To solve for the mean $\vect{\mu}_n$, we write
+	\begin{align*}
+		\vect{\mu}_n 
+		&= \vect{\Sigma}_n n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\vect{\Sigma}_n \vect{\Sigma}^{-1}_0  \vect{\mu}_0
+		\\ &=
+		\left[ \vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1} \frac{1}{n} \vect{\Sigma} \right] n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
+		+
+		\left[  \frac{1}{n} \vect{\Sigma} \left(  \frac{1}{n}  \vect{\Sigma} + \vect{\Sigma}_0  \right)^{-1}  \vect{\Sigma}_0 \right] \vect{\Sigma}^{-1}_0  \vect{\mu}_0 \\
+		& = 
+		 \vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1}  \hat{\vect{\mu}}_n 
+		+
+		 \frac{1}{n} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma}  \right)^{-1}   \vect{\mu}_0 
+	\end{align*}
+	Where we used both equalities given in the theorem from subproblem a).
+	
+\end{easylist}
+
 \subsubsection*{Problem 3.18}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
