@@ -291,7 +291,7 @@ The solution is
 	p(\vect{x}) = \frac{1}{\left(2 \pi \right)^\frac{3}{2} 21^{\frac{1}{2}}} \exp \left( -\frac{1}{2} \vect{w}^T \vect{\Sigma}^{-1} \vect{w}\right)
 	= \frac{1}{\left(2 \pi \right)^\frac{3}{2} 21^{\frac{1}{2}}} \exp \left( -\frac{1}{2} \frac{1}{21} \frac{69}{4}\right).
 \end{equation*}
-# The eigenvectors of $\vect{\Sigma}$ are $\lambda_1 = 3$, $\lambda_1 = 7$ and $\lambda_1 = 21$.
+# The eigenvalues of $\vect{\Sigma}$ are $\lambda_1 = 3$, $\lambda_1 = 7$ and $\lambda_1 = 21$.
 The corresponding eigenvectors are
 $\vect{v}_1 = (0, 1, -1)^T / \sqrt{2}$, 
 $\vect{v}_2 = (0, 1, 1)^T / \sqrt{2}$ and 
@@ -562,15 +562,16 @@ Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}
 		\vect{\Sigma}_n^{-1} \vect{\mu}_n 
 		=n \vect{\Sigma}^{-1} \hat{\vect{\mu}}_n 
 		+
-		\vect{\Sigma}^{-1}_0 + \vect{\mu}_0.
+		\vect{\Sigma}^{-1}_0 + \vect{\mu}_0,
 	\end{equation*}
-	We wish to write $\vect{\Sigma}_n = f \left( \vect{\mu}, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
-	and $\vect{\mu}_n = \left( \vect{\mu}, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$.
+	and we wish to solve these equations with respect to $\vect{\Sigma}_n$ and $\vect{\mu}_n$. 
+	In other words, we want the functional dependence to be$\vect{\Sigma}_n = f \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
+	and $\vect{\mu}_n = \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$.
 	
 	We start with the covariance matrix. 
-	To solve for $\vect{\Sigma}_n^{-1}$, we write
+	To solve for $\vect{\Sigma}_n$, we write
 	\begin{align*}
-		\vect{\Sigma}_n^{-1} = \left(\vect{\Sigma}_n^{-1}\right)^{-1} = \left(  n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1} \right)^{-1} = 
+		\vect{\Sigma}_n = \left(\vect{\Sigma}_n^{-1}\right)^{-1} = \left(  n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1} \right)^{-1} = 
 		\vect{\Sigma}_0 \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma} \right)^{-1} \frac{1}{n} \vect{\Sigma},
 	\end{align*}
 	where the last equality comes from using 
@@ -594,7 +595,7 @@ Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}
 		+
 		 \frac{1}{n} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma}  \right)^{-1}   \vect{\mu}_0 
 	\end{align*}
-	Where we used both equalities given in the theorem from subproblem a).
+	Where we made use of both equalities given in the theorem from subproblem a).
 	
 \end{easylist}
 
@@ -604,11 +605,15 @@ Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}
 	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 3.23}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Problem 3.24}
+We wish to find the maximum likelihood estimate of $\theta$ in the distribution
+\begin{equation*}
+	p (x | \theta) = 
+	\begin{dcases*}
+	2 \theta x \exp \left( -\theta x^2 \right) & if $x \geq 0$ \\
+	0 & otherwise
+	\end{dcases*}
+\end{equation*}
 
 \subsubsection*{Problem 3.30}
 \begin{easylist}[enumerate]
