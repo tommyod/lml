@@ -80,7 +80,7 @@
 	
 \maketitle
 \begin{abstract}
-This document contains my notes, and solutions to, the book ``Pattern Classification'' by Duda et al.
+This document contains some notes and solutions to the book ``Pattern Classification'' by Duda et al.
 \end{abstract}
 
 \tableofcontents
@@ -94,26 +94,59 @@ This document contains my notes, and solutions to, the book ``Pattern Classifica
 \subsubsection*{Problem 2.6}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# We have to find $x^*$ such that $p(\alpha_2 , \omega_1) \leq E_1$, i.e. the probability of choosing $\alpha_2$ and the true state of nature being $\omega_1$ is smaller than some prescribed limit $E_1$.
-\begin{equation*}
-	p(\alpha_2 , \omega_1) = p(\alpha_2  | \omega_1) P(\omega_1) = p(x > x^* | \omega_1) P(\omega_1)
-\end{equation*}
-Let the cumulative gaussian be given by $g(x)$, then we have
-\begin{equation*}
- p(x > x^* | \omega_1) P(\omega_1) = \left(1 - g\left( x < x^* | \omega_1 \right)\right) P(\omega_1) = \left(1 - g\left( x < \frac{x^* - \mu_1}{\sigma_1} \right)\right) P(\omega_1),
-\end{equation*}
-which means that
-\begin{equation*}
-	\left(1 - \Phi \left(\frac{x^* - \mu_1}{\sigma_1} \right)\right) P(\omega_1) \leq E_1 
-	\quad \Rightarrow \quad
-	x^* \geq \mu_1 + \sigma_1 \Phi^{-1} \left( 1 - \frac{E_1}{P(\omega_1)}\right).
-\end{equation*}
-Two sanity checks are in order. First, notice that as $E_1 \to 0$ the argument of $\phi^{-1}$ goes to 1 and $x^*$ goes to infinity. 
-In words, this means that if we want to avoid every $E_1$ error we have to classify \emph{every} observation as $\omega_1$.
+# We want the probability of choosing action $\alpha_2$ to be smaller than, or equal to, $E_1$, given that the true state of nature is $\omega_1$.
+Let's assume that $\mu_1 < \mu_2$ and that the decision threshold is $x^*$, so we decide $\alpha_2$ if $x > x^*$.
+We then have
+\begin{align*}
+	P(\alpha_2 | \omega_1) &\leq E_1 \\
+	p(x > x^* | \omega_1) &\leq E_1 \\
+	\left[1 - \int_{0}^{x^*} p(x | \omega_1)  \, dx \right] &\leq E_1
+\end{align*}
+We let $\Phi: \R \to \left[0, 1\right]$ denote the cumulative Gaussian distribution, and $\Phi^{-1}: \left[0, 1\right] \to \R$ it's inverse function.
+Making use of $\Phi$ we write
+\begin{align*}
+1 - \Phi \left( \frac{x^* - \mu_1}{\sigma_1} \right) &\leq E_1 \\
+x^* \geq \mu_1 + \sigma_1 \Phi^{-1} \left(1 - E_1 \right).
+\end{align*}
+If the desired error is close to zero, then $x^*$ goes to positive infinity.
+If the desired error is close to one, then $x^*$ goes to negative infinity.
 
-Notice also that if we choose $E_1 = 0.5$, the the argument of $\phi^{-1}$
-becomes 0, goes to 1 and $x^*$ goes to infinity. 
+# The error rate for classifying $\omega_2$ as $\omega_1$ is
+\begin{equation*}
+	P(\alpha_1 | \omega_2) = 	p(x \leq x^* | \omega_2) = \int_{0}^{x^*} p(x| \omega_2) \, dx 
+	= 
+	\Phi \left(  \frac{x^* - \mu_2}{\sigma_2}  \right).
+\end{equation*}
+Making use of $x^*$ from the previous problem, we obtain
+\begin{equation*}
+ \Phi \left(  \frac{ \mu_1 + \sigma_1 \Phi^{-1} \left(1 - E_1 \right) - \mu_2}{\sigma_2}  \right) 
+ =
+\Phi \left(  \frac{\mu_1 - \mu_2}{\sigma_2} + \frac{\sigma_1}{\sigma_2}  \Phi^{-1} \left(1 - E_1 \right) \right).
+\end{equation*}
+# The overall error rate becomes
+\begin{align*}
+	P(\text{error}) &= P(\alpha_1, \omega_2) + P(\alpha_2, \omega_1) \\
+	&= P(\alpha_1 | \omega_2) P(\omega_2) + P(\alpha_2| \omega_1) P(\omega_1) \\
+	&= \frac{1}{2} \left[  P(\alpha_1 | \omega_2) +  P(\alpha_2| \omega_1) \right] \\
+	&= \frac{1}{2} \left[ E_1 +  \Phi \left(  \frac{\mu_1 - \mu_2}{\sigma_2} + \frac{\sigma_1}{\sigma_2}  \Phi^{-1} \left(1 - E_1 \right) \right) \right].
+\end{align*}
+In the last equality we used the results from the previous problems.
 
+# We substitute the given values into the equations, and obtain $x^* \approx 0.6449$. The total error rate is $P(\text{error}) \approx 0.2056$.
+# The Bayes error rate, as a function of $x^*$, is given by
+\begin{align*}
+	P(\text{error}) = P(\alpha_2 | \omega_1) P(\omega_1) + P(\alpha_1| \omega_2) P(\omega_2) \\
+	= \frac{1}{2} \left[ p( x > x^*| \omega_1)  + p( x < x^* | \omega_2) \right]   \\
+	= \frac{1}{2} \left[ \left( 1 - \Phi \left( \frac{x^* - \mu_1}{\sigma_1}\right)\right) +  \Phi \left( \frac{x^* - \mu_2}{\sigma_2}\right)  \right]
+\end{align*}
+The Bayes error rate is depicted in Figure \ref{fig:duda_ch2_prob6}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\linewidth]{figs/duda_ch2_prob6}
+\caption{Graf accompanying problem 2.6.}
+\label{fig:duda_ch2_prob6}
+\end{figure}
 
 
 \end{easylist}
@@ -134,10 +167,12 @@ The average probability of error over the data space is therefore the probabilit
 
 # We see that
 \begin{equation*}
-	P(\text{error}) = 1 - \int P(\omega_{\text{max}} | \vect{x} ) p(\vect{x}) \, d \vect{x} \leq 1 - \int \frac{1}{c} p(\vect{x}) \, d \vect{x} = 1 - \frac{1}{c} = \frac{c-1}{c}.
+	P(\text{error}) = 1 - \int P(\omega_{\text{max}} | \vect{x} ) p(\vect{x}) \, d \vect{x} \leq 1 - \int \frac{1}{c} p(\vect{x}) \, d \vect{x} = 1 - \frac{1}{c} = \frac{c-1}{c},
 \end{equation*}
+where we used $\int p(\vect{x}) \, d \vect{x} = 1$.
 
-# A situation where $P(\text{error}) = (c-1)/c$ arises when $P(\omega_i) = 1/c$. Then the maximum value is equal to the average value, and the inequality  in part a) becomes an equality.
+
+# A situation where $P(\text{error}) = (c-1)/c$ arises when $P(\omega_i) = 1/c$ for every $i$. Then the maximum value is equal to the average value, and the inequality in problem a) becomes an equality.
 \end{easylist}
 
 
@@ -169,7 +204,8 @@ and solving this equation for $p(x)$ gives the desired answer.
 \end{easylist}
 
 \subsubsection*{Problem 2.21}
-We are asked to compute the entropy of the Gaussian, triangle distribution and uniform distribution. Every p.d.f has $\mu = 0$ and standard deviation $\sigma$.
+We are asked to compute the entropy of the (1) Gaussian distribution, (2) triangle distribution and (3) uniform distribution. 
+Every p.d.f has $\mu = 0$ and standard deviation $\sigma$, and we must write every p.d.f parameterized using $\sigma$.
 \paragraph{Gaussian} We use the definition $\H\left[p(x)\right] = - \int p(x) \ln p(x) \, dx$ to compute  
 \begin{equation*}
 	\H\left[p(x)\right] = 
@@ -185,32 +221,32 @@ Let us denote $K = \frac{1}{\sqrt{2 \pi} \sigma} $ to simplify notation. We obta
 	- K \ln K \int & 
 	\exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right) \, dx + K \int  \frac{1}{2} \frac{x^2}{\sigma^2} \exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right)  \, dx
 \end{align*}
-The first term is simply $-\ln K$, since it's the normal distribution with an additional factor $-\ln K$.
-The second term is not as easy.
+The first term is simply negative $\ln K$, since it's the normal distribution with an additional factor $-\ln K$.
+The second term is not as straightforward.
 We change variables to $y = x / \left( \sqrt{2} \sigma \right)$, and write it as
 \begin{equation*}
 	K \int  y^2 \exp \left( - y^2 \right) \sqrt{2} \sigma \, dy,
 \end{equation*}
-which can be solved by using the following observation (integration by parts)
+which can be solved by using the following observation (from integration by parts)
 \begin{equation*}
-	\int 1 e^{-x^2} \, dx = \underbrace{\left. x e^{-x^2} \right|}_{0\text{ due to symmetry}} - \int x (-2x) e^{-x^2} \, dx.
+	\int 1 e^{-x^2} \, dx = \underbrace{\left. x e^{-x^2} \right|}_{0\text{ at } \pm \infty} - \int x (-2x) e^{-x^2} \, dx.
 \end{equation*}
-We proceed by using this fact, and integrate as follows:
+Using the above equation in reverse, we integrate as follows:
 \begin{equation*}
 	K \sqrt{2} \sigma \int  y^2 \exp \left( - y^2 \right)  \, dy = 	K \sqrt{2} \sigma \frac{1}{2}\int  \exp \left( - y^2 \right)  \, dy = K \sqrt{2} \sigma \frac{1}{2} \sqrt{\pi} = \frac{1}{2}
 \end{equation*}
 To recap, the first integral evaluated to $- \ln K$, and the second evaluated to $\frac{1}{2}$.
-The entropy of the Gaussian is $1/2 + \ln \sqrt{2 \pi } \sigma$.
+The entropy of the Gaussian is therefore $1/2 + \ln \sqrt{2 \pi } \sigma$.
 
 \paragraph{Triangle}
-The triangle distribution is of the form
+The triangle distribution may be written in the form
 \begin{equation*}
 	f(x) = \begin{cases}
 	h - \frac{hx}{b} &\quad \text{ if } \abs{x} < b\\
 	0 &\quad \text{ if } \abs{x} \geq b,
 	\end{cases}
 \end{equation*}
-where $h$ is a height and $b$ is the width to the left of, and to the right of, $x=0$.
+where $h$ is the height and $b$ is the width to the left of, and to the right of, $x=0$.
 
 Since the integral must evaluate to unity, we impose $hb = 1$ and obtain $f(x;b) = \frac{1}{b} \left( 1- \frac{x}{b}\right)$.
 We wish to parameterize the triangle distribution using the standard deviation $\sigma$ instead of width $b$.
@@ -234,7 +270,7 @@ Changing variables to $y = 1 - kx$ we obtain
 & - 2 \int_{0}^{1} y \left( \ln k + \ln y \right) dy = - 2 \int_{0}^{1} y \ln k \, dy - 2 \int_{0}^{1} y  \ln y \, dy = -2 \left( \ln k - \frac{1}{4}\right),
 \end{align*}
 where the last integral can be evaluated using integration by parts.
-The entropy of the triangle distribution is $1/2 + \ln \sqrt{6} \sigma$.
+The entropy of the triangle distribution turns out to be $1/2 + \ln \sqrt{6} \sigma$.
 
 \paragraph{Uniform}
 Using the same logic as with the triangle distribution to normalize a uniform distribution, and then parameterizing by $\sigma$, we obtain
@@ -250,9 +286,9 @@ u(x; \sigma) =
 0 &\quad \text{ if } \abs{x} \geq \sqrt{3}\sigma.
 \end{aligned}\right.
 \end{equation*}
-Computing the entropy is easier than in the case of the Gaussian and the triangular distribution, we evaluate
+Computing the entropy is easier than in the case of the Gaussian and the triangle distribution, we simply evaluate the integral as
 \begin{equation*}
-\H\left[p(x)\right] =2  \int_0^{\sqrt{3} \sigma} \frac{1}{2\sqrt{3}\sigma} \ln \frac{1}{2\sqrt{3}\sigma}  \, dx = \ln 2 \sqrt{3} \sigma
+\H\left[p(x)\right] =2  \int_0^{\sqrt{3} \sigma} \frac{1}{2\sqrt{3}\sigma} \ln \frac{1}{2\sqrt{3}\sigma}  \, dx = \ln 2 \sqrt{3} \sigma.
 \end{equation*}.
 
 Let's briefly compare the results of our computations as follows:
@@ -261,7 +297,8 @@ Let's briefly compare the results of our computations as follows:
 	H_\text{Triangle}(\sigma) &= 1/2 + \ln \sqrt{6} \sigma = \frac{1}{2} + \ln \sqrt{6} + \ln \sigma \approx 1.3959 + \ln \sigma \\
 	H_\text{Uniform}(\sigma) &= \ln 2 \sqrt{3} \sigma = 0 + \ln 2 \sqrt{3} + \ln \sigma \approx 1.2425 + \ln \sigma
 \end{align*}
-This verifies that out of the three distributions, the Gaussian has the maximal entropy, as was expected.
+This verifies that out of the three distributions, the Gaussian has the maximal entropy.
+This was expected, since the Gaussian maximizes the entropy over \emph{any} continuous p.d.f. having a prescribed mean and variance.
 
 
 
@@ -296,7 +333,7 @@ The corresponding eigenvectors are
 $\vect{v}_1 = (0, 1, -1)^T / \sqrt{2}$, 
 $\vect{v}_2 = (0, 1, 1)^T / \sqrt{2}$ and 
 $\vect{v}_3 = (1, 0, 0)^T$.
-The whitening transformation is
+The whitening transformation is therefore given by
 \begin{equation*}
 	\vect{A}_w = \vect{\Phi} \vect{\Lambda}^{-1/2} = 
 	\frac{1}{\sqrt{2}}
@@ -318,7 +355,7 @@ The rest of the numerical computations are skipped.
 Let's consider the term $\left(\vect{x} - \vect{\mu}\right)^T \vect{\Sigma}^{-1} \left(\vect{x} - \vect{\mu}\right)$ in the exponent first.
 Substituting $\vect{x} \mapsto \vect{T}^T \vect{x}$,
 $\vect{\mu} \mapsto \vect{T}^T \vect{\mu}$ and
-$\vect{\Sigma} \mapsto \vect{T}^T \vect{\Sigma} \vect{T}$, we see that
+$\vect{\Sigma} \mapsto \vect{T}^T \vect{\Sigma} \vect{T}$, we observe that
 \begin{gather*}
 	\left(\vect{T}^T\vect{x} - \vect{T}^T\vect{\mu}\right)^T
 	 \left( \vect{\vect{T}^T\Sigma}\vect{T}  \right)^{-1}
@@ -336,11 +373,8 @@ $\vect{\Sigma} \mapsto \vect{T}^T \vect{\Sigma} \vect{T}$, we see that
 	  \vect{\Sigma}^{-1}
 	 \left(\vect{x} - \vect{\mu}\right),
 \end{gather*}
-where we have used $(\vect{A}\vect{B})^T = \vect{B}^T \vect{A}^T$ and $(\vect{A}\vect{B})^{-1} = \vect{B}^{-1} \vect{A}^{-1}$  from linear algebra.
+where we have used $(\vect{A}\vect{B})^T = \vect{B}^T \vect{A}^T$ and $(\vect{A}\vect{B})^{-1} = \vect{B}^{-1} \vect{A}^{-1}$, which are basic facts from linear algebra.
 The density remains proportional when applying a linear transformation, but not unscaled, since the proportionality term $\abs{\vect{\Sigma}}^{1/2}$ becomes $\abs{\vect{T}^T \vect{\Sigma} \vect{T}}^{1/2} = \abs{\vect{T}^T}^{1/2}  \abs{\vect{\Sigma} }^{1/2}  \abs{ \vect{T}}^{1/2} = \abs{\vect{T}} \abs{\vect{\Sigma} }^{1/2}$.
-
-
-
 
 # Here we use the eigendecomposition of a symmetric matrix.
 We assume that $\vect{\Sigma}$ is positive definite such that every eigenvalue is positive. 
@@ -350,13 +384,16 @@ We write $\vect{\Sigma} = \vect{\Phi} \vect{\Lambda} \vect{\Phi}^T$ and apply th
 	\vect{\vect{A}_w}^T \vect{\Phi} \vect{\Lambda} \vect{\Phi}^T \vect{\vect{A}_w}  = 
 	\left( \vect{\Phi} \vect{\Lambda}^{-1/2} \right)^T \vect{\Phi} \vect{\Lambda} \vect{\Phi}^T \left( \vect{\Phi} \vect{\Lambda}^{-1/2} \right)
 \end{equation*}
-The matrix $\vect{\Phi}$ is orthogonal, so the transpose is the inverse.
-Using this fact and processing, we obtain
+The matrix $\vect{\Phi}$ is orthogonal, so it's transpose is the inverse.
+Using this fact and proceeding, we obtain
 \begin{equation*}
 \left( \vect{\Phi} \vect{\Lambda}^{-1/2} \right)^T \vect{\Phi} \vect{\Lambda} \vect{\Phi}^T \left( \vect{\Phi} \vect{\Lambda}^{1/2} \right) = \left( \vect{\Lambda}^{-1/2} \right)^T \vect{\Lambda} \vect{\Lambda}^{-1/2} = \vect{\Lambda}^{-1/2} \vect{\Lambda} \vect{\Lambda}^{-1/2} = \vect{I},
 \end{equation*}
-so the covariance is proportional to the identity matrix.
-The normalization constant becomes $1$ , since the proportionality term becomes $\abs{\vect{T}} \abs{\vect{\Sigma} }^{1/2}$ under the transformation, and $\abs{\vect{T}} \abs{\vect{\Sigma} }^{1/2} = \abs{\vect{\Phi} \vect{\Lambda}^{-1/2}} \abs{\vect{\Sigma} }^{1/2} = \abs{\vect{\Phi} \vect{\Lambda}^{-1/2}} \abs{\vect{\Phi} \vect{\Lambda} \vect{\Phi}^T }^{1/2} = \abs{\vect{I}} = 1$.
+so the covariance is proportional to the identity matrix, as we were tasked to show.
+The normalization constant becomes $1$ , since the proportionality term becomes $\abs{\vect{T}} \abs{\vect{\Sigma} }^{1/2}$ under the transformation, and 
+\begin{equation*}
+	\abs{\vect{T}} \abs{\vect{\Sigma} }^{1/2} = \abs{\vect{\Phi} \vect{\Lambda}^{-1/2}} \abs{\vect{\Sigma} }^{1/2} = \abs{\vect{\Phi} \vect{\Lambda}^{-1/2}} \abs{\vect{\Phi} \vect{\Lambda} \vect{\Phi}^T }^{1/2} = \abs{\vect{I}} = 1.
+\end{equation*}
 \end{easylist}
 
 \subsubsection*{Problem 2.28}
@@ -390,7 +427,6 @@ We write
 	\frac{1}{(2\pi)^{2/2} \sigma_x \sigma_y} \exp \left( - \frac{1}{2} \vect{x}^T \vect{D}^{-1} \vect{x} \right) = 
 	\frac{1}{(2\pi)^{2/2} \sigma_x \sigma_y} \exp \left( - \frac{1}{2} \left( x^2 / \sigma_x^2 + y^2 / \sigma_y^2 \right) \right)  \\
 	=  \frac{1}{(2\pi)^{1/2} \sigma_x} \exp \left( - \frac{1}{2} \left( x^2 / \sigma_x^2 \right) \right) 
-	\cdot 
 	\frac{1}{(2\pi)^{1/2} \sigma_y} \exp \left( - \frac{1}{2} \left( y^2 / \sigma_y^2 \right) \right)
 	= p(x) p(y).
 \end{gather*}
@@ -402,7 +438,8 @@ The probability density function
 	p(x, y) = K \frac{1}{1 + x^2 + y^2}, \quad K^{-1} = \iint_{\R} \frac{1}{1 + x^2 + y^2} \, dx dy
 \end{equation*}
 achieves this.
-The correlation is zero, since $\sigma_{xy} = \E \left[ (x - 0) (y - 0)\right] = \iint_{\R} \frac{x y}{1 + x^2 + y^2} \, dx dy = \iint_{\R} I(x, y) \, dx dy$ is zero because the integrand $I(x, y)$ is an odd function.
+The covariance is zero, since $\sigma_{xy} = \E \left[ (x - 0) (y - 0)\right] = \iint_{\R} \frac{x y}{1 + x^2 + y^2} \, dx dy = \iint_{\R} I(x, y) \, dx dy$ is zero because the integrand $I(x, y)$ is an odd function.
+
 On the other hand, $p(x, y)$ does \emph{not} factor into $p(x) p(y)$.
 We have proved that $\sigma_{xy} \nRightarrow p(x, y) = p(x) p(y)$ by finding a counterexample.
 \end{easylist}
@@ -410,7 +447,7 @@ We have proved that $\sigma_{xy} \nRightarrow p(x, y) = p(x) p(y)$ by finding a 
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # We'll assume that $\mu_1 < \mu_2$.
-Since $\sigma_1 = \sigma_2 = \sigma$, the minimum probability of error is achieved when setting $x^* = (\mu_1 + \mu_2)/2$.
+Since $\sigma_1 = \sigma_2 = \sigma$, the minimum probability of error is achieved by setting the decision threshold to $x^* = (\mu_1 + \mu_2)/2$.
 To follow the derivation below, it helps to draw the real line and two Gaussians.
 The probability of error is then
 \begin{align*}
@@ -450,8 +487,8 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 	\begin{equation*}
 	P(\omega_j | \vect{x}) \propto p(  \vect{x} | \omega_j) P(\omega_j)
 	\end{equation*}
-	We use the fact that $p(  \vect{x} | \omega_j) = \prod_{i = 1}^{d} p(  x_i| \omega_j)$ since the entries are statistically independent.
-	Furthermore, se wee that
+	We use the fact that $p(  \vect{x} | \omega_j) = \prod_{i = 1}^{d} p(  x_i| \omega_j)$, which follows from the fact that the entries are statistically independent.
+	Furthermore, we see that
 	\begin{equation*}
 	p(  x_i| \omega_j) = 
 	\left\{\!\begin{aligned}
@@ -469,7 +506,7 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 	= \sum_{i = 1}^{d} x_i \ln p_{ij} + (1 - x_i) \ln ( 1 - p_{ij})  + \ln P(\omega_j),
 	\end{align*}
 	which is easily arranged to correspond with the expression in the problem statement. 
-	In summary we choose the class $\omega_j$ if the probability of that class given the data point exceeds the probability of every other data point.
+	In summary we choose the class $\omega_j$ if the probability of that class given the data point exceeds the probability of every other class.
 \end{easylist}
 
 
@@ -492,7 +529,7 @@ The probability $p(x_i | \theta)$ is given by the expression
 The entire product $\prod_{i=1}^{n} p(x_i | \theta)$ is zero if any $x_i$ is larger than $\theta$, since then the corresponding factor is zero.
 Thus $\theta$ must be larger than, or equal to, $\max_k x_k$.
 
-On the other hand, the product equals $\frac{1}{\theta^n}$, and taking logarithms we obtain $-k \ln \theta$.
+On the other hand, the product equals $\frac{1}{\theta^n}$, and taking logarithms we obtain $-n \ln \theta$.
 This function is maximized when $\theta$ is as small as possible.
 
 The conclusion is that $\theta$ (1) must be $\geq \max_k x_k$ to avoid the likelihood being zero, and (2) as small as possible to maximize the likelihood.
@@ -509,13 +546,14 @@ The maximum likelihood estimate is $p( \D | \vect{\theta}) = \prod_{k = 1}^{n} p
  	\ell(\vect{\theta}) = \sum_{k = 1}^{n} \sum_{i=1}^{d}
  	x_{ik} \ln \theta_i + (1 - x_{ik}) \ln \left( 1 - \theta_i\right).
  \end{equation*}
-Differentiating $\ell(\vect{\theta})$ with respect to component $\theta_i$, every term in the $\sum_{i=1}^{d}$ vanishes except the $i$'th.
+Differentiating $\ell(\vect{\theta})$ with respect to component $\theta_i$, every term in the sum $\sum_{i=1}^{d}$ vanishes except the $i$'th.
 We perform the differentiation and equate the result to zero, yielding
 \begin{equation*}
 	\frac{d \ell(\vect{\theta})}{\theta_i} = \sum_{k=1}^{n} \left[ \frac{x_{ik}}{\theta_i} + \frac{x_{ik} - 1}{1 - \theta_i} \right] =
 	 \sum_{k=1}^{n} \left[ x_{ik} - \theta_i \right] = 0.
 \end{equation*}
 Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = \frac{1}{n} \sum_{k=1}^{n} \vect{x}_k$.
+This is what the problem asked us to show.
 
 \subsubsection*{Problem 3.6}
 \begin{easylist}[enumerate]
