@@ -569,6 +569,83 @@ This is what the problem asked us to show.
 
 \subsubsection*{Problem 3.15}
 \begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Familiarity with summation notation helps when solving this problem.
+The matrix product $\vect{A}\vect{a}$ may be written as $\sum_j A_{ij} a_j$.
+The sum is taken over repeated indices.
+
+Let's write the outer product $\vect{a}\vect{b}^T = a_i \oplus b_j$, the trade as $\operatorname{tr}(\vect{A}) = \sum_i A_{ii}$ and
+\begin{equation*}
+	\operatorname{tr}(\vect{a}\vect{b}^T) = \sum_{i = j} a_i \oplus b_j = \sum_{i} a_i b_i.
+\end{equation*}
+In other words, the effect of $\sum_{i = j}$ on a sum is to replace an $i$ by a $j$, or vice versa.
+
+In summation notation, $\vect{a}^T \vect{A} \vect{a} = \sum_i \sum_j A_{ij} a_j a_i$.
+Using the definitions above, and recalling that $\vect{A} \vect{a}$ is just a vector with value $\sum_j A_{ij} a_j$ in the $i$'th index, we see that
+\begin{equation*}
+	\operatorname{tr}( \vect{A} \vect{a} \vect{a}^T) = \sum_{i=k}  \left( \sum_j A_{ij} a_j \right) \oplus a_k = \sum_i \sum_j A_{ij} a_j a_i.
+\end{equation*}
+
+# The likelihood is
+\begin{align*}
+	p(\D | \theta) &= \prod_{k=1}^{n} \frac{\abs{\vect{\Sigma}^{-1}}^{1/2}}{\left(2 \pi \right)^{d/2}} \exp \left( -\frac{1}{2} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right) \\
+	&=  \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right).
+\end{align*}
+Applying $\operatorname{tr}( \vect{A} \vect{a} \vect{a}^T) = \vect{a}^T \vect{A} \vect{a}$ yields
+\begin{equation*}
+p(\D | \theta) = \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} 
+\operatorname{tr} \left( \vect{\Sigma}^{-1} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T \right)
+\right),
+\end{equation*}
+and finally using $\operatorname{tr}\left(\vect{A} + \vect{B}\right) = \operatorname{tr}\left(\vect{A}\right) + \operatorname{tr}\left( \vect{B}\right)$ completes the problem.
+
+# To solve this problem, we need two proofs from linear algebra.
+
+\begin{easylist}
+
+## The determinant is the product of the eigenvalues, i.e. $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
+This can be proved by taking the determinant of the eigenvalues decomposition of $\vect{A}$, i.e. $\vect{A}  = \vect{Q}  \vect{\Lambda} \vect{Q}^T$, since the determinant of an orthogonal matrix is unity and $\vect{\Lambda}$ has eigenvalues on the diagonal, the result is $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
+## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials.
+\end{easylist}
+
+The  term involving $\vect{\Sigma}^{-1}$ is transformed in the following way: if $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, then $\abs{\vect{A}} = \abs{\vect{\Sigma}^{-1}} | \hat{\vect{\Sigma}} |$. We then write
+\begin{equation*}
+	\abs{\vect{\Sigma}^{-1}} = \frac{\abs{\vect{A}}}{| \hat{\vect{\Sigma}} |} = \frac{\prod_{i=1}^{d} \lambda_i}{| \hat{\vect{\Sigma}} |}.
+\end{equation*}
+
+To transform the exponent, we write
+\begin{equation*}
+	 \operatorname{tr} \left( \sum_{k=1}^{n}  \vect{\Sigma}^{-1} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T \right)
+	 =
+	 \operatorname{tr} \left( \vect{\Sigma}^{-1} n \hat{\vect{\Sigma}}  \right)
+	 =
+	 n  \operatorname{tr} \left( \vect{A} \right) = n \sum_{i=1}^{d} \lambda_i.
+\end{equation*}
+Substituting these transformation into the previous equation yields the required expression, which is
+\begin{equation}
+\label{eq:prob3_13}
+	p(\D | \theta) = \frac{\left( \prod_{i=1}^{d} \lambda_i \right)^{n/2}}{\left(2 \pi \right)^{nd/2} \hat{\abs{\vect{\Sigma}}}^{n/2} } \exp \left( -\frac{n}{2} \sum_{i=1}^{d} \lambda_i \right).
+\end{equation}
+
+# Taking logarithms of equation \eqref{eq:prob3_13} above yields
+\begin{equation*}
+	\ln p(\D | \theta) = \frac{n}{2} \left[ \sum_{i=1}^{d} \ln \lambda_i - d \ln 2 \pi - \ln | \hat{\vect{\Sigma}} |  \right] - \frac{n}{2} \sum_{i=1}^{d} \lambda_i,
+\end{equation*}
+and differentiating with respect to $\lambda_j$ yields
+\begin{equation*}
+	\frac{\partial \ln p(\D | \theta)}{\partial \lambda_j} = \frac{n}{2} \left(1 - \lambda_j^2 \right) = 0.
+\end{equation*}
+The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry.
+When the Hessian is negative definite, then the solution is a maximum.
+Therefore we take $\lambda_j = 1$ as the solution (and not $\lambda_j = -1$).
+
+If every eigenvalues of $\vect{A}$ is $1$, then $\vect{A} = \vect{I}$.
+Recall that $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, so when we substitute the identity for $\vect{A}$ we obtain $\vect{\Sigma}^{-1} \hat{\vect{\Sigma}} = \vect{I}$.
+The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T$.
+\end{easylist}
+
+\subsubsection*{Problem 3.15}
+\begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
@@ -644,14 +721,33 @@ This is what the problem asked us to show.
 \end{easylist}
 
 \subsubsection*{Problem 3.24}
-We wish to find the maximum likelihood estimate of $\theta$ in the distribution
+We wish to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution
 \begin{equation*}
 	p (x | \theta) = 
 	\begin{dcases*}
 	2 \theta x \exp \left( -\theta x^2 \right) & if $x \geq 0$ \\
-	0 & otherwise
+	0 & otherwise.
 	\end{dcases*}
 \end{equation*}
+The log-likelihood function is given by
+\begin{equation*}
+	\ell(\theta)= \ln \left( p (\D | \theta) \right) 
+	= 
+	\sum_{k=1}^{n} \ln \left( 2 \theta x \exp \left( -\theta x^2 \right) \right)
+	= 
+	\sum_{k=1}^{n} - \theta x_i^2 + \ln 2 \theta x_i.
+\end{equation*}
+Differentiating with respect to $\theta$ gives
+\begin{equation*}
+	\ell'(\theta) =
+	\sum_{k=1}^{n} \left(-  x_i^2 + \frac{2 x_i}{2 \theta x_i}\right)
+	=
+	\sum_{k=1}^{n} \left(-  x_i^2 + \frac{1}{\theta}\right)
+	=
+	\frac{n}{\theta} - \sum_{k=1}^{n}  x_i^2 
+	= 0,
+\end{equation*}
+and solving this equation for $\theta$ gives the desired answer.
 
 \subsubsection*{Problem 3.30}
 \begin{easylist}[enumerate]
