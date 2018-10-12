@@ -519,41 +519,44 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # The maximum likelihood estimate for $\theta$ is $\max_\theta p(x | \theta) = \max_\theta \prod_{i=1}^{n} p(x_i | \theta)$.
-The probability $p(x_i | \theta)$ is given by the expression
+The probability of a single sample $p(x_i | \theta)$ is given by the expression
 \begin{equation*}
 	p(x_i | \theta) = 
 	\begin{dcases*}
 	1/\theta & if $0 \leq x_i \leq \theta$ \\
-	0 & if $ x_i > \theta$
+	0 & if $ x_i > \theta$.
 	\end{dcases*}
 \end{equation*}
-The entire product $\prod_{i=1}^{n} p(x_i | \theta)$ is zero if any $x_i$ is larger than $\theta$, since then the corresponding factor is zero.
-Thus $\theta$ must be larger than, or equal to, $\max_k x_k$.
+Clearly the product $\prod_{i=1}^{n} p(x_i | \theta)$ is zero if any $x_i$ is larger than $\theta$.
+Therefore $\theta$ must be larger than, or equal to, $\max_k x_k$ for the likelihood to be non-zero.
 
-On the other hand, the product equals $\frac{1}{\theta^n}$, and taking logarithms we obtain $-n \ln \theta$.
+On the other hand, the product equals $1 /\theta^n$, and taking logarithms we obtain $-n \ln \theta$.
 This function is maximized when $\theta$ is as small as possible.
 
-The conclusion is that $\theta$ (1) must be $\geq \max_k x_k$ to avoid the likelihood being zero, and (2) as small as possible to maximize the likelihood.
-Therefore we choose $\hat{\theta} = \max_k x_k = \max \D$.
+The conclusion is that $\theta$ must be $\geq \max_k x_k$ to avoid the likelihood being zero, and also as small as possible to maximize the likelihood.
+Therefore the maximum likelihood is given by $\hat{\theta} = \max_k x_k = \max \D$.
 
-# Skipping this plot. The explanation of why the other points are not needed is given in part a).
+# Skipping this plot. The explanation of why the other points are not needed is given in part a) of the problem.
 \end{easylist}
 
 \subsubsection*{Problem 3.4}
-The maximum likelihood estimate is $p( \D | \vect{\theta}) = \prod_{k = 1}^{n} p( \vect{x} | \vect{\theta}) = \prod_{k = 1}^{n} \prod_{i=1}^{d}
- \theta_{i}^{x_{ik}} \left( 1 - \theta_i \right)^{\left(  1 - x_{ik} \right)}$.
- The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D | \vect{\theta}) $, which becomes
+The maximum likelihood estimate is 
+\begin{equation*}
+	p( \D | \vect{\theta}) = \prod_{k = 1}^{n} p( \vect{x} | \vect{\theta}) = \prod_{k = 1}^{n} \prod_{i=1}^{d}
+	\theta_{i}^{x_{ik}} \left( 1 - \theta_i \right)^{\left(  1 - x_{ik} \right)}.
+\end{equation*}
+ The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D | \vect{\theta}) $, which is explicitly given by
  \begin{equation*}
  	\ell(\vect{\theta}) = \sum_{k = 1}^{n} \sum_{i=1}^{d}
  	x_{ik} \ln \theta_i + (1 - x_{ik}) \ln \left( 1 - \theta_i\right).
  \end{equation*}
-Differentiating $\ell(\vect{\theta})$ with respect to component $\theta_i$, every term in the sum $\sum_{i=1}^{d}$ vanishes except the $i$'th.
+Differentiating $\ell(\vect{\theta})$ with respect to $\theta_i$, every term in the sum $\sum_{i=1}^{d}$ vanishes except the $i$'th.
 We perform the differentiation and equate the result to zero, yielding
 \begin{equation*}
 	\frac{d \ell(\vect{\theta})}{\theta_i} = \sum_{k=1}^{n} \left[ \frac{x_{ik}}{\theta_i} + \frac{x_{ik} - 1}{1 - \theta_i} \right] =
 	 \sum_{k=1}^{n} \left[ x_{ik} - \theta_i \right] = 0.
 \end{equation*}
-Solving this for $\theta_i$ yields $\theta_i = \frac{1}{n} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = \frac{1}{n} \sum_{k=1}^{n} \vect{x}_k$.
+Solving this for $\theta_i$ yields $\theta_i = n^{-1} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = n^{-1} \sum_{k=1}^{n} \vect{x}_k$.
 This is what the problem asked us to show.
 
 \subsubsection*{Problem 3.6}
@@ -572,14 +575,14 @@ This is what the problem asked us to show.
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Familiarity with summation notation helps when solving this problem.
-The matrix product $\vect{A}\vect{a}$ may be written as $\sum_j A_{ij} a_j$.
-The sum is taken over repeated indices.
+The matrix-vector product $\vect{A}\vect{a}$ may be written as $\sum_j A_{ij} a_j$.
+The sum is typically taken over repeated indices, but we will explicitly typeset the summation index.
 
-Let's write the outer product $\vect{a}\vect{b}^T = a_i \oplus b_j$, the trade as $\operatorname{tr}(\vect{A}) = \sum_i A_{ii}$ and
+Let's write the outer product as $\vect{a}\vect{b}^T = a_i \oplus b_j$, the trace as $\operatorname{tr}(\vect{A}) = \sum_i A_{ii}$ and
 \begin{equation*}
 	\operatorname{tr}(\vect{a}\vect{b}^T) = \sum_{i = j} a_i \oplus b_j = \sum_{i} a_i b_i.
 \end{equation*}
-In other words, the effect of $\sum_{i = j}$ on a sum is to replace an $i$ by a $j$, or vice versa.
+In other words, the effect of $\sum_{i = j}$ on a summand is to replace $i$ by $j$, or vice versa.
 
 In summation notation, $\vect{a}^T \vect{A} \vect{a} = \sum_i \sum_j A_{ij} a_j a_i$.
 Using the definitions above, and recalling that $\vect{A} \vect{a}$ is just a vector with value $\sum_j A_{ij} a_j$ in the $i$'th index, we see that
@@ -587,29 +590,29 @@ Using the definitions above, and recalling that $\vect{A} \vect{a}$ is just a ve
 	\operatorname{tr}( \vect{A} \vect{a} \vect{a}^T) = \sum_{i=k}  \left( \sum_j A_{ij} a_j \right) \oplus a_k = \sum_i \sum_j A_{ij} a_j a_i.
 \end{equation*}
 
-# The likelihood is
+# The likelihood is given by the expression
 \begin{align*}
 	p(\D | \theta) &= \prod_{k=1}^{n} \frac{\abs{\vect{\Sigma}^{-1}}^{1/2}}{\left(2 \pi \right)^{d/2}} \exp \left( -\frac{1}{2} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right) \\
 	&=  \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right).
 \end{align*}
-Applying $\operatorname{tr}( \vect{A} \vect{a} \vect{a}^T) = \vect{a}^T \vect{A} \vect{a}$ yields
+Applying $ \vect{a}^T \vect{A} \vect{a} = \operatorname{tr}( \vect{A} \vect{a} \vect{a}^T)$ from problem a) yields
 \begin{equation*}
 p(\D | \theta) = \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} 
 \operatorname{tr} \left( \vect{\Sigma}^{-1} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T \right)
 \right),
 \end{equation*}
-and finally using $\operatorname{tr}\left(\vect{A} + \vect{B}\right) = \operatorname{tr}\left(\vect{A}\right) + \operatorname{tr}\left( \vect{B}\right)$ completes the problem.
+and by using $\operatorname{tr}\left(\vect{A} + \vect{B}\right) = \operatorname{tr}\left(\vect{A}\right) + \operatorname{tr}\left( \vect{B}\right)$ on the exponent we complete the problem.
 
-# To solve this problem, we need two proofs from linear algebra.
+# To solve this problem, we make use of two proofs from linear algebra.
 
 \begin{easylist}
 
 ## The determinant is the product of the eigenvalues, i.e. $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
-This can be proved by taking the determinant of the eigenvalues decomposition of $\vect{A}$, i.e. $\vect{A}  = \vect{Q}  \vect{\Lambda} \vect{Q}^T$, since the determinant of an orthogonal matrix is unity and $\vect{\Lambda}$ has eigenvalues on the diagonal, the result is $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
-## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials.
+This can be proved by taking the determinant of the eigenvalue decomposition of $\vect{A}$, i.e. $\vect{A}  = \vect{Q}  \vect{\Lambda} \vect{Q}^T$, since the determinant of an orthogonal matrix is unity and $\vect{\Lambda}$ has eigenvalues on the diagonal, the result is that $\det \vect{A} = \abs{\vect{A}} = \prod_{i=1}^{d} \lambda_i$.
+## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials, but will not be sketched here.
 \end{easylist}
 
-The  term involving $\vect{\Sigma}^{-1}$ is transformed in the following way: if $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, then $\abs{\vect{A}} = \abs{\vect{\Sigma}^{-1}} | \hat{\vect{\Sigma}} |$. We then write
+The term involving $\vect{\Sigma}^{-1}$ is transformed in the following way: if $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, then $\abs{\vect{A}} = \abs{\vect{\Sigma}^{-1}} | \hat{\vect{\Sigma}} |$. We then write
 \begin{equation*}
 	\abs{\vect{\Sigma}^{-1}} = \frac{\abs{\vect{A}}}{| \hat{\vect{\Sigma}} |} = \frac{\prod_{i=1}^{d} \lambda_i}{| \hat{\vect{\Sigma}} |}.
 \end{equation*}
@@ -628,27 +631,27 @@ Substituting these transformation into the previous equation yields the required
 	p(\D | \theta) = \frac{\left( \prod_{i=1}^{d} \lambda_i \right)^{n/2}}{\left(2 \pi \right)^{nd/2} \hat{\abs{\vect{\Sigma}}}^{n/2} } \exp \left( -\frac{n}{2} \sum_{i=1}^{d} \lambda_i \right).
 \end{equation}
 
-# Taking logarithms of equation \eqref{eq:prob3_13} above yields
+# Taking logarithms of equation \eqref{eq:prob3_13} above gives us the log-likelihood function
 \begin{equation*}
 	\ln p(\D | \theta) = \frac{n}{2} \left[ \sum_{i=1}^{d} \ln \lambda_i - d \ln 2 \pi - \ln | \hat{\vect{\Sigma}} |  \right] - \frac{n}{2} \sum_{i=1}^{d} \lambda_i,
 \end{equation*}
-and differentiating with respect to $\lambda_j$ yields
+and differentiating it with respect to the eigenvalue $\lambda_j$ yields 
 \begin{equation*}
 	\frac{\partial \ln p(\D | \theta)}{\partial \lambda_j} = \frac{n}{2} \left(1 - \lambda_j^2 \right) = 0.
 \end{equation*}
-The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry.
+The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry, so it is negative definite (i.e. $\vect{x}^T \vect{H} \vect{x} < 0$ for every $\vect{x}$) when all $\lambda_j$'s are positive.
 When the Hessian is negative definite, then the solution is a maximum.
-Therefore we take $\lambda_j = 1$ as the solution (and not $\lambda_j = -1$).
+Therefore we take $\lambda_j = 1$ as the solution for every $j$ (and not $\lambda_j = -1$, which is not a maximal point).
 
 If every eigenvalues of $\vect{A}$ is $1$, then $\vect{A} = \vect{I}$.
 Recall that $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, so when we substitute the identity for $\vect{A}$ we obtain $\vect{\Sigma}^{-1} \hat{\vect{\Sigma}} = \vect{I}$.
-The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T$.
+The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T$, and the proof is complete.
 \end{easylist}
 
 \subsubsection*{Problem 3.15}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# We start with equation (31) from the book, and get rid of $\sigma_n^2$ by substituting the expression given in equation (32):
+# Starting with equation (31) from the book, we get rid of $\sigma_n^2$ by substituting the expression given in equation (32) to obtain
 \begin{equation*}
 \mu_n =
 \underbrace{ \left[ \frac{1}{\frac{n}{\sigma^2} + \frac{1}{\sigma_0^2}} \right]}_{\sigma^2_n}
@@ -656,7 +659,7 @@ The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \s
 \underbrace{ \left[ \frac{1}{\frac{n}{\sigma^2} + \frac{1}{\sigma_0^2}} \right]}_{\sigma^2_n}
 \frac{\mu_0}{\sigma_0^2}.
 \end{equation*}
-We cancel terms, use the \emph{dogmatism} $n_0 = \sigma^2 / \sigma_0^2$, and realize that $\mu_0 = n_0^{-1} \sum_{k = -n_0 + 1}^{0} x_k$.
+We cancel terms, use the dogmatism $n_0 = \sigma^2 / \sigma_0^2$, and realize that $\mu_0 = n_0^{-1} \sum_{k = -n_0 + 1}^{0} x_k$.
 \begin{align*}
 \mu_n &= \left[ \frac{1}{1 + \frac{\sigma^2}{n \sigma_0^2}}  \right]
 \hat{\mu}_n + 
@@ -669,9 +672,9 @@ We cancel terms, use the \emph{dogmatism} $n_0 = \sigma^2 / \sigma_0^2$, and rea
  \\
  &= \frac{1}{n + n_0} \sum_{k = 1}^{n} x_k + 
  \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{0} x_k = 
- \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k
+ \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k.
 \end{align*}
-## The value of $\mu_n$ is a weighted average of the real samples and the fictitious samples, since
+## One interpretation of $\mu_n$ is that it's a weighted average of the real samples and the fictitious samples, since
 \begin{equation*}
 	\mu_n = 
 	\frac{n}{n + n_0} \left[ \frac{1}{n} \sum_{k = 0}^{n} n \right] 
@@ -680,14 +683,14 @@ We cancel terms, use the \emph{dogmatism} $n_0 = \sigma^2 / \sigma_0^2$, and rea
 	\frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k
 \end{equation*}
 An interpretation of $\sigma_n^2$ is more straightforward if we consider it's inverse, the \emph{precision} $\sigma_n^{-2}$.
-The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}$, so the number of fictitious samples provides a start estimate for the precision, and as more real data points are added the precision in increased linearly.
+The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}$, so the number of fictitious samples provides an initial estimate for the precision, and as more real data points are added the precision is increased linearly.
 	
 \end{easylist}
 
 \subsubsection*{Problem 3.16}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The trick is to multiply both terms by $\vect{I}$, expanding the identity and using $\left(\vect{A} \vect{B}\right)^{-1} = \vect{B}^{-1} \vect{A}^{-1}$. 
+	# The trick is to multiply both terms by $\vect{I}$ at an opportune moment, expanding the identity and using $\left(\vect{A} \vect{B}\right)^{-1} = \vect{B}^{-1} \vect{A}^{-1}$. 
 	We prove the theorem by writing
 	\begin{align*}
 	\left( \vect{A}^{-1} + \vect{B}^{-1}\right)^{-1} &=
@@ -699,12 +702,13 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 	Replacing the second equality by $\vect{I} \vect{A}^{-1}  + \vect{B}^{-1} \vect{I} = \vect{B}^{-1} \vect{B}  \vect{A}^{-1} + \vect{B}^{-1} \vect{A} \vect{A}^{-1}$ would yield the second quality in the theorem as stated in the problem.
 	
 	# The matrices must be square, since we use $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the first equality, and $\vect{I} = \vect{A}^{-1} \vect{A}$ to prove the second. The same logic applies to $\vect{B}$.
-	In other words, we require that $\vect{A}$ has a left-inverse and a right-inverse, and must therefore be square.
+	In other words, we require that $\vect{A}$ has a left-inverse and a right-inverse, and it must therefore be square.
 	
-	The second equality in the theorem, as stated in the problem, also implies that $\vect{A}$ must have a left and right inverse.
-	It must therefore be square, since no non-square matrix has a left-inverse and right-inverse.
+	An alternative approach is to consider the second equality in the theorem directly.
+	Some algebra reveals that this equality requires $\vect{A}$ to have a left and right inverse.
+	It must therefore be square, against since no non-square matrix has a left-inverse and a right-inverse.
 	
-	# The staring point is
+	# Our staring point is the equations
 	\begin{equation*}
 		\vect{\Sigma}_n^{-1} = n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1}
 		\quad \text{ and } \quad
@@ -714,7 +718,8 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 		\vect{\Sigma}^{-1}_0 + \vect{\mu}_0,
 	\end{equation*}
 	and we wish to solve these equations with respect to $\vect{\Sigma}_n$ and $\vect{\mu}_n$. 
-	In other words, we want the functional dependence to be$\vect{\Sigma}_n = f \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
+	In other words, we want the functional dependence to be 
+	$\vect{\Sigma}_n = f \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$
 	and $\vect{\mu}_n = \left( \hat{\vect{\mu}}_n, \vect{\mu}_0, \vect{\Sigma}, \vect{\Sigma}_0 \right)$.
 	
 	We start with the covariance matrix. 
@@ -755,7 +760,7 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 \end{easylist}
 
 \subsubsection*{Problem 3.24}
-We wish to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution
+We are tasked to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution, which is given by
 \begin{equation*}
 	p (x | \theta) = 
 	\begin{dcases*}
@@ -771,7 +776,7 @@ The log-likelihood function is given by
 	= 
 	\sum_{k=1}^{n} - \theta x_i^2 + \ln 2 \theta x_i.
 \end{equation*}
-Differentiating with respect to $\theta$ gives
+Differentiating the log-likelihood with respect to $\theta$ yields
 \begin{equation*}
 	\ell'(\theta) =
 	\sum_{k=1}^{n} \left(-  x_i^2 + \frac{2 x_i}{2 \theta x_i}\right)
@@ -781,7 +786,7 @@ Differentiating with respect to $\theta$ gives
 	\frac{n}{\theta} - \sum_{k=1}^{n}  x_i^2 
 	= 0,
 \end{equation*}
-and solving this equation for $\theta$ gives the desired answer.
+and solving this equation for $\theta$ reveals the desired answer.
 
 \subsubsection*{Problem 3.30}
 \begin{easylist}[enumerate]
@@ -802,20 +807,20 @@ TODO ?
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimension.
-Adding $n$ vectors of length $d$ requires $(n-1)d$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
-The complexity is $(n-1)d + d = O(nd)$.
+Adding $n$ vectors of length $d$ requires $d(n-1)$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
+The resulting complexity is therefore $d(n-1) + d = O(nd)$.
 
 The complexity of computing $\vect{C}_n$ is $O\left(nd^2\right)$.
-For each term in the sum, we compute the subtraction using $d$ flops, then the outer product using $d^2$ flops.
+For each term in the sum, we compute the subtraction by $d$ flops, then the outer product using $d^2$ flops.
 This is done of each of the $n$ terms, so we need $n(d + d^2)$ flops to compute the terms.
 We then add the terms, requiring $d^2(n-1)$ flops.
 Diving requires $d^2$ flops.
-In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \approx 2nd^2 = O(nd^2)$ flops.
+In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \sim 2nd^2 = O(nd^2)$ flops.
 
-# We will show that these equations work.
+# We will show that these equations are indeed correct by two different methods.
 
 
-The recursive definition of $\hat{\vect{\mu}}_n$ can be proved by induction.
+The recursive definition of $\hat{\vect{\mu}}_n$ may be proved by induction.
 It's clearly valid for $n=0$, since then it reduces to $\hat{\vect{\mu}}_0 = \vect{x}_1$.
 The inductive step is
 \begin{align*}
@@ -825,16 +830,17 @@ The inductive step is
 	&= 
 	\left(\frac{n}{n+1}\right) \hat{\vect{\mu}}_{n}  + \frac{1}{n + 1} \vect{x}_{n+1} = 
 	\frac{1}{n+1} \sum_{k=1}^{n} \vect{x}_{k} + \frac{1}{n+1} \vect{x}_{n+1}
-	 = \frac{1}{n+1} \sum_{k=1}^{n+1} \vect{x}_{k}.
+	 = \frac{1}{n+1} \sum_{k=1}^{n+1} \vect{x}_{k},
 \end{align*}
+and this proves the recursive relation for $\hat{\vect{\mu}}_{n+1}$.
 
 We will prove that the recursive equation for $\vect{C}_{n+1}$ is correct by deriving it from the definition.
-This is a long computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
-We write out the definition of $\vect{C}_{n+1}$ as
+This is a somewhat tedious computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
+We staring by writing the definition of $\vect{C}_{n+1}$, which is
 \begin{equation*}
 	\vect{C}_{n+1} = \frac{1}{n} \sum_{k=1}^{n+1} \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right) \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right)^T.
 \end{equation*}
-We then write the outer product as
+We then subtract and add $\hat{\vect{\mu}}_{n}$ to write the outer product as
 \begin{equation}
 \label{eqn:chapter3_prob35}
 	\left( 
@@ -867,7 +873,7 @@ and we expand it as such to obtain the following sum
 +  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
 \end{split}
 \end{align}
-and we will study each of the four terms.
+and we will study each of the four preceding terms in order.
 
 The \textbf{first term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
 \begin{equation*}
@@ -895,7 +901,7 @@ The \textbf{third term} in Equation \eqref{eqn:eq3_problem35_2} may also be writ
 \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
 \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
 \end{equation*}
-by the same logic used in computations related to the second term.
+where we used the same logic as in computations related to the second term.
 
 The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
 \begin{equation*}
@@ -904,30 +910,28 @@ The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written 
 \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
 \end{equation*}
 since the entire term is constant with respect to the index $k$.
-We multiply it with $(n+1)$, canceling part of the fraction, and apply the $n^{-1}$ fraction from outside the sum.
+We multiplied the last term with $(n+1)$ to get it out of the sum, canceled part of the fraction, and applied the $n^{-1}$ fraction from outside the sum.
 
 Let's return Equation \eqref{eqn:eq3_problem35_2} again, and write $\vect{w}_k = \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)$ to ease notation.
-Using our findings, the sum becomes
+Using our findings from above, the sum becomes
 \begin{align*}
-\vect{C}_{n+1} = & \frac{n-1}{n} \vect{C}_n +  \frac{1}{n} \vect{w} \vect{w}^T \\
-- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
-- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
-+ & \frac{1}{n(n+1)} \vect{w} \vect{w}^T,
+\vect{C}_{n+1} = & \frac{n-1}{n} \vect{C}_n +  \frac{1}{n} \vect{w} \vect{w}^T -  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
+- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T + \frac{1}{n(n+1)} \vect{w} \vect{w}^T,
 \end{align*}
 and since $1/n - 1/(n (n+1)) = 1 / ( n + 1 )$ we obtain the desired result
 \begin{equation*}
 	\vect{C}_{n+1} = \frac{n-1}{n} \vect{C}_n + \frac{1}{n+1} \vect{w} \vect{w}^T.
 \end{equation*}
-
+This concludes our derivation of the recursive formulas.
 
 
 # The calculation of $\hat{\vect{\mu}}_{n+1}$ is dominated by vector addition and subtraction, and the complexity is $O(d)$.
-The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which is $O(d^2)$, and a matrix addition, which has the same complexity.
+The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which has $O(d^2)$ complexity, and a matrix addition, which is $O(d^2)$ too.
 The overall complexity is for the iterative sample covariance matrix $\vect{C}_{n+1}$ is therefore $O(d^2)$.
 
-# When data arrives in a stream (online learning), the recursive methods are clearly better than applying the naive formulas.
+# When data arrives in a stream (on-line learning), the recursive methods are clearly superior to  application of the naive formulas.
 Consider data iteratively entering a learning system.
-If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, then the overall complexity is
+If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, the overall complexity is
 \begin{equation*}
 	1d + 2d + \dots + nd = \left(1 + 2 + \dots + n\right) d = O(n^2 d).
 \end{equation*}
@@ -935,9 +939,10 @@ If we compute the sequence using the iterative equation, the complexity resolves
 \begin{equation*}
 1d + 1d + \dots + 1d = \left(1 + 1 + \dots + 1\right) d = O(n d).
 \end{equation*}
-Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas results in $O(nd^2)$ complexity. 
-If data arrives sequentially and predictions are to be made before all the data has arrived, then clearly the recursive formulas are superior.
-They also require intermediate storage.
+Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas result in $O(nd^2)$ complexity. 
+If data arrives sequentially and predictions are to be made before all of the data has arrived, then clearly the recursive formulas are superior.
+They also require less intermediate storage.
+It would be interesting to know the numerical stability of both approaches.
 
 \end{easylist}
 
