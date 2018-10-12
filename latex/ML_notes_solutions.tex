@@ -22,6 +22,7 @@
 \usepackage[margin = 2.5cm, includehead]{geometry}% May be used to set margins
 \usepackage{nicefrac}% Enables \nicefrac{nom}{denom}
 %\usepackage[sc]{mathpazo}% A nice font, alternative to CM
+\usepackage{booktabs}
 
 % -------------------------------------------------
 % Package setup
@@ -567,7 +568,7 @@ This is what the problem asked us to show.
 	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 3.15}
+\subsubsection*{Problem 3.4}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Familiarity with summation notation helps when solving this problem.
@@ -646,8 +647,41 @@ The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \s
 
 \subsubsection*{Problem 3.15}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# We start with equation (31) from the book, and get rid of $\sigma_n^2$ by substituting the expression given in equation (32):
+\begin{equation*}
+\mu_n =
+\underbrace{ \left[ \frac{1}{\frac{n}{\sigma^2} + \frac{1}{\sigma_0^2}} \right]}_{\sigma^2_n}
+\frac{n}{\sigma^2} \hat{\mu}_n + 
+\underbrace{ \left[ \frac{1}{\frac{n}{\sigma^2} + \frac{1}{\sigma_0^2}} \right]}_{\sigma^2_n}
+\frac{\mu_0}{\sigma_0^2}.
+\end{equation*}
+We cancel terms, use the \emph{dogmatism} $n_0 = \sigma^2 / \sigma_0^2$, and realize that $\mu_0 = n_0^{-1} \sum_{k = -n_0 + 1}^{0} x_k$.
+\begin{align*}
+\mu_n &= \left[ \frac{1}{1 + \frac{\sigma^2}{n \sigma_0^2}}  \right]
+\hat{\mu}_n + 
+\left[ \frac{1}{1 + \frac{n \sigma_0^2}{\sigma^2}} \right] \mu_0 \\
+&= \left[ \frac{1}{1 + \frac{n_0}{n}}  \right]
+\frac{1}{n} \sum_{k = 1}^{n} x_k
++ 
+\left[ \frac{1}{1 + \frac{n}{n_0}} \right]
+ \frac{1}{n_0} \sum_{k = -n_0 + 1}^{0} x_k
+ \\
+ &= \frac{1}{n + n_0} \sum_{k = 1}^{n} x_k + 
+ \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{0} x_k = 
+ \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k
+\end{align*}
+## The value of $\mu_n$ is a weighted average of the real samples and the fictitious samples, since
+\begin{equation*}
+	\mu_n = 
+	\frac{n}{n + n_0} \left[ \frac{1}{n} \sum_{k = 0}^{n} n \right] 
+	+
+	\frac{n_0}{n + n_0} \left[ \frac{1}{n_0} \sum_{k = -n_0 + 1}^{0} x_k \right] = 
+	\frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k
+\end{equation*}
+An interpretation of $\sigma_n^2$ is more straightforward if we consider it's inverse, the \emph{precision} $\sigma_n^{-2}$.
+The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}$, so the number of fictitious samples provides a start estimate for the precision, and as more real data points are added the precision in increased linearly.
+	
 \end{easylist}
 
 \subsubsection*{Problem 3.16}
@@ -762,15 +796,149 @@ and solving this equation for $\theta$ gives the desired answer.
 \end{easylist}
 
 \subsubsection*{Problem 3.34}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+TODO ? 
 
 \subsubsection*{Problem 3.41}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimension.
+Adding $n$ vectors of length $d$ requires $(n-1)d$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
+The complexity is $(n-1)d + d = O(nd)$.
+
+The complexity of computing $\vect{C}_n$ is $O\left(nd^2\right)$.
+For each term in the sum, we compute the subtraction using $d$ flops, then the outer product using $d^2$ flops.
+This is done of each of the $n$ terms, so we need $n(d + d^2)$ flops to compute the terms.
+We then add the terms, requiring $d^2(n-1)$ flops.
+Diving requires $d^2$ flops.
+In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \approx 2nd^2 = O(nd^2)$ flops.
+
+# We will show that these equations work.
+
+
+The recursive definition of $\hat{\vect{\mu}}_n$ can be proved by induction.
+It's clearly valid for $n=0$, since then it reduces to $\hat{\vect{\mu}}_0 = \vect{x}_1$.
+The inductive step is
+\begin{align*}
+	\hat{\vect{\mu}}_{n+1} &= \hat{\vect{\mu}}_{n} +  \frac{1}{n +1} \left( \vect{x}_{n+1} -  \hat{\vect{\mu}}_{n} \right)
+	= 
+	\left(1 - \frac{1}{n+1}\right) \hat{\vect{\mu}}_{n}  + \frac{1}{n + 1} \vect{x}_{n+1} \\
+	&= 
+	\left(\frac{n}{n+1}\right) \hat{\vect{\mu}}_{n}  + \frac{1}{n + 1} \vect{x}_{n+1} = 
+	\frac{1}{n+1} \sum_{k=1}^{n} \vect{x}_{k} + \frac{1}{n+1} \vect{x}_{n+1}
+	 = \frac{1}{n+1} \sum_{k=1}^{n+1} \vect{x}_{k}.
+\end{align*}
+
+We will prove that the recursive equation for $\vect{C}_{n+1}$ is correct by deriving it from the definition.
+This is a long computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
+We write out the definition of $\vect{C}_{n+1}$ as
+\begin{equation*}
+	\vect{C}_{n+1} = \frac{1}{n} \sum_{k=1}^{n+1} \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right) \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right)^T.
+\end{equation*}
+We then write the outer product as
+\begin{equation}
+\label{eqn:chapter3_prob35}
+	\left( 
+	\left( \vect{x}_k - \hat{\vect{\mu}}_{n}\right)
+	- 
+	\left( \hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} \right)
+	\right) 
+	\left( 
+	\left( \vect{x}_k - \hat{\vect{\mu}}_{n}\right)
+	- 
+	\left( \hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} \right)
+	\right) ^T.
+\end{equation}
+The last term in each product may be written as
+\begin{equation*}
+	\hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} = \frac{1}{n +1} \left( \vect{x}_{n+1} -  \hat{\vect{\mu}}_{n} \right).
+\end{equation*}
+Equation \eqref{eqn:chapter3_prob35} has the same functional form as 
+\begin{equation*}
+(\vect{a} - \vect{b}) (\vect{a} - \vect{b})^T = \vect{a} \vect{a}^T - \vect{a} \vect{b}^T - \vect{b}\vect{a}^T + \vect{b} \vect{b}^T,
+\end{equation*}
+and we expand it as such to obtain the following sum
+\begin{align}
+\begin{split}
+\label{eqn:eq3_problem35_2}
+\vect{C}_{n+1} &= \frac{1}{n} \sum_{k=1}^{n+1}  
+ \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T 
++  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T \\
++ &   \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)   \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right) 
++  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+\end{split}
+\end{align}
+and we will study each of the four terms.
+
+The \textbf{first term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+\begin{equation*}
+	\frac{1}{n} \sum_{k=1}^{n+1}  \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T = \frac{n-1}{n} \vect{C}_n  
+	+ \frac{1}{n} \left( \vect{x}_{n+1} - \vect{\mu}_n \right) 
+	\left( \vect{x}_{n+1} - \vect{\mu}_n \right)^T,
+\end{equation*}
+where we stripped out the last term in the sum and used the definition of $\vect{C}_n$.
+
+
+The \textbf{second term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+\begin{equation*}
+\frac{1}{n(n+1)} \left[ \sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)\right]\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T
+= 
+\frac{1}{n(n+1)}  
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+\end{equation*}
+since $\sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)
+= \left( \sum_{k=1}^{n} \vect{x}_{k} \right) + \vect{x}_{n+1} - (n+1)\hat{\vect{\mu}}_n = n\hat{\vect{\mu}}_n + \vect{x}_{n+1} - n\hat{\vect{\mu}}_n - \hat{\vect{\mu}}_n$.
+
+The \textbf{third term} in Equation \eqref{eqn:eq3_problem35_2} may also be written as
+\begin{equation*}
+\frac{1}{n(n+1)}  
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+\end{equation*}
+by the same logic used in computations related to the second term.
+
+The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+\begin{equation*}
+\frac{1}{n(n+1)}  
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+\end{equation*}
+since the entire term is constant with respect to the index $k$.
+We multiply it with $(n+1)$, canceling part of the fraction, and apply the $n^{-1}$ fraction from outside the sum.
+
+Let's return Equation \eqref{eqn:eq3_problem35_2} again, and write $\vect{w}_k = \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)$ to ease notation.
+Using our findings, the sum becomes
+\begin{align*}
+\vect{C}_{n+1} = & \frac{n-1}{n} \vect{C}_n +  \frac{1}{n} \vect{w} \vect{w}^T \\
+- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
+- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
++ & \frac{1}{n(n+1)} \vect{w} \vect{w}^T,
+\end{align*}
+and since $1/n - 1/(n (n+1)) = 1 / ( n + 1 )$ we obtain the desired result
+\begin{equation*}
+	\vect{C}_{n+1} = \frac{n-1}{n} \vect{C}_n + \frac{1}{n+1} \vect{w} \vect{w}^T.
+\end{equation*}
+
+
+
+# The calculation of $\hat{\vect{\mu}}_{n+1}$ is dominated by vector addition and subtraction, and the complexity is $O(d)$.
+The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which is $O(d^2)$, and a matrix addition, which has the same complexity.
+The overall complexity is for the iterative sample covariance matrix $\vect{C}_{n+1}$ is therefore $O(d^2)$.
+
+# When data arrives in a stream (online learning), the recursive methods are clearly better than applying the naive formulas.
+Consider data iteratively entering a learning system.
+If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, then the overall complexity is
+\begin{equation*}
+	1d + 2d + \dots + nd = \left(1 + 2 + \dots + n\right) d = O(n^2 d).
+\end{equation*}
+If we compute the sequence using the iterative equation, the complexity resolves to
+\begin{equation*}
+1d + 1d + \dots + 1d = \left(1 + 1 + \dots + 1\right) d = O(n d).
+\end{equation*}
+Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas results in $O(nd^2)$ complexity. 
+If data arrives sequentially and predictions are to be made before all the data has arrived, then clearly the recursive formulas are superior.
+They also require intermediate storage.
+
 \end{easylist}
 
 \subsubsection*{Problem 3.48}
