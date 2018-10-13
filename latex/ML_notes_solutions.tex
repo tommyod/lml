@@ -87,9 +87,17 @@ This document contains some notes and solutions to the book ``Pattern Classifica
 \tableofcontents
 
 \section{Notes from ``Pattern Recognition''}
+\setcounter{subsection}{1}
+\subsection{Bayesian Decision Theory}
+TODO
+
+
+\subsection{Maximum-likelihood and Bayesian parameter estimation}
+TODO
 
 \section{Solutions to ``Pattern Recognition''}
 
+\setcounter{subsection}{1}
 \subsection{Bayesian Decision Theory}
 
 \subsubsection*{Problem 2.6}
@@ -559,19 +567,8 @@ We perform the differentiation and equate the result to zero, yielding
 Solving this for $\theta_i$ yields $\theta_i = n^{-1} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = n^{-1} \sum_{k=1}^{n} \vect{x}_k$.
 This is what the problem asked us to show.
 
-\subsubsection*{Problem 3.6}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
 
-\subsubsection*{Problem 3.9}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-\subsubsection*{Problem 3.4}
+\subsubsection*{Problem 3.13}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Familiarity with summation notation helps when solving this problem.
@@ -750,14 +747,8 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 		 \frac{1}{n} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma}  \right)^{-1}   \vect{\mu}_0 
 	\end{align*}
 	Where we made use of both equalities given in the theorem from subproblem a).
-	
 \end{easylist}
 
-\subsubsection*{Problem 3.18}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
 
 \subsubsection*{Problem 3.24}
 We are tasked to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution, which is given by
@@ -788,61 +779,87 @@ Differentiating the log-likelihood with respect to $\theta$ yields
 \end{equation*}
 and solving this equation for $\theta$ reveals the desired answer.
 
-\subsubsection*{Problem 3.30}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
 
-\subsubsection*{Problem 3.31}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
 
-\subsubsection*{Problem 3.34}
-TODO ? 
-
-\subsubsection*{Problem 3.41}
+\subsubsection*{Problem 3.32}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimension.
-Adding $n$ vectors of length $d$ requires $d(n-1)$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
-The resulting complexity is therefore $d(n-1) + d = O(nd)$.
+# A simple $\Theta(n^2)$ algorithm is given by
+\begin{lstlisting}
+	f = 0
+	for i=0 to n-1 do:
+	   f = f + a[i] * x**i
+	end
+\end{lstlisting}
+Assuming that the computation of $x^i$ requires $i-1$ flops, the complexity for iteration $i$ is $\Theta(i)$, and the full complexity becomes $1 + 2 + 3 + \dots + (n-1) = \Theta(n^2)$.
 
-The complexity of computing $\vect{C}_n$ is $O\left(nd^2\right)$.
-For each term in the sum, we compute the subtraction by $d$ flops, then the outer product using $d^2$ flops.
-This is done of each of the $n$ terms, so we need $n(d + d^2)$ flops to compute the terms.
-We then add the terms, requiring $d^2(n-1)$ flops.
-Diving requires $d^2$ flops.
-In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \sim 2nd^2 = O(nd^2)$ flops.
+# The waste in the algorithm from problem a) above stems from having to compute powers of $x$ many times.
+If we know $x^{k-1}$, then $x^k = x^{k-1} x$, and there is no need to compute $x^k$ as $\underbrace{x \cdot x \cdot \ldots \cdot x}_{k \text{ times}}$.
+Define $S_k := \sum_{i=k}^{n-1} a_i x^{i-k}$, then
+\begin{equation*}
+	f(x) = S_0 = a_0 + x S_1 = a_0 + x\left( a_1 +x  S_2 \right) = a_0 + x\left( a_1 + x\left( a_2 + xS_3 \right) \right).
+\end{equation*}
+Clearly $S_k = a_k + x S_{k+1}$, looping backwards we can use the following algorithm
+\begin{lstlisting}
+	f = a_[n-1]
+	for i=n-2 to 0 do:
+	   f = a[i] + x * f
+	end
+\end{lstlisting}
+which requires a constant number flops in each iteration.
+The computational complexity is therefore $\Theta(n)$.
+A specific example when $n=4$ is
+\begin{equation*}
+	a_0 x^0 + a_1 x^1 +a_2 x^2 +a_3 x^3 = a_0 + x (a_1 + x (a_2 + x (a_3 + x))),
+\end{equation*}
+and the algorithm evaluates this using the right-hand side, from the inside and out.
 
-# We will show that these equations are indeed correct by two different methods.
+\end{easylist}
 
 
-The recursive definition of $\hat{\vect{\mu}}_n$ may be proved by induction.
-It's clearly valid for $n=0$, since then it reduces to $\hat{\vect{\mu}}_0 = \vect{x}_1$.
-The inductive step is
-\begin{align*}
+
+
+
+\subsubsection*{Problem 3.35}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimension.
+	Adding $n$ vectors of length $d$ requires $d(n-1)$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
+	The resulting complexity is therefore $d(n-1) + d = O(nd)$.
+	
+	The complexity of computing $\vect{C}_n$ is $O\left(nd^2\right)$.
+	For each term in the sum, we compute the subtraction by $d$ flops, then the outer product using $d^2$ flops.
+	This is done of each of the $n$ terms, so we need $n(d + d^2)$ flops to compute the terms.
+	We then add the terms, requiring $d^2(n-1)$ flops.
+	Diving requires $d^2$ flops.
+	In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \sim 2nd^2 = O(nd^2)$ flops.
+	
+	# We will show that these equations are indeed correct by two different methods.
+	
+	
+	The recursive definition of $\hat{\vect{\mu}}_n$ may be proved by induction.
+	It's clearly valid for $n=0$, since then it reduces to $\hat{\vect{\mu}}_0 = \vect{x}_1$.
+	The inductive step is
+	\begin{align*}
 	\hat{\vect{\mu}}_{n+1} &= \hat{\vect{\mu}}_{n} +  \frac{1}{n +1} \left( \vect{x}_{n+1} -  \hat{\vect{\mu}}_{n} \right)
 	= 
 	\left(1 - \frac{1}{n+1}\right) \hat{\vect{\mu}}_{n}  + \frac{1}{n + 1} \vect{x}_{n+1} \\
 	&= 
 	\left(\frac{n}{n+1}\right) \hat{\vect{\mu}}_{n}  + \frac{1}{n + 1} \vect{x}_{n+1} = 
 	\frac{1}{n+1} \sum_{k=1}^{n} \vect{x}_{k} + \frac{1}{n+1} \vect{x}_{n+1}
-	 = \frac{1}{n+1} \sum_{k=1}^{n+1} \vect{x}_{k},
-\end{align*}
-and this proves the recursive relation for $\hat{\vect{\mu}}_{n+1}$.
-
-We will prove that the recursive equation for $\vect{C}_{n+1}$ is correct by deriving it from the definition.
-This is a somewhat tedious computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
-We staring by writing the definition of $\vect{C}_{n+1}$, which is
-\begin{equation*}
+	= \frac{1}{n+1} \sum_{k=1}^{n+1} \vect{x}_{k},
+	\end{align*}
+	and this proves the recursive relation for $\hat{\vect{\mu}}_{n+1}$.
+	
+	We will prove that the recursive equation for $\vect{C}_{n+1}$ is correct by deriving it from the definition.
+	This is a somewhat tedious computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
+	We staring by writing the definition of $\vect{C}_{n+1}$, which is
+	\begin{equation*}
 	\vect{C}_{n+1} = \frac{1}{n} \sum_{k=1}^{n+1} \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right) \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right)^T.
-\end{equation*}
-We then subtract and add $\hat{\vect{\mu}}_{n}$ to write the outer product as
-\begin{equation}
-\label{eqn:chapter3_prob35}
+	\end{equation*}
+	We then subtract and add $\hat{\vect{\mu}}_{n}$ to write the outer product as
+	\begin{equation}
+	\label{eqn:chapter3_prob35}
 	\left( 
 	\left( \vect{x}_k - \hat{\vect{\mu}}_{n}\right)
 	- 
@@ -853,112 +870,330 @@ We then subtract and add $\hat{\vect{\mu}}_{n}$ to write the outer product as
 	- 
 	\left( \hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} \right)
 	\right) ^T.
-\end{equation}
-The last term in each product may be written as
-\begin{equation*}
+	\end{equation}
+	The last term in each product may be written as
+	\begin{equation*}
 	\hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} = \frac{1}{n +1} \left( \vect{x}_{n+1} -  \hat{\vect{\mu}}_{n} \right).
-\end{equation*}
-Equation \eqref{eqn:chapter3_prob35} has the same functional form as 
-\begin{equation*}
-(\vect{a} - \vect{b}) (\vect{a} - \vect{b})^T = \vect{a} \vect{a}^T - \vect{a} \vect{b}^T - \vect{b}\vect{a}^T + \vect{b} \vect{b}^T,
-\end{equation*}
-and we expand it as such to obtain the following sum
-\begin{align}
-\begin{split}
-\label{eqn:eq3_problem35_2}
-\vect{C}_{n+1} &= \frac{1}{n} \sum_{k=1}^{n+1}  
- \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T 
-+  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T \\
-+ &   \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)   \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right) 
-+  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
-\end{split}
-\end{align}
-and we will study each of the four preceding terms in order.
-
-The \textbf{first term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
-\begin{equation*}
+	\end{equation*}
+	Equation \eqref{eqn:chapter3_prob35} has the same functional form as 
+	\begin{equation*}
+	(\vect{a} - \vect{b}) (\vect{a} - \vect{b})^T = \vect{a} \vect{a}^T - \vect{a} \vect{b}^T - \vect{b}\vect{a}^T + \vect{b} \vect{b}^T,
+	\end{equation*}
+	and we expand it as such to obtain the following sum
+	\begin{align}
+	\begin{split}
+	\label{eqn:eq3_problem35_2}
+	\vect{C}_{n+1} &= \frac{1}{n} \sum_{k=1}^{n+1}  
+	\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T 
+	+  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T \\
+	+ &   \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)   \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right) 
+	+  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+	\end{split}
+	\end{align}
+	and we will study each of the four preceding terms in order.
+	
+	The \textbf{first term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+	\begin{equation*}
 	\frac{1}{n} \sum_{k=1}^{n+1}  \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T = \frac{n-1}{n} \vect{C}_n  
 	+ \frac{1}{n} \left( \vect{x}_{n+1} - \vect{\mu}_n \right) 
 	\left( \vect{x}_{n+1} - \vect{\mu}_n \right)^T,
-\end{equation*}
-where we stripped out the last term in the sum and used the definition of $\vect{C}_n$.
-
-
-The \textbf{second term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
-\begin{equation*}
-\frac{1}{n(n+1)} \left[ \sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)\right]\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T
-= 
-\frac{1}{n(n+1)}  
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
-\end{equation*}
-since $\sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)
-= \left( \sum_{k=1}^{n} \vect{x}_{k} \right) + \vect{x}_{n+1} - (n+1)\hat{\vect{\mu}}_n = n\hat{\vect{\mu}}_n + \vect{x}_{n+1} - n\hat{\vect{\mu}}_n - \hat{\vect{\mu}}_n$.
-
-The \textbf{third term} in Equation \eqref{eqn:eq3_problem35_2} may also be written as
-\begin{equation*}
-\frac{1}{n(n+1)}  
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
-\end{equation*}
-where we used the same logic as in computations related to the second term.
-
-The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
-\begin{equation*}
-\frac{1}{n(n+1)}  
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
-\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
-\end{equation*}
-since the entire term is constant with respect to the index $k$.
-We multiplied the last term with $(n+1)$ to get it out of the sum, canceled part of the fraction, and applied the $n^{-1}$ fraction from outside the sum.
-
-Let's return Equation \eqref{eqn:eq3_problem35_2} again, and write $\vect{w}_k = \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)$ to ease notation.
-Using our findings from above, the sum becomes
-\begin{align*}
-\vect{C}_{n+1} = & \frac{n-1}{n} \vect{C}_n +  \frac{1}{n} \vect{w} \vect{w}^T -  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
-- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T + \frac{1}{n(n+1)} \vect{w} \vect{w}^T,
-\end{align*}
-and since $1/n - 1/(n (n+1)) = 1 / ( n + 1 )$ we obtain the desired result
-\begin{equation*}
+	\end{equation*}
+	where we stripped out the last term in the sum and used the definition of $\vect{C}_n$.
+	
+	
+	The \textbf{second term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+	\begin{equation*}
+	\frac{1}{n(n+1)} \left[ \sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)\right]\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T
+	= 
+	\frac{1}{n(n+1)}  
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+	\end{equation*}
+	since $\sum_{k=1}^{n+1}  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right)
+	= \left( \sum_{k=1}^{n} \vect{x}_{k} \right) + \vect{x}_{n+1} - (n+1)\hat{\vect{\mu}}_n = n\hat{\vect{\mu}}_n + \vect{x}_{n+1} - n\hat{\vect{\mu}}_n - \hat{\vect{\mu}}_n$.
+	
+	The \textbf{third term} in Equation \eqref{eqn:eq3_problem35_2} may also be written as
+	\begin{equation*}
+	\frac{1}{n(n+1)}  
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+	\end{equation*}
+	where we used the same logic as in computations related to the second term.
+	
+	The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
+	\begin{equation*}
+	\frac{1}{n(n+1)}  
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
+	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+	\end{equation*}
+	since the entire term is constant with respect to the index $k$.
+	We multiplied the last term with $(n+1)$ to get it out of the sum, canceled part of the fraction, and applied the $n^{-1}$ fraction from outside the sum.
+	
+	Let's return Equation \eqref{eqn:eq3_problem35_2} again, and write $\vect{w}_k = \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)$ to ease notation.
+	Using our findings from above, the sum becomes
+	\begin{align*}
+	\vect{C}_{n+1} = & \frac{n-1}{n} \vect{C}_n +  \frac{1}{n} \vect{w} \vect{w}^T -  \frac{1}{n(n+1)} \vect{w} \vect{w}^T \\
+	- &  \frac{1}{n(n+1)} \vect{w} \vect{w}^T + \frac{1}{n(n+1)} \vect{w} \vect{w}^T,
+	\end{align*}
+	and since $1/n - 1/(n (n+1)) = 1 / ( n + 1 )$ we obtain the desired result
+	\begin{equation*}
 	\vect{C}_{n+1} = \frac{n-1}{n} \vect{C}_n + \frac{1}{n+1} \vect{w} \vect{w}^T.
-\end{equation*}
-This concludes our derivation of the recursive formulas.
-
-
-# The calculation of $\hat{\vect{\mu}}_{n+1}$ is dominated by vector addition and subtraction, and the complexity is $O(d)$.
-The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which has $O(d^2)$ complexity, and a matrix addition, which is $O(d^2)$ too.
-The overall complexity is for the iterative sample covariance matrix $\vect{C}_{n+1}$ is therefore $O(d^2)$.
-
-# When data arrives in a stream (on-line learning), the recursive methods are clearly superior to  application of the naive formulas.
-Consider data iteratively entering a learning system.
-If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, the overall complexity is
-\begin{equation*}
+	\end{equation*}
+	This concludes our derivation of the recursive formulas.
+	
+	
+	# The calculation of $\hat{\vect{\mu}}_{n+1}$ is dominated by vector addition and subtraction, and the complexity is $O(d)$.
+	The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which has $O(d^2)$ complexity, and a matrix addition, which is $O(d^2)$ too.
+	The overall complexity is for the iterative sample covariance matrix $\vect{C}_{n+1}$ is therefore $O(d^2)$.
+	
+	# When data arrives in a stream (on-line learning), the recursive methods are clearly superior to  application of the naive formulas.
+	Consider data iteratively entering a learning system.
+	If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, the overall complexity is
+	\begin{equation*}
 	1d + 2d + \dots + nd = \left(1 + 2 + \dots + n\right) d = O(n^2 d).
-\end{equation*}
-If we compute the sequence using the iterative equation, the complexity resolves to
+	\end{equation*}
+	If we compute the sequence using the iterative equation, the complexity resolves to
+	\begin{equation*}
+	1d + 1d + \dots + 1d = \left(1 + 1 + \dots + 1\right) d = O(n d).
+	\end{equation*}
+	Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas result in $O(nd^2)$ complexity. 
+	If data arrives sequentially and predictions are to be made before all of the data has arrived, then clearly the recursive formulas are superior.
+	They also require less intermediate storage.
+	It would be interesting to know the numerical stability of both approaches.
+	
+\end{easylist}
+
+
+
+
+\subsubsection*{Problem 3.36}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# We'll prove the Sherman-Morrison-Woodbury matrix identity by demonstrating that it reduces to $I = I$.
+Recall that $1 + \vect{y}^T A^{-1} \vect{x}$ is a scalar.
+\begin{align*}
+\left(A + \vect{x}\vect{y}^T\right)^{-1} &= A^{-1} - \frac{A^{-1}\vect{x}\vect{y}^TA^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
+\left(A + \vect{x}\vect{y}^T\right)\left(A + \vect{x}\vect{y}^T\right)^{-1} &= \left(A + \vect{x}\vect{y}^T\right)A^{-1} - \left(A + \vect{x}\vect{y}^T\right)\frac{A^{-1}\vect{x}\vect{y}^TA^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T A^{-1} - \frac{\vect{x}\vect{y}^T A^{-1} + \vect{x}\vect{y}^T A^{-1} \vect{x}\vect{y}^T A^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T A^{-1} - \frac{ \vect{x} \left( 1 + \vect{y}^T A^{-1} \vect{x} \right) \vect{y}^T A^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T A^{-1} - \vect{x} \vect{y}^T A^{-1} 
+\end{align*}
+
+# Recall the recursive equation for the sample covariance matrix, where we define $a$, $b$ and $\vect{w}$ to ease notation in the following derivation.
 \begin{equation*}
-1d + 1d + \dots + 1d = \left(1 + 1 + \dots + 1\right) d = O(n d).
+	\vect{C}_{n+1} = \underbrace{\frac{n-1}{n}}_{a} \vect{C}_n + \underbrace{\frac{1}{n+1}}_b
+	\underbrace{\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)}_{\vect{w}}
+	\underbrace{\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T}_{\vect{w}^T}
+	= a \vect{C}_n + b \vect{w} \vect{w}^T
 \end{equation*}
-Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas result in $O(nd^2)$ complexity. 
-If data arrives sequentially and predictions are to be made before all of the data has arrived, then clearly the recursive formulas are superior.
-They also require less intermediate storage.
-It would be interesting to know the numerical stability of both approaches.
+The inverse is given by
+\begin{equation*}
+	\vect{C}_{n+1}^{-1} = \left( a \vect{C}_n + b \vect{w} \vect{w}^T \right)^{-1},
+\end{equation*}
+and we now apply the Sherman-Morrison-Woodbury matrix identity to obtain
+\begin{align*}
+	\vect{C}_{n+1}^{-1} = \left( a \vect{C}_n + b \vect{w} \vect{w}^T \right)^{-1} & = \left( a \vect{C}_n \right)^{-1} - \frac{\left( a \vect{C}_n \right)^{-1} b \vect{w} \vect{w}^T \left( a \vect{C}_n \right)^{-1}}{1 + \vect{w}^T \left( a \vect{C}_n \right)^{-1} b \vect{w}} \\
+	&= \frac{1}{a}\left( \vect{C}_n^{-1} - \frac{b}{a} \left( \frac{ \vect{C}_n^{-1} \vect{w} \vect{w}^T \vect{C}_n^{-1}}{1 + \frac{b}{a} \vect{w}^T \vect{C}_n^{-1} \vect{w}} \right) \right) \\
+	&= \frac{1}{a}\left( \vect{C}_n^{-1} - 
+	\frac{ \vect{C}_n^{-1} \vect{w} \vect{w}^T \vect{C}_n^{-1}}{\frac{a}{b} + \vect{w}^T \vect{C}_n^{-1} \vect{w}}  \right).
+\end{align*}
+Using the fact that $a^{-1} = n / (n-1)$ and $a /b = (n^2 - 1) / n$, we have shown that the inverse of $\vect{C}_{n+1}$ is indeed given by
+\begin{equation*}
+	\vect{C}_{n+1}^{-1} =
+	\frac{n}{n-1}\left( \vect{C}_n^{-1} - 
+	\frac{ \vect{C}_n^{-1} \vect{w} \vect{w}^T \vect{C}_n^{-1}}{\frac{n^2-1}{n} + \vect{w}^T \vect{C}_n^{-1} \vect{w}}  \right).
+\end{equation*}
+# The computational complexity is $O(d^2)$.
+First $\vect{w}$ is computed using $O(d)$ flops.
+In the numerator, the matrix-vector product $\vect{x} = \vect{C}_n^{-1} \vect{w}$ is computed in $O(d^2)$ time, and so is $\vect{y}^T = \vect{w}^T \vect{C}_n^{-1}$.
+Then the outer product $\vect{x}\vect{y}^T =  \left( \vect{C}_n^{-1} \vect{w} \right) \left( \vect{w}^T \vect{C}_n^{-1} \right)$ may be computed in $O(d^2)$ time too.
+
+The denominator is also computed in $O(d^2)$ time, and so is the matrix subtraction.
+Therefore the overall computational complexity is $O(d^2)$.
+Notice that if $\vect{w} \vect{w}^T$ is computed first in the denominator, the computational complexity would be $O(d^3)$, since matrix-matrix products are $O(d^3)$.
+
+# See the answer to problem 35 d).
+\end{easylist}
+
+
+\subsubsection*{Problem 3.38}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The criterion function is given by
+\begin{equation*}
+	J_1 (\vect{w}) = \frac{\left( \mu_1 - \mu_2 \right)^2}{\sigma_1^2 + \sigma_2^2} = \frac{\vect{w}^T \vect{S}_B \vect{w}}
+	{\vect{w}^T \left( \vect{\Sigma}_1 + \vect{\Sigma}_2 \right)
+		\vect{w}},
+\end{equation*}
+since the numerator is given by
+\begin{align*}
+	\left( \mu_1 - \mu_2 \right)^2 &= 
+	\left( \vect{w}^T \vect{\mu}_1 - \vect{w}^T \vect{\mu}_2 \right)
+	\left( \vect{w}^T \vect{\mu}_1 - \vect{w}^T \vect{\mu}_2 \right)^T \\
+	&=
+	\vect{w}^T 
+	\left(  \vect{\mu}_1 -  \vect{\mu}_2 \right)
+	\left(  \vect{\mu}_1 -  \vect{\mu}_2 \right)^T
+	 \vect{w}
+	 =
+	 \vect{w}^T 
+	\vect{S}_B
+	 \vect{w}
+\end{align*}
+and the denominator is given by
+\begin{equation*}
+	\sigma_1^2 + \sigma_1^2 = \vect{w}^T 
+	\left( \vect{\Sigma}_1 + \vect{\Sigma}_2 \right)
+	\vect{w}.
+\end{equation*}
+Compare this with equation (96) in the book.
+By the same logic used there, the solution is given by equation (106) from the book, which is
+\begin{equation*}
+	\vect{w} = \left(\vect{\Sigma}_1 + \vect{\Sigma}_2 \right)^{-1} \left(  \vect{\mu}_1 -  \vect{\mu}_2 \right)
+	=
+	\left(\vect{\Sigma}_1^{-1} + \vect{\Sigma}_2^{-1} \right) \left(  \vect{\mu}_1 -  \vect{\mu}_2 \right).
+\end{equation*}
+
+# Simply substitute $\sigma_i^2 \to P(\omega_i) \sigma_i^2$ into problem a).
+
+# Recall that $\tilde{s}_i^2 = \sum_{y \in \mathcal{Y}_i} (y_i - \tilde{m}_i)^2$. 
+This expression is $n_i$ times the population variance, so $\tilde{s}_i^2 \approx n_i \sigma_i^2$.
+Equation (96) in the book therefore has $n_1 \sigma_1^2 + n_2 \sigma_2^2$ in the denominator, $J_1 (\vect{w})$ from subproblem a) had $ \sigma_1^2 +  \sigma_2^2$ in the denominator and the denominator of $J_2 (\vect{w})$ is
+\begin{equation*}
+	P(\omega_1) \sigma_1^2 + P(\omega_2) \sigma_2^2 = 
+	\frac{n_1}{n} \sigma_1^2 + \frac{n_2}{n} \sigma_2^2
+	= \frac{1}{n} \left( n_1 \sigma_1^2 + n_2 \sigma_2^2 \right).
+\end{equation*}
+The denominator in equation (96) in the book is proportional to $J_2 (\vect{w})$, so they are the most similar.
+Their optimization results in the same value of $\vect{w}$, since constants make no difference when optimizing $J(\vect{w})$.
+\end{easylist}
+
+
+\subsubsection*{Problem 3.31}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# We start by expanding terms
+\begin{align*}
+	J_1 &= \frac{1}{n_1 n_2} \sum_{i} \sum_{j} \left( y_i^2 - 2y_i y_j + y_j^2\right) \\ 
+	&=
+	\frac{1}{n_1 n_2} \left( n_2 \sum_i y_i^2 
+	- 
+	2\left( \sum_i y_i \right)\left( \sum_j y_j \right)
+	+
+	n_1 \sum_j y_j^2 
+	 \right).
+\end{align*}
+From $\var(Y) = \E(Y^2) - \E(Y)^2$ we note that
+\begin{equation*}
+	\sum_i y_i^2 = \sum_i (y_i - m_i)^2 + \frac{1}{n_i} \left( \sum_i y_i \right)^2 = s_1^2 + \frac{1}{n_i} \left( \sum_i y_i \right)^2.
+\end{equation*}
+Now we denote $k_i = \sum_i y_i$ and $k_j = \sum_j y_j$,
+then we substitute the equation above into the equation for $J_1$ to obtain
+\begin{align*}
+	J_1 &= \frac{1}{n_1 n_2} \left[
+	n_2 \left( s_1^2 + \frac{1}{n_1} k_i^2 \right)
+	- 2 k_i k_j
+	+ n_1 \left( s_2^2 + \frac{1}{n_2} k_j^2 \right)
+	\right] \\
+	&= \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2} + \frac{k_i^2}{n_1^2} - 2 \frac{k_i k_j}{n_1 n_2} + \frac{k_j^2}{n_2^2} \\
+	&= \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2} + 
+	m_1^2 - 2 m_1 m_2 + m_2^2 = \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2} + (m_1 - m_2)^2.
+\end{align*}
+
+# Not sure about this one. TODO
+# Not sure about this one. TODO
 
 \end{easylist}
 
-\subsubsection*{Problem 3.48}
+
+\subsubsection*{Problem 3.40}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# We have $\tilde{\vect{S}}_W = \vect{W}^T \vect{S}_W \vect{W}$, using the fact that $\vect{W}$ contains eigenvector columns with $\vect{e}^T_i \vect{S}_W \vect{e}^T_j = \delta_{ij}$, we observe that 
+\begin{align*}
+\vect{W}^T \vect{S}_W \vect{W}
+& =
+\begin{pmatrix}
+\vect{e}_1^T \\ 
+\vdots \\ 
+\vect{e}_n^T
+\end{pmatrix}
+\begin{pmatrix}
+\vect{S}_W\vect{e}_1 & \dots & \vect{S}_W\vect{e}_n
+\end{pmatrix}
+=
+	\begin{pmatrix}
+	\vect{e}_1^T \\ 
+	\vdots \\ 
+	\vect{e}_n^T
+	\end{pmatrix}
+	\vect{S}_W
+	\begin{pmatrix}
+	\vect{e}_1 & \dots & \vect{e}_n
+	\end{pmatrix} \\
+	&=
+	\begin{pmatrix}
+	\vect{e}_1^T \vect{S}_W \vect{e}_1 & \vect{e}_1^T \vect{S}_W \vect{e}_2 & \dots \\ 
+	\vect{e}_2^T \vect{S}_W \vect{e}_1 & \vect{e}_2^T \vect{S}_W \vect{e}_2 & \vdots \\ 
+	\vdots & \dots & \vect{e}_n^T \vect{S}_W \vect{e}_n
+	\end{pmatrix}
+	= \delta_{ij} = \vect{I}.
+\end{align*}
+The same exact procedure may be applied to $\tilde{\vect{S}}_B$ to show that it's a diagonal matrix with eigenvalues, $\vect{\Lambda}$. 
+We will not devote space to this computation.
+
+# Applying the result from a), we see that the value of $J$ is
+\begin{equation*}
+	J = \frac{\abs{\tilde{\vect{S}}_B}}{\abs{\tilde{\vect{S}}_W}}
+	= \frac{\abs{\vect{W}^T \vect{S}_B \vect{W}}}{\abs{\vect{W}^T \vect{S}_W \vect{W}}}
+	=
+	\frac{\abs{\vect{\Lambda}}}{\abs{\vect{I}}} = \prod_{i = 1}^{n} \lambda_i.
+\end{equation*}
+
+# The relation is $\vect{y} = \vect{W}^T \vect{x}$, and the relation after scaling and rotating becomes $\vect{y}' = \vect{Q} \vect{D} \vect{W}^T \vect{x}$.
+We replace $\vect{W}^T$ by $\vect{Q} \vect{D} \vect{W}^T$ and obtain
+\begin{equation*}
+	J' =  
+	\frac{\abs{\left( \vect{Q} \vect{D} \vect{W}^T \right) \vect{S}_B \left( \vect{Q} \vect{D} \vect{W}^T \right)^T}}{\abs{\left( \vect{Q} \vect{D} \vect{W}^T \right) \vect{S}_W \left( \vect{Q} \vect{D} \vect{W}^T \right)^T}}
+	= 
+	\frac{\abs{\vect{Q}} \abs{\vect{D}} \abs{\vect{\Lambda}} \abs{\vect{D}} \abs{\vect{Q}^{-1}}}
+	{\abs{\vect{Q}} \abs{\vect{D}} \abs{\vect{I}} \abs{\vect{D}} \abs{\vect{Q}^{-1}}} =
+	\frac{\abs{\vect{\Lambda}}}{\abs{\vect{I}}} = J,
+\end{equation*}
+where we used $\vect{W}^T \vect{S}_W \vect{W} = \vect{I}$ and $\vect{W}^T \vect{S}_B \vect{W} = \vect{\Lambda}$, as well as $\vect{Q}^T = \vect{Q}^{-1}$.
+Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so it's invariant to this transformation.
+\end{easylist}
+
+
+\subsection{Nonparametrix techniques}
+
+\subsubsection*{TEST}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
 
 
+\subsubsection*{Problem 3.31}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
 
+
+\subsection{TEST}
 
 \subsubsection*{TEST}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # sdf
+\end{easylist}
+
+
+\subsubsection*{Problem 3.31}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
 \end{easylist}
 
 
