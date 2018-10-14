@@ -89,8 +89,40 @@ This document contains some notes and solutions to the book ``Pattern Classifica
 \section{Notes from ``Pattern Recognition''}
 \setcounter{subsection}{1}
 \subsection{Bayesian Decision Theory}
-TODO
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Bayes theorem is
+\begin{equation*}
+	P(\omega_j \mid \vect{x}) = \frac{p(\vect{x} \mid \omega_j) P(\omega_j)}{p(\vect{x})}
+	= \frac{\text{likelihood} \times \text{prior}}{\text{evidence}}
+\end{equation*}
+and the Bayes decision rule is to choose $\omega$ such that
+\begin{equation*}
+	\omega = \arg \max_j P(\omega_j \mid \vect{x}).
+\end{equation*}
 
+# Risk functions with risks (losses) other than zero-one is possible.
+ In general, we choose the action $\lambda$ to minimize the risk $R(\lambda \mid \vect{x})$.
+ 
+# The normal density 
+\begin{equation*}
+	p(\vect{x} \mid \vect{\mu}, \vect{\Sigma}) = \frac{1}{(2 \pi)^{d/2} \abs{\vect{\Sigma}}^{1/2}} 
+	\exp \left[ - \frac{1}{2} 
+	\left( \vect{x} - \vect{\mu} \right)^T \vect{\Sigma}^{-1} 
+	\left( \vect{x} - \vect{\mu} \right) \right]
+\end{equation*}
+
+is often analytically tractable, and closed form discriminant functions exist.
+
+# If features $y$ are missing, we integrate over it using the sum rule
+\begin{equation*}
+	p(x) = \int p(x, y) \, dy = \int p(x \mid y) p(y) \, dy.
+\end{equation*}
+
+# In Bayesian belief networks, influences are represented using a directed graph.
+If $B$ is dependent on $A$, we add $A \to B$ to the network.
+
+\end{easylist}
 
 \subsection{Maximum-likelihood and Bayesian parameter estimation}
 TODO
@@ -603,7 +635,7 @@ and by using $\operatorname{tr}\left(\vect{A} + \vect{B}\right) = \operatorname{
 # To solve this problem, we make use of two proofs from linear algebra.
 
 \begin{easylist}
-
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
 ## The determinant is the product of the eigenvalues, i.e. $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
 This can be proved by taking the determinant of the eigenvalue decomposition of $\vect{A}$, i.e. $\vect{A}  = \vect{Q}  \vect{\Lambda} \vect{Q}^T$, since the determinant of an orthogonal matrix is unity and $\vect{\Lambda}$ has eigenvalues on the diagonal, the result is that $\det \vect{A} = \abs{\vect{A}} = \prod_{i=1}^{d} \lambda_i$.
 ## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials, but will not be sketched here.
@@ -1167,17 +1199,82 @@ Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so i
 
 \subsection{Nonparametrix techniques}
 
-\subsubsection*{TEST}
+
+\subsubsection*{Problem 4.3}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The mean of the Parzen-window estimate is given by
+\begin{equation*}
+	\bar{p}(x) = \frac{1}{V_n} \int p(v) \phi \left( \frac{x-v}{h_n} \right) \, dv,
+\end{equation*}
+where $p(v) = U(0, a)$.
+Two observations about when this integral is zero are needed.
+
+\begin{easylist}
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+## $p(v) = U(0, a)$ is zero outside of $0 < v < a$.
+## $\phi \left( \frac{x-v}{h_n} \right)$ is zero when $x - v >0 \Leftrightarrow v < x$.
 \end{easylist}
+Let's consider the integral in every case.
+
+\textbf{When $x < 0$}, $v$ must be $0$ too since $v < x$, and the integral is zero.
+
+\textbf{When $0 < x < a$}, $v$ can range from $0$ to $x$. We obtain
+\begin{align*}
+	\bar{p}(x) &= 
+	\frac{1}{V_n} \int p(v) \phi \left( \frac{x-v}{h_n} \right) \, dv =
+	\frac{1}{h_n} \int_{0}^x \frac{1}{a} \exp \left( \frac{v - x}{h_n} \right) \, dv \\
+	&= \left .\frac{1}{a h_n} h_n \exp \left( \frac{v - x}{h_n} \right) \right|_{v=0}^{v=x} = \frac{1}{a} \left( 1 - \exp \left( \frac{-x}{h_n} \right) \right).
+\end{align*}
+
+\textbf{When $x > a$}, $v$ is not affected by $x$ and ranges from $0$ to $a$.
+We obtain
+\begin{align*}
+\bar{p}(x) &= 
+\frac{1}{V_n} \int p(v) \phi \left( \frac{x-v}{h_n} \right) \, dv =
+\frac{1}{h_n} \int_{a}^a \frac{1}{a} \exp \left( \frac{v - x}{h_n} \right) \, dv \\
+&= \left .\frac{1}{a h_n} h_n \exp \left( \frac{v - x}{h_n} \right) \right|_{v=0}^{v=a} 
+= \frac{1}{a} \left( \exp \left( \frac{a - x}{h_n} \right) - \exp \left( \frac{-x}{h_n}  \right) \right) \\
+& = \frac{1}{a} \left( \exp \left( \frac{a }{h_n} \right) - 1 \right) 
+\exp \left( \frac{-x}{h_n}  \right).
+\end{align*}
+ 
+ 
+# The plot is found in figure \ref{fig:duda_ch4_prob3_b}.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\linewidth]{figs/duda_ch4_prob3_b}
+\caption{Plot of $\bar{p}(x)$ versus $x$ for $a=1$ and $h=1$, $1/4$ and $1/16$.}
+\label{fig:duda_ch4_prob3_b}
+\end{figure}
+
+# The bias is $\E(p(x) - \hat{p}(x)) = p(x) - \bar{p}(x)$, and we obtain the relative bias (in percentage) by diving with $p(x)$ so that
+\begin{equation*}
+	\operatorname{bias}(x) = \frac{\abs{p(x) - \bar{p}(x)}}{p(x)}
+	= \frac{\frac{1}{a} - \bar{p}(x)}{\frac{1}{a}} = 1 - ap(x) = e^{-x / h_n}.
+\end{equation*}
+The bias is decreasing on $0 < x < a$, so if we want the bias to be less than 0.01 on $99\%$ of the interval, it amounts to requiring that
+\begin{equation*}
+	\operatorname{bias} \left( \frac{a}{100} \right) = 0.01 
+	\quad \Leftrightarrow \quad \exp \left( - \frac{a}{100 h_n} \right) = 0.01.
+\end{equation*}
+Solving this for $h_n$ yields $h_n = a / (100 \ln 100)$.
 
 
-\subsubsection*{Problem 3.31}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+# When $a=0$, $h_n$ becomes $h_n = 1 / (100 \ln 100) \approx 0.0022$.
+See figure \ref{fig:duda_ch4_prob3_d} for a plot.
+Although it is hard to tell exactly from the plot, observe that when $x = 0.01$, the relative bias is indeed close to $0.01$ so that $\bar{p}(0.01) = 0.99$.
+
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\linewidth]{figs/duda_ch4_prob3_d}
+\caption{Plot accompanying problem 4.3d).}
+\label{fig:duda_ch4_prob3_d}
+\end{figure}
+
+
+
 \end{easylist}
 
 
