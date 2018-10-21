@@ -41,6 +41,7 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\D}{\mathcal{D}}
+\newcommand{\F}{\mathcal{F}}
 \newcommand{\Reg}{\mathcal{R}}
 \newcommand{\Class}{\mathcal{C}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -93,15 +94,15 @@ This document contains some notes and solutions to the book ``Pattern Classifica
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Bayes theorem is
 \begin{equation*}
-	P(\omega_j \mid \vect{x}) = \frac{p(\vect{x} \mid \omega_j) P(\omega_j)}{p(\vect{x})}
-	= \frac{\text{likelihood} \times \text{prior}}{\text{evidence}}
+	P(\omega_j \mid \vect{x}) = \frac{p(\vect{x} \mid \omega_j) \times P(\omega_j)}{p(\vect{x})}
+	= \frac{\text{likelihood} \times \text{prior}}{\text{evidence}}.
 \end{equation*}
-and the Bayes decision rule is to choose $\omega$ such that
+The Bayes decision rule is to choose $\omega_m$ such that
 \begin{equation*}
-	\omega = \arg \max_j P(\omega_j \mid \vect{x}).
+	\omega_m = \arg \max_j P(\omega_j \mid \vect{x}).
 \end{equation*}
 
-# Risk functions with risks (losses) other than zero-one is possible.
+# Loss functions (or risk functions) with losses other than zero-one is possible.
  In general, we choose the action $\lambda$ to minimize the risk $R(\lambda \mid \vect{x})$.
  
 # The normal density 
@@ -114,19 +115,124 @@ and the Bayes decision rule is to choose $\omega$ such that
 
 is often analytically tractable, and closed form discriminant functions exist.
 
-# If features $y$ are missing, we integrate over it using the sum rule
+# If features $\vect{y}$ are missing, we integrate them out using the sum rule
 \begin{equation*}
-	p(x) = \int p(x, y) \, dy = \int p(x \mid y) p(y) \, dy.
+	p(\vect{x}) = \int p(\vect{x}, \vect{y}) \, d\vect{y} = \int p(\vect{x} \mid \vect{y}) p(\vect{y}) \, d\vect{y}.
 \end{equation*}
 
-# In Bayesian belief networks, influences are represented using a directed graph.
-If $B$ is dependent on $A$, we add $A \to B$ to the network.
+# In Bayesian belief networks, influences are represented by means of a directed graph.
+If $B$ is dependent on $A$, we add a directed edge $A \to B$ to the network.
+\end{easylist}
+
+
+
+
+\subsection{Maximum-likelihood and Bayesian parameter estimation}
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The maximum likelihood of a distribution $p(\vect{x} \mid \vect{\theta})$ is given by $\hat{\vect{\theta}} = \arg \max_{\vect{\theta}} p(\D \mid \vect{\theta})$,
+assuming i.i.d. data points and maximizing the log-likelihood, we have
+\begin{equation*}
+	\hat{\vect{\theta}} = \arg \max \ln  p(\D \mid \vect{\theta}) = \ln  \prod_{i=1}^{n} p(\vect{x}_i \mid \vect{\theta})  .
+\end{equation*}
+Analytical solutions exist for the Gaussian, but in general maximum likelihood estimates may be biased in the sense that $\E_x[ \hat{\vect{\theta}} ] = \int \hat{\vect{\theta}} p(\vect{x}) \, d\vect{x} \neq \vect{\theta}$.
+
+# In the Bayesian framework, the parameter $\vect{\theta}$ is expressed by a probability density function $p(\vect{\theta})$.
+This is called the \emph{prior} distribution of $\vect{\theta}$, which is updated when new data is seen.
+The result is the \emph{posterior} distribution
+\begin{equation*}
+	p(\vect{\theta} \mid \D)  
+	= 
+	\frac{p(\D \mid \vect{\theta}) p (\vect{\theta})}
+	{p(\D)}
+	= 
+	\frac{p(\D \mid \vect{\theta}) p (\vect{\theta})}
+	{\int p(\D \mid \vect{\theta}) p(\vect{\theta}) \, d \vect{\theta}}.
+\end{equation*}
+The estimate of $\vect{x}$ becomes
+\begin{equation*}
+	p(\vect{x} \mid \D) = \int p(\vect{x}, \vect{\theta} \mid \D) \, d\vect{\theta} =
+	\int p(\vect{x} \mid \vect{\theta} , \D) p(\vect{\theta} \mid \D)  \, d\vect{\theta} =
+	\int p(\vect{x} \mid \vect{\theta}) p(\vect{\theta} \mid \D)  \, d\vect{\theta},
+\end{equation*}
+which may be interpreted as a weighted average of models $p(\vect{x} \mid \vect{\theta})$, where $p(\vect{\theta} \mid \D)$ is the weight associated with the model.
+
+# The Bayesian framework is analytically tractable when using Gaussians.
+For instsance, we can compute $p(\vect{\mu} \mid \D)$ if we assume $p(\vect{\mu}) \sim \N(\vect{\mu}_0, \vect{\Sigma}_0)$.
+The distribution $p(\vect{\mu})$ is called the \emph{conjugate prior} and $p(\vect{\mu} \mid \D)$ is a \emph{reproducing density}, since the normal prior transforms to a normal posterior (with different parameters) when new data is seen.
+
+# In summary the Bayesian framework allows us to incorporate prior information, but the maximum-likelihood approach is simpler.
+Maximum likelihood gives us $\hat{\vect{\theta}}$, but the Bayesian framework gives us $p(\vect{\theta} | \D)$---the full distribution.
+
+# Principal Component Analysis (PCA) yields components useful for \emph{representation}.
+The covariance matrix is diagonalized, and low-variance directions in the hyperellipsoid are eliminated.
+The computation is performed using the SVD.
+
+# Discriminant Analysis (DA) projects to a lower dimensional subspace with optimal \emph{discrimination} (and not representation).
+
+# Expectation Maximization (EM) is an iterative algorithm for finding the maximum-likelihood when data is missing (or latent).
+
+# A discrete, first order, hidden Markov model consists of a transition matrix $\vect{A}$ and an emission matrix $\vect{B}$.
+The probability of transition from state $i$ to state $j$ is given by $a_{ij}$, and the probability that state $i$ emits signal $j$ is given by $b_{ij}$.
+Three fundamental problems related to Markov models are:
+## The evaluation problem - probability that $\vect{V}^T$ was emitted, given $\vect{A}$ and $\vect{B}$.
+## The decoding problem - determine most likely sequence of hidden states $\vect{\omega}^T$, given emitted $\vect{V}^T$, $\vect{A}$ and $\vect{B}$.
+## The learning problem -- determine $\vect{A}$ and $\vect{B}$ given training observations of $\vect{V}^T$ and a coarse model.
 
 \end{easylist}
 
-\subsection{Maximum-likelihood and Bayesian parameter estimation}
-TODO
 
+
+
+\subsection{Nonparametric techniques}
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Two conceptually different approaches are available for nonparametric pattern recognition: 
+## Estimation of densities $p(\vect{x} \mid w_j)$, called the \emph{generative} approach.
+## Estimation of $P(w_j \mid \vect{x})$, called the \emph{discriminative} approach.
+
+# Parzen-windows (kernel density estimation) is a generative method. 
+It places a \emph{kernel function} $\phi: \R \to \R_+$ on every data point $\vect{x}_i$ to create a density estimate
+\begin{equation*}
+	p_n(\vect{x}) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{V_n} 
+	\phi \left( \frac{\norm{\vect{x} - \vect{x}_i}_p}{h_n}  \right),
+\end{equation*}
+where $\norm{\cdot}: \R \times \R \to \R_+$ is metric defined by the $p$-norm (called the \emph{Minkowski metric}) and $h_n$ is the bandwidth.
+
+# $k$-nearest neighbors is a discriminative method.
+It uses information about the $k$ nearest neighbors to compute $P(w_j \mid \vect{x})$.
+This automatically uses more of the surrounding space when data is sparse, and less of the surrounding space when data is dense.
+The estimate $k$-nearest neighbor estimate is given by
+\begin{equation*}
+	P(w_j \mid \vect{x}) = \frac{\text{\# samples labeled } w_j}{k}.
+\end{equation*}
+
+# The \emph{nearest neighbor method} uses $k= 1$.
+It can be shown that the error rate $P$ of the nearest neighbor method is never more than twice the Bayes error rate $P^*$ in the limit of infinite data.
+More precisely, we have $P^* \leq P \leq P^* (2 - \frac{c}{c-1} P^*)$.
+
+# In some applications, careful thought must be put into metrics.
+Examples include periodic data on $\R / \Z$, and image data which where the metric should be invariant to shifts and small rotations.
+One method to alleviate the problems of using the $L_2$ metric on images is to introduce the \emph{tangent distance}.
+For an image $\vect{x}'$, the tangent vector of a transformation $\F$ (such as rotation by an angle $\alpha_i$) is
+\begin{equation*}
+	\vect{TV}_i = \F\left(\vect{x}'; \alpha_i \right) - \vect{x}'.
+\end{equation*}
+If several transformations are available, their linear combination may be computed.
+For each test point $\vect{x}$, we search the tangent space the linear  combination minimizing the metric.
+This gives information about $D(\vect{x}, \vect{x}')$ which is more invariant to transformations such as rotation and translation.
+
+# Reduced Coloumb energy networks use ideas from both Parzen windows and $k$-nearest neighbors.
+It adjusts the size of the window so that it is less than some maximal radius, while not touching any observation of a different class.
+This creates ``basins of attraction'' for classification.
+
+\end{easylist}
+
+
+
+
+
+\clearpage
 \section{Solutions to ``Pattern Recognition''}
 
 \setcounter{subsection}{1}
@@ -552,7 +658,7 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 
 
 
-
+\clearpage
 \subsection{Maximum-likelihood and Bayesian parameter estimation}
 
 \subsubsection*{Problem 3.2}
@@ -1196,8 +1302,88 @@ where we used $\vect{W}^T \vect{S}_W \vect{W} = \vect{I}$ and $\vect{W}^T \vect{
 Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so it's invariant to this transformation.
 \end{easylist}
 
-
+\clearpage
 \subsection{Nonparametrix techniques}
+
+\subsubsection*{Problem 4.2}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# We'll prove $\bar{p}_n(x) \sim \N(\mu, \sigma^2 + h_n^2)$ by direct computation. 
+	An alternative approach would be to use the Fourier convolution theorem, which states that convolution becomes pointwise-multiplication in the Fourier basis.
+	
+	We start with
+	\begin{equation*}
+	\bar{p}_n(x) = 	\int \frac{1}{h_n} \phi \left( \frac{x-v}{h_n} \right) p(v) \, dv,
+	\end{equation*}
+	and if $\phi(x) \sim \N(0, 1)$ then it is easy to see that $\frac{1}{h_n} \phi \left( \frac{x-v}{h_n} \right) \sim \N(v, h_n^2)$.
+	We'll expand the exponents, write it as a quadratic function of $v$, integrate out the $v$-variable and with algebra turn the result into a well-known form.
+	The integral is
+	\begin{equation}
+	\label{eqn:ch4_prob2}
+		\frac{1}{\sqrt{2 \pi} \sigma}
+		\frac{1}{\sqrt{2 \pi} h_n}
+		 \int \exp \left[ -\frac{1}{2} \left( 
+		 \left(\frac{x-v}{h_n}\right)^2 + 
+		 \left(\frac{v - \mu}{\sigma}\right)^2 
+		 \right)\right] \, dv,
+	\end{equation}
+	and we wish to integrate out the $v$.
+	To do so, we write the exponent as a function of $v$.
+	Defining $\beta = x^2 \sigma^2 + h_n^2 \mu^2$, the exponent may be written as
+	\begin{equation*}
+		\frac{\sigma^2 \left( x^2 - 2xv + v^2 \right) + 
+			h_n^2 \left( v^2 - 2v\mu + \mu^2 \right)}{(h_n \sigma)^2} = 
+		\frac{v^2(\sigma^2 + h_n^2) - 2v (x\sigma^2 + \mu h_n^2) + \beta}{(h_n \sigma)^2}.
+	\end{equation*}
+	Now we introduce $y = v \sqrt{\sigma^2 + h_n^2}$, since we are aiming to write the exponent as $(y - a)^2 / b^2 + c$ for some $y$.
+	Defining $\alpha$ and completing the square, the right hand side of the equation above may be written as
+	\begin{equation*}
+		\frac{y^2 - 2v  \overbrace{ \left(\frac{x \sigma^2 + \mu h_n^2}{\sqrt{\sigma^2 + h_n^2}} \right)}^\alpha  + \beta}{(h_n \sigma)^2}
+		=
+		\frac{y^2 - 2v \alpha + \beta}{(h_n \sigma)^2}
+		=
+		\frac{(y - \alpha)^2 - \alpha^2 + \beta}{(h_n \sigma)^2}.
+	\end{equation*}
+	We return to the integral in \eqref{eqn:ch4_prob2}, use $dv = (\sigma^2 + h_n^2)^{-1/2} dy$ and write 
+	\begin{equation*}
+	\frac{1}{\sqrt{2 \pi} \sigma}
+	\frac{1}{\sqrt{2 \pi} h_n} \frac{1}{\sqrt{\sigma^2 + h_n^2}}
+	\exp \left[ -\frac{1}{2} \left( \frac{-\alpha^2 + \beta}{(h_n \sigma)^2}
+	\right) \right]
+	\underbrace{\int \exp \left[ 
+	-\frac{1}{2} \left( \frac{y - \alpha}{h_n \sigma}
+	\right)^2 \right]
+	 \, dy}_{= \sqrt{2 \pi} h_n \sigma},
+	\end{equation*}
+	where the integral is evaluated easily by virtue of being $\N(\alpha, h_n^2 \sigma^2)$. 
+	We have
+	\begin{equation*}
+	\bar{p}_n(x) = 	 \frac{1}{ \sqrt{2 \pi} \sqrt{\sigma^2 + h_n^2}}
+	\exp \left[ -\frac{1}{2} \left( \frac{ \beta - \alpha^2}{(h_n \sigma)^2}
+	\right) \right]
+	\end{equation*}
+	and all that remains is to clean up the exponent.
+	We write
+	\begin{align*}
+		\frac{-\alpha^2 + \beta}{(h_n \sigma)^2}
+		& = \frac{1}{(h_n \sigma)^2}
+		\left[
+		\frac{(\sigma^2 + h_n^2) \left( x^2 \sigma^2 + h_n^2 \mu^2 \right)}{\sigma^2 + h_n^2}
+		-
+		\frac{\left( x \sigma^2 + \mu h_n^2 \right)^2}{\sigma^2 + h_n^2}
+		\right] \\
+		&= \frac{1}{\sigma^2 + h_n^2} \left( x^2 + 2\mu x + \mu^2 \right)
+		= \frac{\left( x - \mu \right)^2}{\sigma^2 + h_n^2} ,
+	\end{align*}
+	where some tedious algebra was omitted.
+	Finally the integral becomes
+	\begin{equation*}
+	\bar{p}_n(x) = \frac{1}{\sqrt{2 \pi} \sqrt{\sigma^2 + h_n^2}} 
+	\exp \left[ -\frac{1}{2} \frac{\left( x - \mu \right)^2}{\sigma^2 + h_n^2} \right]
+	\end{equation*}
+	which is clearly $\N(\mu, \sigma^2 + h_n^2)$, and this is what we were asked to show.
+	
+\end{easylist}
 
 
 \subsubsection*{Problem 4.3}
@@ -1273,9 +1459,219 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 \label{fig:duda_ch4_prob3_d}
 \end{figure}
 
-
-
 \end{easylist}
+
+
+
+\subsubsection*{Problem 4.27}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# sdf
+
+\begin{table}[ht!]
+	\centering
+	\caption{Ranked order of combinations of words for problem 4.27.}
+	\begin{tabular}{@{}lll@{}} \toprule
+	Word 1	& Word 2 & $D_\text{Tantimoto}$ \\ \midrule
+	\texttt{pots} & \texttt{stop} &  0.0 \\ 
+	\texttt{pattern} & \texttt{elementary} &  0.444 \\ 
+	\texttt{pattern} & \texttt{pat} &  0.5 \\ 
+	\texttt{taxonomy} & \texttt{elementary} &  0.5 \\ 
+	\texttt{pat} & \texttt{pots} &  0.6 \\ 
+	\texttt{pat} & \texttt{stop} &  0.6 \\ 
+	\texttt{pattern} & \texttt{taxonomy} &  0.7 \\ 
+	\texttt{pattern} & \texttt{pots} &  0.75 \\ 
+	\texttt{pattern} & \texttt{stop} &  0.75 \\ 
+	\texttt{pat} & \texttt{taxonomy} &  0.75 \\ 
+	\texttt{pat} & \texttt{elementary} &  0.778 \\ 
+	\texttt{pots} & \texttt{taxonomy} &  0.778 \\ 
+	\texttt{stop} & \texttt{taxonomy} &  0.778 \\ 
+	\texttt{pots} & \texttt{elementary} &  0.909 \\ 
+	\texttt{stop} & \texttt{elementary} &  0.909 \\  \bottomrule
+	\end{tabular}
+	\label{table:problem_4_17}
+\end{table}
+
+
+# sdfsdf
+\end{easylist}
+
+
+\subsubsection*{Problem 4.13}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# $D(x, x_1) = \frac{4}{3} \left( x^3 - 3x + 2	 \right)$
+\end{easylist}
+
+
+
+
+\clearpage
+\subsection{Linear discriminant functions}
+
+\subsubsection*{Problem 5.4}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# We wish to solve the problem
+	\begin{align*}
+		\operatorname{minimize} \, & \norm{\vect{x} - \vect{x}_a}^2 =
+		\vect{x}_a^T \vect{x}_a - 2\vect{x}^T \vect{x}_a + \vect{x}^T \vect{x} \\
+		\text{subject to } \, & g(\vect{x}) = \vect{\omega}^T \vect{x} + \omega_0 = 0.
+	\end{align*}
+	In doing so, we start by constructing a Lagrange function
+	\begin{equation*}
+		L(\vect{x}, \lambda) = \vect{x}_a^T \vect{x}_a - 2\vect{x}^T \vect{x}_a + \vect{x}^T \vect{x} - \lambda( \vect{\omega}^T \vect{x} + \omega_0 - 0 ),
+	\end{equation*}
+	which we differentiate with respect to $\vect{x}$ and $\lambda$ to obtain:
+	\begin{align*}
+		L_{\vect{x}} &= -2 \vect{x}_a + 2 \vect{x} - \lambda \vect{\omega} = 0 \\
+		L_\lambda &= \vect{\omega}^T \vect{x} + \omega_0 = 0
+	\end{align*}
+	We wish to solve these equations for $\vect{x}$.
+	
+	Solving the first equation for $\vect{x}$ yields $\vect{x} = \lambda \vect{\omega} / 2 + \vect{x}_a$.
+	This is all well and good, but we need $\lambda$ too.
+	If we left-multiply by $\vect{\omega}^T$ and compare with the second equation, we observe that
+	\begin{equation*}
+		\vect{\omega}^T \vect{x} 
+		= -\omega_0 \quad \text{and} 
+		\quad 
+		\vect{\omega}^T \vect{x} 
+		= 
+		\frac{\norm{\vect{\omega}}^2 \lambda}{2} + \vect{\omega}^T \vect{x}_a.
+	\end{equation*}
+	This implies that
+	\begin{equation*}
+		-\omega_0 =  \frac{\norm{\vect{\omega}}^2 \lambda}{2} + \vect{\omega}^T \vect{x}_a \quad \Leftrightarrow \quad \lambda = - \frac{2}{\norm{\vect{\omega}}^2}\left( \omega_0 + \vect{\omega}^T \vect{x}_a \right),
+	\end{equation*}
+	and substituting this into $\vect{x} = \lambda \vect{\omega} / 2 + \vect{x}_a$ yields the optimal answer
+	\begin{equation}
+	\label{eqn:ch5_prob4}
+		\vect{x}^* = -\frac{\vect{\omega}}{\norm{\vect{\omega}}^2} \left( \vect{\omega}^T \vect{x}_a + \omega_0 \right) + \vect{x}_a = - \frac{\vect{\omega}}{\norm{\vect{\omega}}^2} g(\vect{x}_a) + \vect{x}_a.
+	\end{equation}
+	Inserting this into $\norm{\vect{x}^* - \vect{x}_a}$ yields 
+	\begin{equation*}
+		\norm{\vect{x}^* - \vect{x}_a}=
+		\norm{\frac{\vect{\omega}}{\norm{\vect{\omega}}^2} g(\vect{x}_a)}
+		= \frac{\abs{g(\vect{x}_a)}}{\norm{\vect{\omega}}}.
+	\end{equation*}
+	
+	# The projection onto the plane is the minimizer $\vect{x}^*$ from equation \eqref{eqn:ch5_prob4} in the previous problem, so we immediately see that 
+	\begin{equation*}
+	\vect{x}^* = -\frac{\vect{\omega}}{\norm{\vect{\omega}}^2} \left( \vect{\omega}^T \vect{x}_a + \omega_0 \right) + \vect{x}_a = - \frac{\vect{\omega}}{\norm{\vect{\omega}}^2} g(\vect{x}_a) + \vect{x}_a
+	=  
+	\vect{x}_a - \frac{g(\vect{x}_a)}{\norm{\vect{\omega}}^2}  \vect{\omega},
+	\end{equation*}
+	which is what we were required to show.
+\end{easylist}
+
+\subsubsection*{Problem 5.13}
+We wish to choose $\eta(k)$ to minimize the quadratic function
+\begin{equation*}
+	J \left( \vect{a}(k+1)  \right)
+	\simeq
+	J \left( \vect{a}(k)  \right)
+	-
+	\eta(k) \norm{\nabla \vect{J}}^2
+	+
+	\frac{1}{2} \eta^2(k) \nabla \vect{J}^T \vect{H} \nabla \vect{J}.
+\end{equation*}
+Differentiating and setting equal to zero yields
+\begin{equation*}
+	\frac{\partial J \left( \vect{a}(k+1)  \right)}{\partial \eta(k)}
+	=
+	-
+	\norm{\nabla \vect{J}}^2
+	+
+	\eta(k) \nabla \vect{J}^T \vect{H} \nabla \vect{J} = 0,
+\end{equation*}
+and solving this for $\eta(k)$ yields the desired answer
+\begin{equation*}
+	\eta(k) = \frac{\norm{\nabla \vect{J}}^2}{\nabla \vect{J}^T \vect{H} \nabla \vect{J}}.
+\end{equation*}
+
+\subsubsection*{Problem 5.15}
+If $\alpha > \beta^2 / 2 \gamma$, then $-2 \alpha \gamma +\beta^2 < 0$ and 
+\begin{equation*}
+	\norm{\vect{a}(k+1) - \alpha \hat{\vect{a}}}^2 
+	\leq
+	\norm{\vect{a}(k) - \alpha \hat{\vect{a}}}^2 - 2 \alpha \gamma +\beta^2
+\end{equation*}
+represents error which decreases at each step.
+After $k$ corrections we obtain
+\begin{equation*}
+\norm{\vect{a}(k+1) - \alpha \hat{\vect{a}}}^2 
+\leq
+\norm{\vect{a}(1) - \alpha \hat{\vect{a}}}^2 + k(-2 \alpha \gamma +\beta^2),
+\end{equation*}
+and the error is zero when $\norm{\vect{a}(1) - \alpha \hat{\vect{a}}}^2 + k_0(-2 \alpha \gamma +\beta^2) = 0$, which implies that
+\begin{equation*}
+	k_0 = \frac{\norm{\vect{a}(1) - \alpha \hat{\vect{a}}}^2}{2 \alpha \gamma - \beta^2}.
+\end{equation*}
+This is what we were asked to show.
+
+\subsubsection*{Problem 5.21}
+To ease the notation, let us write $\vect{m} := \vect{m}_1 - \vect{m}_2$\footnote{This definition of $\vect{m}$ is not the same as the one used in the book, where $\vect{m}$ is the grand mean.}.
+Staring with equation (53) from the book, we left-multiply by the bracketed term to isolate $\vect{w}$ as 
+\begin{equation}
+\label{eqn:ch5_prob21}
+	\vect{w} = \left[ \frac{1}{n} \vect{S}_W + \frac{n_1 n_2}{n^2} \vect{m} \vect{m}^T \right]^{-1} \vect{m}.
+\end{equation}
+Recall from problem 3.36 that the Sherman-Morrison-Woodbury matrix identity is 
+\begin{equation*}
+	\left(\vect{A} + \vect{x}\vect{y}^T\right)^{-1} =
+	\vect{A}^{-1} - \frac{\vect{A}^{-1} \vect{x} \vect{y}^t \vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}}.
+\end{equation*}
+We now apply the identity to the bracketed term in equation \eqref{eqn:ch5_prob21}.
+In doing so, we identify 
+\begin{equation*}
+	\vect{A} \cong \frac{1}{n} \vect{S}_W 
+	\quad \quad \text{and} \quad \quad
+	\vect{x}\vect{y}^T \cong \frac{n_1 n_2}{n^2} \vect{m} \vect{m}^T.
+\end{equation*}
+Applying the matrix identity, we obtain
+\begin{align*}
+	\vect{w} &= \left[ n \vect{S}_W^{-1} - \frac{
+		n^2 \left( \frac{n_1 n_2}{n^2} \right)
+		\vect{S}_W^{-1} \vect{m} \vect{m}^T \vect{S}_W^{-1}
+		}{
+		1 + n \left( \frac{n_1 n_2}{n^2} \right) \vect{m}^T \vect{S}_W^{-1} \vect{m} 
+		}  \right] \vect{m} \\
+		&=
+		n \vect{S}_W^{-1}\vect{m} - \frac{
+			n \left( \frac{n_1 n_2}{n} \right)
+			\vect{S}_W^{-1} \vect{m} \vect{m}^T \vect{S}_W^{-1}\vect{m}
+		}{
+		1 +  \left( \frac{n_1 n_2}{n} \right) \vect{m}^T \vect{S}_W^{-1} \vect{m} 
+	}.
+\end{align*}
+To simplify the notation and remind ourselves that some of these quantities are mere scalars, let us denote $a:= n_1 n_2 / n$ and $b := \vect{m}^T \vect{S}_W^{-1} \vect{m} $.
+We simplify and factor our $n \vect{S}_W^{-1} \vect{m}$ to obtain
+\begin{equation*}
+	\vect{w} = n \vect{S}_W^{-1}\vect{m} - \frac{
+		n a
+		\vect{S}_W^{-1} \vect{m} b
+	}{
+	1 +  a b }
+	=
+	n \vect{S}_W^{-1} \vect{m} \left[ 1  - \frac{ab}{1 + ab} \right]
+	=
+	n \vect{S}_W^{-1} \vect{m} \left[ 1  + ab \right]^{-1}.
+\end{equation*}
+Recalling now that $a:= n_1 n_2 / n$ and $b := \vect{m}^T \vect{S}_W^{-1} \vect{m} $, we have accomplished the goal.
+The result is that
+\begin{equation*}
+	\vect{w} = n \vect{S}_W^{-1} \vect{m} \alpha = n \vect{S}_W^{-1} \vect{m} \big[ 1 + \underbrace{\left( \frac{n_1 n_2}{n} \right)}_a \underbrace{\vect{m}^T \vect{S}_W^{-1} \vect{m}}_b \big]^{-1},
+\end{equation*}
+which shows that $\alpha$ is indeed given by the quantity in the problem statement.
+
+\subsubsection*{Problem 5.25}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+
 
 
 \subsection{TEST}
