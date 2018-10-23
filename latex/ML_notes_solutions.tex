@@ -1667,6 +1667,147 @@ which shows that $\alpha$ is indeed given by the quantity in the problem stateme
 
 \subsubsection*{Problem 5.25}
 \begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+
+# We supply a proof by induction: we first show the base case, and then the inductive step.
+
+\textbf{The base case} is verified by checking that the relation holds for $\eta^{-1}(2) = \eta^{-1}(1) + y_1^2$.
+This is true, since it implies
+\begin{equation*}
+	\eta(2) = \frac{1}{\eta^{-1}(1) + y_1^2}
+	= \frac{\eta(1)}{1 + \eta(1) y_1^2}
+	= \frac{\eta(1)}{1 + \eta(1) \sum_{i=1}^{1}y_i^2},
+\end{equation*}
+which is clearly the given formula for $k = 2$.
+
+In \textbf{the inductive step} we assume that the relation holds for $\eta(k)$, and show that this implies that it holds for $\eta(k+1)$ too.
+The required algebra is
+\begin{align*}
+	\eta^{-1}(k+1) &= \eta^{-1}(k) + y_k^2 \\
+&= \left( \frac{\eta(1)}{1 + \eta(1) \sum_{i=1}^{k-1}y_i^2 }  \right)^{-1} + y_k^2 \\
+&= \frac{1 + \eta(1) \sum_{i=1}^{k-1}y_i^2}{\eta(1) } + \frac{\eta(1)}{\eta(1)}y_k^2 \\
+&= \frac{1 + \eta(1) \sum_{i=1}^{k}y_i^2}{\eta(1)}.
+\end{align*}
+Inverting this shows that $\eta(k+1) = \eta(1) / \left( 1 + \eta(1) \sum_{i=1}^{k}y_i^2 \right)$, as required.
+
+
+
+# To show why the sequence of coefficients will satisfy the sums, we will first bound the terms, and the convert the problems to integrals.
+
+If $0 < a \leq y_i^2 \leq b < \infty$ for every $i$, then the sum is bounded by
+\begin{equation*}
+	a(k-1) \leq \sum_{i=1}^{k-1} y_i^2 \leq b(k-1),
+\end{equation*}
+and this in turn implies the expression $\eta(k)$ that may be bounded by
+\begin{equation*}
+	\frac{\eta(1)}{1 + \eta(1) b(k-1)} \leq \eta(k) \leq\frac{\eta(1)}{1 + \eta(1) a(k-1)}.
+\end{equation*}
+
+To show that $\sum \eta(k) \to \infty$, we note that $\sum \eta(k) \simeq \lim_{\alpha \to \infty} \int_{x=1}^{x=\alpha} \eta(x) \, dx $.
+We observe that the integral
+\begin{equation*}
+	\lim_{\alpha \to \infty} \int_{x=1}^{x=\alpha} \frac{\eta(1)}{1 + \eta(1)(x-1)b} \, dx 
+	= 
+	\lim_{\alpha \to \infty} \left. \frac{1}{b} \ln \abs{u} \right|_{u=1}^{u=1 + \eta(1) (\alpha - 1)b}
+\end{equation*}
+diverges for any value of $b$, where we used the substitution $u = 1 + \eta(1)(x-1)b$.
+Since $b$ represents the maximal value of the terms $\eta(k)$, any other value of $y_i^2$ will diverge too, and the sum $\sum \eta(k)$ diverges to infinity.
+
+To show that $\sum \eta^2(k) \to L < \infty$, we again use $\sum \eta^2(k) \simeq \lim_{\alpha \to \infty} \int_{x=1}^{x=\alpha} \eta^2(x) \, dx $.
+Now the integral converges, since for any value of $a$ the integral
+\begin{equation*}
+\lim_{\alpha \to \infty} \int_{x=1}^{x=\alpha} \frac{\eta^2(1)}{(1 + \eta(1)(x-1)b)^2} \, dx 
+= 
+\lim_{\alpha \to \infty} \left. \frac{\eta(1)}{bu} \right|_{u=1 + \eta(1) (\alpha - 1)a}^{u=1} \leq \frac{\eta(1)}{b}
+\end{equation*}
+diverges, and $a$ represents the maximal bound on $\eta(k)$. 
+The sum $\sum \eta(k)$ diverges to infinity, for any $0 < a \leq y_i^2 \leq b < \infty$.
+\end{easylist}
+
+
+
+
+\subsubsection*{Problem 5.27}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The data points are plotted in figure \ref{fig:duda_ch5_prob27} on page \pageref{fig:duda_ch5_prob27}, and as seen they are not linearly separable.
+
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figs/duda_ch5_prob27}
+	\caption{Graf accompanying problem 5.27.}
+	\label{fig:duda_ch5_prob27}
+\end{figure}
+
+
+# From equation (95) we observe that the optimal choice of $\eta$ is given by
+
+\begin{equation*}
+	\eta(k) = \frac{\norm{\vect{Y}^T \abs{\vect{e}(k)}}^2}
+	{\norm{\vect{Y}\vect{Y}^T \abs{\vect{e}(k)}}^2}
+	= \frac{\vect{e}^T \vect{Y} \vect{Y}^T \vect{e}}
+	{\vect{e}^T \vect{Y} \vect{Y}^T \vect{Y} \vect{Y}^T \vect{e}}.
+\end{equation*}
+This value varies from loop to loop, depending on $\vect{e}$.
+For this specific data set, the value of $\vect{Y}$ and $\vect{Y} \vect{Y}^T$ are given in equation \eqref{eqn:chapter5_prob27}.
+
+\begin{gather*}
+\label{eqn:chapter5_prob27}
+	\vect{Y} = \left(\begin{matrix}
+	1.0 & 1.0 & 2.0\\1.0 & 2.0 & -4.0\\1.0 & -3.0 & -1.0\\-1.0 & -2.0 & -4.0\\-1.0 & 1.0 & 5.0\\-1.0 & -5.0 & 0.0
+	\end{matrix}\right)
+	\\
+	\vect{Y} \vect{Y}^T = 
+	\left(\begin{matrix}
+	6.0 & -5.0 & -4.0 & -11.0 & 10.0 & -6.0\\-5.0 & 21.0 & -1.0 & 11.0 & -19.0 & -11.0\\-4.0 & -1.0 & 11.0 & 9.0 & -9.0 & 14.0\\-11.0 & 11.0 & 9.0 & 21.0 & -21.0 & 11.0\\10.0 & -19.0 & -9.0 & -21.0 & 27.0 & -4.0\\-6.0 & -11.0 & 14.0 & 11.0 & -4.0 & 26.0
+	\end{matrix}\right)
+\end{gather*}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figs/duda_ch5_prob27_b}
+	\caption{Convergence of the Ho Kashyap algorithm.}
+	\label{fig:duda_ch5_prob27_b}
+\end{figure}
+
+\end{easylist}
+
+
+\subsubsection*{Problem 5.32}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The plot is show in figure \ref{fig:duda_ch5_prob32}.
+By inspection the weight vector is 
+\begin{equation*}
+	\vect{a} = (a_0, a_1, a_2)= (-1.5, 1, 1).
+\end{equation*}
+This corresponds to the line $y = 1.5 - x$.
+The optimal margin is the distance from the line $y = 1.5 - x$ to a point, say $(1,1)$, and this distance is $\sqrt{2}/4 \approx 0.3536$.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figs/duda_ch5_prob32}
+	\caption{Plot related to problem 5.32a).}
+	\label{fig:duda_ch5_prob32}
+\end{figure}
+
+# From inspection there are four support vectors, they are
+\begin{align*}
+	(0, 1)^T \quad & \quad (1, 0)^T \\
+	(1, 1)^T \quad & \quad (2, 0)^T.
+\end{align*}
+
+# sdf
+
+
+\end{easylist}
+
+
+
+
+\subsubsection*{Problem 5.33}
+\begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
@@ -1674,16 +1815,40 @@ which shows that $\alpha$ is indeed given by the quantity in the problem stateme
 
 
 
-\subsection{TEST}
 
-\subsubsection*{TEST}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{sdfsdf}
+
+\subsubsection*{Problem X.YY}
 \begin{easylist}[enumerate]
-\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
 \end{easylist}
 
-
-\subsubsection*{Problem 3.31}
+\subsubsection*{Problem X.YY}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf

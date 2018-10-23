@@ -142,13 +142,13 @@ for w1, w2, w3 in itertools.permutations(words, 3):
 
 # ## Problem 4.13
 
-# In[23]:
+# In[6]:
 
 
 get_ipython().run_cell_magic('time', '', '\nfrom scipy.stats import triang\n\n\ndef run_simulation(num_samples_from_each, simulations=10000, random_state=42):\n    """\n    Generate samples from each distribution. Check error rate.\n    """\n    np.random.seed(random_state)\n    \n    if num_samples_from_each == 0:\n        return 0.5\n    \n    # Set up distributions\n    x_dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)\n    y_dist = triang(loc=0, scale=1, c=0)  # This is p(x|w_2)\n    \n    n = num_samples_from_each\n    x_value = x_dist.rvs(size=(simulations, 1))\n    \n    x_n_vals = x_dist.rvs(size=(simulations, n))\n    y_n_vals = y_dist.rvs(size=(simulations, n))\n    \n    closest_x = np.min(np.abs(x_value - x_n_vals), axis=1).reshape(-1, 1)\n    closest_y = np.min(np.abs(x_value - y_n_vals), axis=1).reshape(-1, 1)\n    \n    errors = np.argmin(np.hstack((closest_x, closest_y)), axis=1)\n    \n    return errors.sum() / simulations\n\n\nplt.figure(figsize=FIGSIZE) \n\n# Simulation\nn = [1, 2, 3, 4, 5]\nP_e_sim = [run_simulation(k, simulations=100_000) for k in n]\n\n# Analytical\nP_e = lambda n: 1/3 + 1/((n+1) * (n+3)) + 1/(2 * (n+2) * (n+3))\nP_e_true = [P_e(k) for k in n]\n\nplt.plot(n, P_e_sim, \'-o\', label=\'$P_n(e) simulated$\')\n#plt.plot(n, P_e_true, \'-o\', label=\'$P_n(e) true$\')\n\nplt.xlabel(\'Error rate\')\nplt.xlabel(\'$n$\')\nplt.legend()\nplt.tight_layout()\nplt.savefig(\'duda_ch4_prob13_sim.pdf\')')
 
 
-# In[9]:
+# In[7]:
 
 
 x_dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)
@@ -161,8 +161,11 @@ plt.plot(x, x_dist.pdf(x))
 plt.plot(x, y_dist.pdf(x))
 
 
-# In[ ]:
+# In[8]:
 
+
+dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)
+dist2 = triang(loc=0, scale=1, c=0)  # This is p(x|w_2)
 
 
 import numpy as np
@@ -205,7 +208,7 @@ plt.plot(x, 1* (1 - G)**0*g)
 #plt.plot(x, np.cumsum(y)/ np.sum(y))
 
 
-# In[148]:
+# In[9]:
 
 
 dist = triang(loc=0, scale=1, c = 1)
@@ -223,10 +226,155 @@ dists.shape
 np.sum(dists.argmin(axis=0)) / n
 
 
-# In[150]:
+# In[10]:
 
 
 P = lambda n: 1/ 3 + 1/((n+1) * (n+3)) + 1/(2*(n+2) * (n+3))
 
 P(1)
+
+
+# ## Problem 5.27
+
+# In[11]:
+
+
+omega1 = np.array([[1, 2], [2, -4], [-3, -1]])
+omega2 = np.array([[2, 4], [-1, -5], [5, 0]])
+
+plt.figure(figsize=FIGSIZE)
+
+# Plot the data
+plt.scatter(omega1[:, 0], omega1[:, 1], label='$\omega_1$', zorder=15)
+plt.scatter(omega2[:, 0], omega2[:, 1], label='$\omega_2$', zorder=15)
+
+plt.grid(True, alpha=0.5, zorder=-15)
+plt.legend()
+plt.tight_layout()
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.savefig('duda_ch5_prob27.pdf')
+
+
+# In[12]:
+
+
+def modified_ho_kashyap(Y, a=None, b=None, eta=0.001, b_min=10e-1, 
+                        max_iter=50, random_state=123):
+    """
+    The modified Ho-Kashyap algorithm for linear inequalities.
+    
+    See chapter 5 of Pattern Recognition by Duda et al.
+    
+    The matrix Y should have a first column of +/- 1.
+    """
+    # Get the shape of Y to possibly determine a and b
+    m, d = Y.shape
+    
+    # If the variables a, b are None, they are set to random variables
+    np.random.seed(random_state)
+    a = a or np.random.randn(d)
+    b = b or np.abs(np.random.randn(m))
+    yield a, b  # Yield for plotting. Remove for proper implementation.
+    
+    # Moore-Penrose pseudo-inverse
+    # computed outside loop for speed
+    Y_inv = np.linalg.pinv(Y)
+    
+    for i in range(max_iter):
+        #print(f'----------  {i}  ----------')
+        
+        # The algorithm is based on Algorithm 12,
+        # chapter 5 in Pattern Recognition by
+        # Duda et al. Page 254
+        e = np.dot(Y, a) - b
+        e_plus = (e + np.abs(e))
+        b = b + eta * (e + np.abs(e))
+        a = np.dot(Y_inv,  b)
+        
+        yield a, b  # Yield for plotting. Remove for proper implementation.
+        
+        # The code below will implement proper stopping criteria.
+        # It was removed here, to facilitate plotting of convergence
+        # instead.
+        
+        #if np.all(np.abs(e) < b_min):
+        #    return a, b
+
+    #return a, b
+
+# Data points from the problem
+omega1 = np.array([[1, 2], [2, -4], [-3, -1]])
+omega2 = np.array([[2, 4], [-1, -5], [5, 0]])
+
+# Data points from two normal distributions
+data_points = 50
+omega1 = np.hstack((np.random.randn(data_points, 1)/2 - 2, np.random.randn(data_points, 1)))
+omega2 = np.hstack((np.random.randn(data_points, 1)/2 + 2, np.random.randn(data_points, 1)))
+
+# Create the matrix Y
+m, d = omega1.shape
+n, d = omega2.shape
+Y1 = +np.hstack((np.ones((m, 1)), omega1))
+Y2 = -np.hstack((np.ones((n, 1)), omega2))
+Y = np.vstack((Y1, Y2))
+
+plt.figure(figsize=FIGSIZE)
+plt.scatter(omega1[:, 0], omega1[:, 1], label='$\omega_1$', zorder=15)
+plt.scatter(omega2[:, 0], omega2[:, 1], label='$\omega_2$', zorder=15)
+
+max_iter = 25
+generator = modified_ho_kashyap(Y, eta=0.4, 
+                                b_min=0.001, 
+                                max_iter=max_iter,
+                                random_state=426870)
+
+for i, (a, b) in enumerate(generator, 1):
+    x = np.linspace(-10, 10)
+    y = -(a[0] + a[1] * x) / a[2]
+
+    color = '-r' if i == max_iter else '-k'
+    alpha = 1 if i == max_iter else (10  + i/2)/30
+    plt.plot(x, y, color, alpha = alpha)
+    
+plt.xlim([-3, 3])
+plt.ylim([-3, 3])
+plt.grid(True, alpha=0.5, zorder=-15)
+plt.legend()
+plt.tight_layout()
+plt.savefig('duda_ch5_prob27_b.pdf')
+
+
+# ## Problem 5.32
+
+# In[21]:
+
+
+omega1 = np.array([[1, 1], [2, 2], [2, 0]])
+omega2 = np.array([[0, 0], [1, 0], [0, 1]])
+
+plt.figure(figsize=FIGSIZE)
+
+# Plot the data
+plt.scatter(omega1[:, 0], omega1[:, 1], label='$\omega_1$', zorder=15)
+plt.scatter(omega2[:, 0], omega2[:, 1], label='$\omega_2$', zorder=15)
+
+# By inspection, the minimum margin hyperplane is
+# given by 1.5 - x
+x = np.linspace(0, 2)
+y = 1.5 - x
+plt.plot(x, y, 'r', label = 'Minimum margin hyperplane')
+
+plt.grid(True, alpha=0.5, zorder=-15)
+plt.legend()
+plt.tight_layout()
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.savefig('duda_ch5_prob32.pdf')
+
+
+# In[23]:
+
+
+round(np.sqrt(2)/4, 4)
 
