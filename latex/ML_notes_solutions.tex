@@ -1774,6 +1774,47 @@ For this specific data set, the value of $\vect{Y}$ and $\vect{Y} \vect{Y}^T$ ar
 \end{easylist}
 
 
+\subsubsection*{Problem 5.29}
+To show that there always exists a mapping to a higher dimensional space which leaves points from two classes linearly separable, we will explicitly provide such a mapping.
+The mapping would be very inefficient in practice, but provides a constructive proof.
+
+Observe first that to apply a linear classifier to points where data from one class is close to the origin, a function such as $y = \phi (\vect{x}) = \exp(- \vect{x}^T \vect{x})$ may be used.
+This leave the data linearly separable in the new space, as illustrated in figure \ref{fig:1024px_Kernel_trick_idea_svg_wikipedia}.
+Below we will extend this idea by introducing many distinct mappings $\phi (\vect{x})$.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{figs/1024px_Kernel_trick_idea_svg_wikipedia}
+	\caption{Using a kernel to raise points in a new dimension. Source: \url{https://commons.wikimedia.org/wiki/File:Kernel_trick_idea.svg}}
+	\label{fig:1024px_Kernel_trick_idea_svg_wikipedia}
+\end{figure}
+
+Consider now points $\D = \left\{ \vect{x}_1, \vect{x}_2, \dots, \vect{x}_N \right\}$ in $\R^d$.
+Assume that some points $S \subseteq \D$ belong to $\omega_1$, and that we know exactly which points. 
+If we know which points belong to  $\omega_1$, then a kernel density estimate  (Parzen window) such as
+\begin{equation*}
+	y  = \operatorname{Parzen}(S) = \frac{1}{\abs{S}}\sum_{\vect{x}_i \in S} \frac{1}{h} \phi \left( \frac{\vect{x} - \vect{x}_i}{h} \right)
+\end{equation*}
+with a sufficiently small value of the bandwidth $h$ will raise these points in the new $y$ feature space.
+When $h \ll 1$, neighboring points not belonging to $\omega_1$ will be unaffected.
+A plane such as $y = 0.1$ will then perfectly separate the points.
+
+Since we do not know the true subset $S \subseteq \D$, we can apply this transformation on \emph{every} subset of $\D$ (the \emph{power set} of $\D$).
+There are $2^{\abs{S}}$ such subsets.
+We use
+\begin{equation*}
+	\vect{y} = 
+	\begin{pmatrix}
+	\vect{x} & \operatorname{Parzen}(S_1) & \operatorname{Parzen}(S_1) & \dots & \operatorname{Parzen}(S_{2^{\abs{S}}})
+	\end{pmatrix}
+\end{equation*}
+to map $\vect{x} \in \R^d$ to a $d + 2^{\abs{S}$ space.
+In other words: if $\left\{ \vect{x_1} \right\}$ is ``raised'' in one new feature dimension, $\left\{ \vect{x_1}, \vect{x_2} \right\}$ in another, $\left\{ \vect{x_1}, \vect{x_3} \right\}$ in yet another, etc. for \emph{every} combination of points, then in some dimension in the feature space the points are linearly separable.
+
+
+
+
+
+
 \subsubsection*{Problem 5.32}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
@@ -1798,7 +1839,7 @@ The optimal margin is the distance from the line $y = 1.5 - x$ to a point, say $
 	(1, 1)^T \quad & \quad (2, 0)^T.
 \end{align*}
 
-# sdf
+# This laborious computation is omitted.
 
 
 \end{easylist}
@@ -1808,8 +1849,106 @@ The optimal margin is the distance from the line $y = 1.5 - x$ to a point, say $
 
 \subsubsection*{Problem 5.33}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The optimization problem
+\begin{equation}
+\label{eqn:ch5_problem_33_1}
+	L(\vect{a}, \vect{\alpha}) = \frac{1}{2} \norm{\vect{a}}^2 -
+	\sum_{k=1}^{n} \alpha_k \left[ z_k \vect{a}^T \vect{y}_k - 1 \right]
+\end{equation}
+has a solution which is a saddle point since we wish to maximize with respect to $\vect{\alpha}$ and minimize with respect to $\vect{a}$.
+
+# Here I believe there to be a slight error in the text, which might lead to confusion.
+In the initial pages of the chapter, the distance from a point to a hyperplane is given by $r = (\vect{\omega}^T \vect{x} + \omega_0) / \norm{\vect{\omega}}$, and this is indeed correct.
+
+In the context of SVMs, however, the distance is said to be 
+\begin{equation*}
+	\frac{g(y)}{\norm{\vect{a}}}
+	=
+	\frac{\vect{a} ^T \vect{y}}{\norm{\vect{a}}}
+	=
+	\frac{(\omega_0, \vect{a}') (1, \vect{y}')^T}{\norm{\vect{a}}}
+	=
+	\frac{\vect{a}'\,^T\vect{y} + \omega_0}{\norm{\vect{a}}},
+\end{equation*}
+which is different because $\vect{a}$ is in the denominator, not $\vect{a}'$.
+Amending equation \eqref{eqn:ch5_problem_33_1} with this information, the $\frac{1}{2} \norm{\vect{a}}^2$ should be replaced by $\frac{1}{2} \norm{\vect{a}'}^2$, i.e. dropping $\vect{a}_0 = \omega_0$.
+If we do this and differentiate with respect to the first component of $\vect{a}$, we obtain
+\begin{equation*}
+	\frac{\partial L(\vect{a}, \vect{\alpha})}{\partial \vect{a}_0}
+	=
+	\sum_k \alpha_k^* z_k \vect{y}_0 = 0,
+\end{equation*}
+which gives the desired result since $\vect{y}_0 = 1$ due to the augmentation of the vector.
+
+# To prove this, we differentiate with respect to $\vect{a}$ and obtain
+\begin{equation*}
+\frac{\partial L(\vect{a}, \vect{\alpha})}{\partial \vect{a}}
+=
+\vect{a}^* - \sum_k \alpha_k^* z_k \vect{y}_k = 0.
+\end{equation*}
+
+# If the Lagrange multiplier (or \emph{undetermined multiplier}) $\alpha_k^*$ is zero, then it's said to be \emph{inactive}.
+At the optimum, the constraint is not used.
+The optimum of $L(\vect{a}, \vect{\alpha})$ is the same with or without this constraint.
+
+If the Lagrange  multiplier $\alpha_k^*$ is non-zero, then it's said to be \emph{active}.
+The constrained solution is different from the unconstrained solution, and the optimum lies on the boundary of the constraint.
+Since $\alpha_k^* z_k \vect{y}_k \geq 1$ in the feasible region, the optimal solution is on the boundary if $\alpha_k^* z_k \vect{y}_k = 1$, but then  $\alpha_k^*$ is non-zero since the constraint is active.
+
+In conclusion, either $\alpha_k^* z_k \vect{y}_k = 1$ if the constraint is active, or $\alpha_k^* = 0$ if the constraint is inactive.
+This is one of the Karush–Kuhn–Tucker (KKT) conditions, and it may be expressed as
+\begin{equation*}
+	\alpha_k^* \left[ \alpha_k^* z_k \vect{y}_k - 1 \right] = 0 \qquad k = 1 , \dots, n.
+\end{equation*}
+
+# Simply multiply the brackets in equation \eqref{eqn:ch5_problem_33_1} from subproblem a).
+\begin{equation*}
+L(\vect{a}, \vect{\alpha}) = \frac{1}{2} \norm{\vect{a}}^2 -
+\sum_{k=1}^{n} \alpha_k \left[ z_k \vect{a}^T \vect{y}_k - 1 \right]
+=
+\frac{1}{2} \norm{\vect{a}}^2 -
+\sum_{k=1}^{n} \alpha_k  z_k \vect{a}^T \vect{y}_k 
++
+\sum_{k=1}^{n} \alpha_k 
+\end{equation*}
+
+# Using $\vect{a}^* = \sum_j \alpha_j^* z_j \vect{y}_j$ we observe that
+\begin{align*}
+	L(\vect{\alpha}) &= 
+	\frac{1}{2} \norm{\vect{a}^*}^2 -
+	\sum_{k=1}^{n} \alpha_k  z_k \vect{a}^{*T} \vect{y}_k 
+	+
+	\sum_{k=1}^{n} \alpha_k \\
+	&= 
+	\frac{1}{2} 
+	\left(\sum_j \alpha_j^* z_j \vect{y}^T_j\right)
+	\left(\sum_k \alpha_k^* z_k \vect{y}_k\right)
+	 -
+	\sum_{k=1}^{n} \alpha_k  z_k 
+	\left(\sum_j \alpha_j^* z_j \vect{y}^T _j\right)
+	\vect{y}_k 
+	+
+	\sum_{k=1}^{n} \alpha_k 
+\end{align*}
+and since the first and second terms are equal, we obtain
+\begin{equation*}
+-
+\frac{1}{2} 
+\left(\sum_j \alpha_j^* z_j \vect{y}^T_j\right)
+\left(\sum_k \alpha_k^* z_k \vect{y}_k\right)
++
+\sum_{k=1}^{n} \alpha_k 
+= 
+-
+\frac{1}{2} 
+\sum_j \sum_k \alpha_j^* \alpha_k^* z_j z_k \vect{y}_j^T \vect{y}_k
++
+\sum_{k=1}^{n} \alpha_k 
+\end{equation*}
+as desired.
+We have formulated the problem as a maximization over $L(\vect{\alpha})$.
+
 \end{easylist}
 
 
