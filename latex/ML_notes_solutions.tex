@@ -42,6 +42,7 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\D}{\mathcal{D}}
 \newcommand{\F}{\mathcal{F}}
+\newcommand{\Y}{\mathcal{Y}}
 \newcommand{\Reg}{\mathcal{R}}
 \newcommand{\Class}{\mathcal{C}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -225,9 +226,69 @@ This gives information about $D(\vect{x}, \vect{x}')$ which is more invariant to
 # Reduced Coloumb energy networks use ideas from both Parzen windows and $k$-nearest neighbors.
 It adjusts the size of the window so that it is less than some maximal radius, while not touching any observation of a different class.
 This creates ``basins of attraction'' for classification.
-
 \end{easylist}
 
+
+\subsection{Linear discriminant functions}
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Linear discriminant functions split the feature space in two with a hyperplance, which is defined as
+\begin{equation*}
+	g(x) = \omega^T x + \omega_0 = a^T y =
+	\begin{pmatrix}
+	\omega_0 & \omega
+	\end{pmatrix}
+	\begin{pmatrix}
+	1 \\
+	x
+	\end{pmatrix},
+\end{equation*}
+where in the first form $\omega_0$ is the bias. The second form is the \emph{augmented} form.
+
+# A linear machine assigns a point $x$ to $\omega_i$ if
+\begin{equation*}
+	g_i( x ) \geq g_j( x )
+\end{equation*}
+for every other class $j$.
+This leaves no ambiguous regions in the feature space.
+
+# Introducing mappings $y = h(x)$ to higher dimensional spaces, non-linearities in $x$-space may be captured by linear classifiers working in $y$ space. An example is $h(x) = \exp(-x^T x)$ if data from one class i centered around the origin.
+
+# Several algorithms may be used to decrease an error function.
+Two choices are gradient descent and Newton descent.
+## Gradient descent moves in the direction of the negative gradient.
+It is often controlled by a step length parameter $\eta(k)$, which may decrease as the iterations $k$ increase.
+\begin{equation*}
+	\vect{a} \leftarrow \vect{a} - \eta(k) \nabla J(\vect{a})
+\end{equation*}
+## Newton descent also moves in the direction of the negative gradient, but the optimal step length is computed by linearizing the function $\nabla J(\vect{a})$ (or, equivalently, a second order approximation of $\vect{a}$).
+\begin{equation*}
+\vect{a} \leftarrow \vect{a} - \vect{H}^{-1} \nabla J(\vect{a})
+\end{equation*}
+
+# Criterion functions for linearly separable data sets include:
+## The Perceptron function $\sum_{y \in \Y} (-\vect{a}^T \vect{y})$, which is not smooth.
+## The squared error with margin is $\sum_{y \in \Y} (\vect{a}^T \vect{y} - b)^2 / \norm{\vect{y}}^a$.
+
+# MSE may be used, but does not in general yield a separating hyperplane---even if one exists.
+## The MSE solutions is found analytically by the pseudoinverse $\vect{A}^\dagger = \left( \vect{A}^T \vect{A} \right)^{-1} \vect{A}^T$, which solves the least squares problem
+\begin{equation*}
+	\min_x \vect{e}^T\vect{e} = 
+	\min_x \left(\vect{b} - \vect{A}\vect{x}\right)^T
+	\left(\vect{b} - \vect{A}\vect{x}\right).
+\end{equation*}
+## Related to Fisher's linear discriminant for an appropriate choice of margin vector $\vect{b}$.
+## LMS may be computed using matrix procedures (never use the pseudoinverse directly) or by the gradient descent algorithm.
+## Ho-Kashyap procedures yield a separating hyperplane if one exists.
+
+# \emph{Linear programming} (LP) may also be used to find a separating hyperplane. Several reductions are possible by introduction of \emph{artificial variables}.
+## Minimizing the Perceptron criterion function may be formulated as LP, and the result is decent even if a separating hyperplane does not exist.
+
+# \emph{Support Vector Machines} (SVM) find the minimum margin hyperplane.
+This is a quadratic programming (QP) problem, and the dual problem is easier to solve than the primal problem.
+
+
+\end{easylist}
 
 
 
@@ -1462,11 +1523,43 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 \end{easylist}
 
 
+\subsubsection*{Problem 4.17}
+We assume that $p(\omega_i) = 1/ c$ and $p(\vect{x} \mid \omega_i) = p(\vect{x})$.
+In this case, for any point $\vect{x}$, any guess is as good as any other, and the Bayes error rate is clearly
+\begin{equation*}
+	P^* = \frac{c-1}{c}.
+\end{equation*}
+To prove that the bound
+\begin{equation}
+\label{eqn:ch4_problem17}
+	P \leq P^* \left( 2 - \frac{c}{c - 1}P^* \right)
+\end{equation}
+is achieved, we calculate the error rate $P$.
+In the following calculation, we use the fact that $p(\vect{x} \mid \omega_i) = p(\vect{x})$ and $\int p( \vect{x}) \, d\vect{x} = 1$.
+We observe that
+\begin{align*}
+	P &= \int \left[ 1 - \sum_{i=1}^{c} P^2 \left( \omega_i \mid \vect{x} \right) \right] p( \vect{x}) \, d\vect{x} \\
+	&= \int \left[ 1 - \sum_{i=1}^{c}  \left( \frac{p(\vect{x} \mid \omega_i) P( \omega_i) }{p(\vect{x})} \right)^2 \right] p( \vect{x}) \, d\vect{x} \\
+	&= \int \left[ 1 - \sum_{i=1}^{c} P^2( \omega_i) \right] p( \vect{x}) \, d\vect{x} \\
+	&= \left[ 1 - \sum_{i=1}^{c} \frac{1}{c^2} \right]  \int  p( \vect{x}) \, d\vect{x} \\
+	&= 1 - c \frac{1}{c^2} = \frac{c-1}{c}.
+\end{align*}
+
+In other words, $P^*$ and $P$ are equal. 
+When we substitute $P^*$ and $P$ into equation \eqref{eqn:ch4_problem17}, we see that the bound is achieved since 
+\begin{equation*}
+	P \leq P^* \left( 2 - \frac{c}{c - 1}P^* \right) 
+	\quad  \Rightarrow \quad
+	\frac{c-1}{c} \leq \frac{c-1}{c} \left( 2 - \frac{c}{c-1} \frac{c-1}{c}  \right) = \frac{c-1}{c},
+\end{equation*}
+which completes the proof.
+
+
 
 \subsubsection*{Problem 4.27}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# sdf
+# TODO
 
 \begin{table}[ht!]
 	\centering
@@ -1493,7 +1586,7 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 \end{table}
 
 
-# sdfsdf
+# TODO
 \end{easylist}
 
 
@@ -1948,7 +2041,6 @@ and since the first and second terms are equal, we obtain
 \end{equation*}
 as desired.
 We have formulated the problem as a maximization over $L(\vect{\alpha})$.
-
 \end{easylist}
 
 
@@ -1978,14 +2070,74 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 
 
 
+\clearpage
+\subsection{Multilayer Neural Networks}
 
-\subsection{sdfsdf}
+\subsubsection*{Problem 6.5}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# sdf
+\end{easylist}
 
-\subsubsection*{Problem X.YY}
+\subsubsection*{Problem 6.13}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
+
+\subsubsection*{Problem 6.15}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.21}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.24}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.26}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.31}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.37}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.39}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+\subsubsection*{Problem 6.41}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
+
+
+
+
+
+\clearpage
 
 \subsubsection*{Problem X.YY}
 \begin{easylist}[enumerate]
