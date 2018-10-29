@@ -286,8 +286,13 @@ It is often controlled by a step length parameter $\eta(k)$, which may decrease 
 
 # \emph{Support Vector Machines} (SVM) find the minimum margin hyperplane.
 This is a quadratic programming (QP) problem, and the dual problem is easier to solve than the primal problem.
+\end{easylist}
 
 
+\subsection{Multilayer Neural Networks}
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# TODO
 \end{easylist}
 
 
@@ -1607,11 +1612,11 @@ which completes the proof.
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# We wish to solve the problem
 	\begin{align*}
-		\operatorname{minimize} \, & \norm{\vect{x} - \vect{x}_a}^2 =
+	\underset{\vect{x}}{\operatorname{minimize}} \, & \norm{\vect{x} - \vect{x}_a}^2 =
 		\vect{x}_a^T \vect{x}_a - 2\vect{x}^T \vect{x}_a + \vect{x}^T \vect{x} \\
 		\text{subject to } \, & g(\vect{x}) = \vect{\omega}^T \vect{x} + \omega_0 = 0.
 	\end{align*}
-	In doing so, we start by constructing a Lagrange function
+	To accomplish this, we start by constructing the Lagrange function
 	\begin{equation*}
 		L(\vect{x}, \lambda) = \vect{x}_a^T \vect{x}_a - 2\vect{x}^T \vect{x}_a + \vect{x}^T \vect{x} - \lambda( \vect{\omega}^T \vect{x} + \omega_0 - 0 ),
 	\end{equation*}
@@ -2076,13 +2081,38 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 \subsubsection*{Problem 6.5}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# sdf
+# DONE
+\end{easylist}
+
+\subsubsection*{Problem 6.10}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# Simple calculus shows that when $f(x) = 1 /(1 + e^{ax} )$, then the derivative may be expressed in terms of the function as
+	\begin{equation*}
+		f'(x) = -a e^{ax} f^2(x).
+	\end{equation*}
+	
+	# We'll study $f(x) = a (1 - e^{-2bx}) / (1 + e^{-2bx})$, and here it pays off to ease notation somewhat.
+	Letting $g(x) := e^{-2bx}$, we have $g'(x) = -2b g(x)$ and
+	\begin{equation*}
+		f(x) = a \frac{1 - e^{-2bx}}{1 + e^{-2bx}} :=
+		a \frac{1 - g(x)}{1 + g(x)} =  a (1 - g(x)) (1 + g(x))^{-1}.
+	\end{equation*}
+	We differentiate to obtain 
+	\begin{align*}
+		f'(x) &=  \frac{-a g'(x) (1 + g(x)) - ag'(x) (1 - g(x))}{(1 + g(x))^2} \\
+		&= \frac{4 ab g(x)}{(1 + g(x))^2} = \underbrace{a \frac{1 - g(x)}{1 + g(x)}}_{f'(x)} \frac{4bg(x)}{(1 - g(x)) (1 + g(x))}.
+	\end{align*}
+	Substituting back $g(x) := e^{-2bx}$, we see that  the derivative may be expressed in terms of the function as
+	\begin{equation*}
+		f'(x) = f(x) \frac{4 b  e^{-2bx}}{1 - e^{-4bx}}.
+	\end{equation*}
 \end{easylist}
 
 \subsubsection*{Problem 6.13}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# DONE
 \end{easylist}
 
 \subsubsection*{Problem 6.15}
@@ -2094,13 +2124,13 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 \subsubsection*{Problem 6.21}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# DONE
 \end{easylist}
 
 \subsubsection*{Problem 6.24}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# DONE
 \end{easylist}
 
 \subsubsection*{Problem 6.26}
@@ -2124,14 +2154,87 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 \subsubsection*{Problem 6.39}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# If we write out the sums, we obtain
+	\begin{equation*}
+		f(\vect{x}) = \vect{x}^T \vect{K} \vect{x} = \sum_i \sum_j x_i K_{ij} x_j.
+	\end{equation*}
+	Of course, the function $f(\vect{x})$ is a mapping from a vector $\vect{x} \in \R^d$ to a real number $\R$.
+	In this setting, the derivative is the gradient, i.e. $\nabla f(\vect{x}) = f'(\vect{x})$.
+	To find the gradient using explicit components, we write
+	\begin{gather}
+		\nonumber \frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  = \\ 
+		\nonumber \frac{d}{d x_k} \left( \sum_i x_i \sum_j K_{ij} x_j \right)  = \\
+		\label{eqn:ch6_problem39a} \frac{d}{d x_k} \left( 
+		x_1 \left( \sum_j K_{1j} x_j \right) + 
+		x_2 \left( \sum_j K_{2j} x_j \right) + \dots +
+		x_k \left( \sum_j K_{kj} x_j \right) + \dots
+		 \right).
+	\end{gather}
+	For every term $i \neq k$ , the derivative is $x_i K_{ik}$.
+	On the $k$'th term, we apply the product rule of differentiation to obtain
+	\begin{equation*}
+		\frac{d}{d x_k} \left( x_k \left( \sum_j K_{kj} x_j \right) \right)=
+		1 \left( \sum_j K_{kj} x_j \right) +
+		x_k \left( K_{kk} \right).
+	\end{equation*}
+	Applying these results to the non-$k$'th terms and the $k$'th term respectively, equation \eqref{eqn:ch6_problem39a} becomes
+	\begin{align*}
+	\frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  &=  x_1 K_{1k} + x_2 K_{2k} + x_3 K_{3k} + \dots + 
+		\left(  \sum_j K_{kj} x_j  +
+		x_k  K_{kk}  \right)
+		+ \dots  \\
+		& =  \sum_i x_i K_{ik} + \sum_j K_{kj} x_j = 
+		\vect{K}^T \vect{x} + \vect{K} \vect{x} = 
+		\left( \vect{K}^T + \vect{K}  \right)\vect{x},
+	\end{align*}
+	where the last equality follows from
+	\begin{align*}
+		\vect{b} = \vect{A} \vect{x} \quad &\Leftrightarrow \quad
+		b_i = \sum_j A_{ij} x_j \\
+		\vect{b} = \vect{A}^T \vect{x} \quad &\Leftrightarrow \quad
+		b_i = \sum_j A_{ji} x_j.
+	\end{align*}
+	
+	# Here's an approach which does not require indices, and is therefore more expedient.
+	Let $f(\vect{x}) = \vect{x}^T \vect{H} \vect{x}$, where $\vect{H}$ is symmetric.
+	We have
+	\begin{equation*}
+		f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+		\left( \delta \vect{x} \right)^T \vect{H} \vect{x} + 
+		\vect{x}^T \vect{H} \left( \delta \vect{x} \right)
+		+ O \left( \norm{ \delta \vect{x} }^2 \right),
+	\end{equation*}
+	and when $\vect{H}$ is symmetric this becomes 
+	\begin{equation*}
+			f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+			2 \vect{x}^T \vect{H} \left( \delta \vect{x} \right)
+			+ O \left( \norm{ \delta \vect{x} }^2 \right).
+	\end{equation*}
+	So $2 \vect{x}^T \vect{H}$ is indeed the first-order approximation to  $f(\vect{x} + \delta \vect{x})$.
+	The reader might react to the fact that the derivative in problem a) is a column vector, while the derivative in problem b) is a row vector.
+	The gradient is really a row vector, since $\left( \nabla f(\vect{x} ) \right)^T \delta \vect{x}$ produces a real number.
+	
 \end{easylist}
 
-\subsubsection*{Problem 6.41}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Problem 6.42}
+The weight decay rule of equation (38) in the book does not exactly lead to equation (39).
+The rule multiplies the weight set by gradient descent by the factor $(1 - \epsilon)$, such that 
+\begin{equation*}
+	\vect{w}_{n+1} = \left( \vect{w}_{n} - \eta \nabla J(\vect{w}_n ) \right) (1 - \epsilon).
+\end{equation*}
+Moving the terms around a little bit, we observe that this is equivalent to
+\begin{equation*}
+		\vect{w}_{n+1} = \vect{w}_{n} - \eta  \underbrace{\left(
+			(1 - \epsilon ) \nabla J(\vect{w}_n ) + \frac{\epsilon}{\eta} \vect{w}_n
+			\right)}_{\nabla J_{ef}(\vect{w}_n)} .
+\end{equation*}
+Since $\nabla \vect{w}^T \vect{w} = 2 \vect{w}$, we observe that $J_{ef}(\vect{w}_n) = (1 - \epsilon ) J(\vect{w}_n ) + \epsilon \frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n $.
+This is a weighted average of the ordinary error function $J(\vect{w}_n )$ and the regularization term $\frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n$.
+We can easily verify that 
+(1) when $\epsilon = 0$, everything reduces to the ordinary gradient descent with no weight decay and
+(2) when $\epsilon = 1$, $\vect{w}_{n+1}$ is forever stuck at $\vect{0}$.
+
+This also shows that equation (39) in the book is wrong with respect to equation (38), since if $\epsilon=1$ in the book, equation (38) would always set $\vect{w}_{n+1} = \vect{0}$ while optimizing equation (39) would not---it would amount to optimizing $J(\vect{w} )$ with a regularization term.
 
 
 
