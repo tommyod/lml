@@ -163,7 +163,7 @@ For instsance, we can compute $p(\vect{\mu} \mid \D)$ if we assume $p(\vect{\mu}
 The distribution $p(\vect{\mu})$ is called the \emph{conjugate prior} and $p(\vect{\mu} \mid \D)$ is a \emph{reproducing density}, since the normal prior transforms to a normal posterior (with different parameters) when new data is seen.
 
 # In summary the Bayesian framework allows us to incorporate prior information, but the maximum-likelihood approach is simpler.
-Maximum likelihood gives us $\hat{\vect{\theta}}$, but the Bayesian framework gives us $p(\vect{\theta} | \D)$---the full distribution.
+Maximum likelihood gives us $\hat{\vect{\theta}}$, but the Bayesian framework gives us $p(\vect{\theta}  \mid  \D)$---the full distribution.
 
 # Principal Component Analysis (PCA) yields components useful for \emph{representation}.
 The covariance matrix is diagonalized, and low-variance directions in the hyperellipsoid are eliminated.
@@ -311,9 +311,9 @@ This is a quadratic programming (QP) problem, and the dual problem is easier to 
 Let's assume that $\mu_1 < \mu_2$ and that the decision threshold is $x^*$, so we decide $\alpha_2$ if $x > x^*$.
 We then have
 \begin{align*}
-	P(\alpha_2 | \omega_1) &\leq E_1 \\
-	p(x > x^* | \omega_1) &\leq E_1 \\
-	\left[1 - \int_{0}^{x^*} p(x | \omega_1)  \, dx \right] &\leq E_1
+	P(\alpha_2  \mid  \omega_1) &\leq E_1 \\
+	p(x > x^*  \mid  \omega_1) &\leq E_1 \\
+	\left[1 - \int_{0}^{x^*} p(x  \mid  \omega_1)  \, dx \right] &\leq E_1
 \end{align*}
 We let $\Phi: \R \to \left[0, 1\right]$ denote the cumulative Gaussian distribution, and $\Phi^{-1}: \left[0, 1\right] \to \R$ it's inverse function.
 Making use of $\Phi$ we write
@@ -326,7 +326,7 @@ If the desired error is close to one, then $x^*$ goes to negative infinity.
 
 # The error rate for classifying $\omega_2$ as $\omega_1$ is
 \begin{equation*}
-	P(\alpha_1 | \omega_2) = 	p(x \leq x^* | \omega_2) = \int_{0}^{x^*} p(x| \omega_2) \, dx 
+	P(\alpha_1  \mid  \omega_2) = 	p(x \leq x^*  \mid  \omega_2) = \int_{0}^{x^*} p(x \mid  \omega_2) \, dx 
 	= 
 	\Phi \left(  \frac{x^* - \mu_2}{\sigma_2}  \right).
 \end{equation*}
@@ -339,8 +339,8 @@ Making use of $x^*$ from the previous problem, we obtain
 # The overall error rate becomes
 \begin{align*}
 	P(\text{error}) &= P(\alpha_1, \omega_2) + P(\alpha_2, \omega_1) \\
-	&= P(\alpha_1 | \omega_2) P(\omega_2) + P(\alpha_2| \omega_1) P(\omega_1) \\
-	&= \frac{1}{2} \left[  P(\alpha_1 | \omega_2) +  P(\alpha_2| \omega_1) \right] \\
+	&= P(\alpha_1  \mid  \omega_2) P(\omega_2) + P(\alpha_2 \mid  \omega_1) P(\omega_1) \\
+	&= \frac{1}{2} \left[  P(\alpha_1  \mid  \omega_2) +  P(\alpha_2 \mid  \omega_1) \right] \\
 	&= \frac{1}{2} \left[ E_1 +  \Phi \left(  \frac{\mu_1 - \mu_2}{\sigma_2} + \frac{\sigma_1}{\sigma_2}  \Phi^{-1} \left(1 - E_1 \right) \right) \right].
 \end{align*}
 In the last equality we used the results from the previous problems.
@@ -348,8 +348,8 @@ In the last equality we used the results from the previous problems.
 # We substitute the given values into the equations, and obtain $x^* \approx 0.6449$. The total error rate is $P(\text{error}) \approx 0.2056$.
 # The Bayes error rate, as a function of $x^*$, is given by
 \begin{align*}
-	P(\text{error}) = P(\alpha_2 | \omega_1) P(\omega_1) + P(\alpha_1| \omega_2) P(\omega_2) \\
-	= \frac{1}{2} \left[ p( x > x^*| \omega_1)  + p( x < x^* | \omega_2) \right]   \\
+	P(\text{error}) = P(\alpha_2  \mid  \omega_1) P(\omega_1) + P(\alpha_1 \mid  \omega_2) P(\omega_2) \\
+	= \frac{1}{2} \left[ p( x > x^* \mid  \omega_1)  + p( x < x^*  \mid  \omega_2) \right]   \\
 	= \frac{1}{2} \left[ \left( 1 - \Phi \left( \frac{x^* - \mu_1}{\sigma_1}\right)\right) +  \Phi \left( \frac{x^* - \mu_2}{\sigma_2}\right)  \right]
 \end{align*}
 The Bayes error rate is depicted in Figure \ref{fig:duda_ch2_prob6}.
@@ -367,20 +367,20 @@ The Bayes error rate is depicted in Figure \ref{fig:duda_ch2_prob6}.
 \subsubsection*{Problem 2.12}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The key observation is that the maximal value $P(\omega_{\text{max}} | \vect{x} )$ is greater than, or equal to, the average. Therefore we obtain
+# The key observation is that the maximal value $P(\omega_{\text{max}}  \mid  \vect{x} )$ is greater than, or equal to, the average. Therefore we obtain
 \begin{equation*}
-	P(\omega_{\text{max}} | \vect{x} ) \geq \frac{1}{c} \sum_{i=1}^{c} P(\omega_i | \vect{x}) = \frac{1}{c},
+	P(\omega_{\text{max}}  \mid  \vect{x} ) \geq \frac{1}{c} \sum_{i=1}^{c} P(\omega_i  \mid  \vect{x}) = \frac{1}{c},
 \end{equation*}
 where the last equality is due to probabilities summing to unity.
 # The minimum error rate is achieved by choosing $\omega_{\text{max}}$, the most likely state of nature. 
 The average probability of error over the data space is therefore the probability that $\omega_{\text{max}}$ is \emph{not} the true state of nature for a given $\vect{x}$, that is:
 \begin{equation*}
-	P(\text{error}) = \E_x \left[ 1 - P(\omega_{\text{max}} | \vect{x} ) \right] = 1 - \int P(\omega_{\text{max}} | \vect{x} ) p(\vect{x}) \, d \vect{x}.
+	P(\text{error}) = \E_x \left[ 1 - P(\omega_{\text{max}}  \mid  \vect{x} ) \right] = 1 - \int P(\omega_{\text{max}}  \mid  \vect{x} ) p(\vect{x}) \, d \vect{x}.
 \end{equation*}
 
 # We see that
 \begin{equation*}
-	P(\text{error}) = 1 - \int P(\omega_{\text{max}} | \vect{x} ) p(\vect{x}) \, d \vect{x} \leq 1 - \int \frac{1}{c} p(\vect{x}) \, d \vect{x} = 1 - \frac{1}{c} = \frac{c-1}{c},
+	P(\text{error}) = 1 - \int P(\omega_{\text{max}}  \mid  \vect{x} ) p(\vect{x}) \, d \vect{x} \leq 1 - \int \frac{1}{c} p(\vect{x}) \, d \vect{x} = 1 - \frac{1}{c} = \frac{c-1}{c},
 \end{equation*}
 where we used $\int p(\vect{x}) \, d \vect{x} = 1$.
 
@@ -666,11 +666,11 @@ The probability of error is then
 \begin{align*}
 	P_e &= P(x \in R_2, \omega_1) + P(x \in R_1, \omega_2) \\
 	&= 
-	P(x \in R_2 | \omega_1) P(\omega_1)  + P(x \in R_1 | \omega_2) P(\omega_2) \\&= 
-	\int_{R_2} p(x | \omega_1) P(\omega_1) \, dx + \int_{R_1} p(x | \omega_2) P(\omega_2) \, dx
+	P(x \in R_2  \mid  \omega_1) P(\omega_1)  + P(x \in R_1  \mid  \omega_2) P(\omega_2) \\&= 
+	\int_{R_2} p(x  \mid  \omega_1) P(\omega_1) \, dx + \int_{R_1} p(x  \mid  \omega_2) P(\omega_2) \, dx
 	 \\
-	 &= \frac{1}{2}\left( \int_{x^*}^{\infty} p(x | \omega_1) \, dx + 
-	 \int_{0}^{x^*} p(x | \omega_2) \, dx \right) = \int_{x =(\mu_1 + \mu_2)/2 }^{\infty} p(x | \omega_1) \, dx \\
+	 &= \frac{1}{2}\left( \int_{x^*}^{\infty} p(x  \mid  \omega_1) \, dx + 
+	 \int_{0}^{x^*} p(x  \mid  \omega_2) \, dx \right) = \int_{x =(\mu_1 + \mu_2)/2 }^{\infty} p(x  \mid  \omega_1) \, dx \\
 	 &=
 	 \int_{x =(\mu_1 + \mu_2)/2 }^{\infty} \frac{1}{\sqrt{2 \pi } \sigma} \exp\left( - \frac{1}{2} \frac{(x - \mu_1)^2}{\sigma^2}\right) \, dx.
 \end{align*}
@@ -696,14 +696,14 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# $p_{ij}$ is the probability that the $i$'th entry in the vector $\vect{x}$ equals $1$, given a state of nature $\omega_j$.
-	# We decide $\omega_j$ if $P(\omega_j | \vect{x})$ is greater than $P(\omega_k | \vect{x})$ for every $k \neq j$.
+	# We decide $\omega_j$ if $P(\omega_j  \mid  \vect{x})$ is greater than $P(\omega_k  \mid  \vect{x})$ for every $k \neq j$.
 	\begin{equation*}
-	P(\omega_j | \vect{x}) \propto p(  \vect{x} | \omega_j) P(\omega_j)
+	P(\omega_j  \mid  \vect{x}) \propto p(  \vect{x}  \mid  \omega_j) P(\omega_j)
 	\end{equation*}
-	We use the fact that $p(  \vect{x} | \omega_j) = \prod_{i = 1}^{d} p(  x_i| \omega_j)$, which follows from the fact that the entries are statistically independent.
+	We use the fact that $p(  \vect{x}  \mid  \omega_j) = \prod_{i = 1}^{d} p(  x_i \mid  \omega_j)$, which follows from the fact that the entries are statistically independent.
 	Furthermore, we see that
 	\begin{equation*}
-	p(  x_i| \omega_j) = 
+	p(  x_i \mid  \omega_j) = 
 	\left\{\!\begin{aligned}
 	p_{ij} &\quad \text{ if } x_i = 1 \\
 	1 - p_{ij} &\quad \text{ if } x_i = 0 
@@ -712,8 +712,8 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 	\end{equation*}
 	Now we take logarithms and  obtain
 	\begin{align*}
-	& \ln \left( \prod_{i = 1}^{d} p(  x_i| \omega_j) P(\omega_j) \right) =
-	\sum_{i = 1}^{d} \ln p(  x_i| \omega_j)  + \ln P(\omega_j) \\
+	& \ln \left( \prod_{i = 1}^{d} p(  x_i \mid  \omega_j) P(\omega_j) \right) =
+	\sum_{i = 1}^{d} \ln p(  x_i \mid  \omega_j)  + \ln P(\omega_j) \\
 	& = \sum_{i = 1}^{d} \ln p_{ij}^{x_i} \left( 1 - p_{ij}\right)^{ 1 - x_i}  + \ln P(\omega_j) \\
 	&
 	= \sum_{i = 1}^{d} x_i \ln p_{ij} + (1 - x_i) \ln ( 1 - p_{ij})  + \ln P(\omega_j),
@@ -730,16 +730,16 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 \subsubsection*{Problem 3.2}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The maximum likelihood estimate for $\theta$ is $\max_\theta p(x | \theta) = \max_\theta \prod_{i=1}^{n} p(x_i | \theta)$.
-The probability of a single sample $p(x_i | \theta)$ is given by the expression
+# The maximum likelihood estimate for $\theta$ is $\max_\theta p(x  \mid  \theta) = \max_\theta \prod_{i=1}^{n} p(x_i  \mid  \theta)$.
+The probability of a single sample $p(x_i  \mid  \theta)$ is given by the expression
 \begin{equation*}
-	p(x_i | \theta) = 
+	p(x_i  \mid  \theta) = 
 	\begin{dcases*}
 	1/\theta & if $0 \leq x_i \leq \theta$ \\
 	0 & if $ x_i > \theta$.
 	\end{dcases*}
 \end{equation*}
-Clearly the product $\prod_{i=1}^{n} p(x_i | \theta)$ is zero if any $x_i$ is larger than $\theta$.
+Clearly the product $\prod_{i=1}^{n} p(x_i  \mid  \theta)$ is zero if any $x_i$ is larger than $\theta$.
 Therefore $\theta$ must be larger than, or equal to, $\max_k x_k$ for the likelihood to be non-zero.
 
 On the other hand, the product equals $1 /\theta^n$, and taking logarithms we obtain $-n \ln \theta$.
@@ -754,10 +754,10 @@ Therefore the maximum likelihood is given by $\hat{\theta} = \max_k x_k = \max \
 \subsubsection*{Problem 3.4}
 The maximum likelihood estimate is 
 \begin{equation*}
-	p( \D | \vect{\theta}) = \prod_{k = 1}^{n} p( \vect{x} | \vect{\theta}) = \prod_{k = 1}^{n} \prod_{i=1}^{d}
+	p( \D  \mid  \vect{\theta}) = \prod_{k = 1}^{n} p( \vect{x}  \mid  \vect{\theta}) = \prod_{k = 1}^{n} \prod_{i=1}^{d}
 	\theta_{i}^{x_{ik}} \left( 1 - \theta_i \right)^{\left(  1 - x_{ik} \right)}.
 \end{equation*}
- The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D | \vect{\theta}) $, which is explicitly given by
+ The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D  \mid  \vect{\theta}) $, which is explicitly given by
  \begin{equation*}
  	\ell(\vect{\theta}) = \sum_{k = 1}^{n} \sum_{i=1}^{d}
  	x_{ik} \ln \theta_i + (1 - x_{ik}) \ln \left( 1 - \theta_i\right).
@@ -793,12 +793,12 @@ Using the definitions above, and recalling that $\vect{A} \vect{a}$ is just a ve
 
 # The likelihood is given by the expression
 \begin{align*}
-	p(\D | \theta) &= \prod_{k=1}^{n} \frac{\abs{\vect{\Sigma}^{-1}}^{1/2}}{\left(2 \pi \right)^{d/2}} \exp \left( -\frac{1}{2} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right) \\
+	p(\D  \mid  \theta) &= \prod_{k=1}^{n} \frac{\abs{\vect{\Sigma}^{-1}}^{1/2}}{\left(2 \pi \right)^{d/2}} \exp \left( -\frac{1}{2} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right) \\
 	&=  \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} \left( \vect{x}_k - \vect{\mu} \right)^T  \vect{\Sigma}^{-1}  \left( \vect{x}_k - \vect{\mu} \right)\right).
 \end{align*}
 Applying $ \vect{a}^T \vect{A} \vect{a} = \operatorname{tr}( \vect{A} \vect{a} \vect{a}^T)$ from problem a) yields
 \begin{equation*}
-p(\D | \theta) = \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} 
+p(\D  \mid  \theta) = \frac{\abs{\vect{\Sigma}^{-1}}^{n/2}}{\left(2 \pi \right)^{nd/2}} \exp \left( -\frac{1}{2}  \sum_{k=1}^{n} 
 \operatorname{tr} \left( \vect{\Sigma}^{-1} \left( \vect{x}_k - \vect{\mu} \right) \left( \vect{x}_k - \vect{\mu} \right)^T \right)
 \right),
 \end{equation*}
@@ -829,16 +829,16 @@ To transform the exponent, we write
 Substituting these transformation into the previous equation yields the required expression, which is
 \begin{equation}
 \label{eq:prob3_13}
-	p(\D | \theta) = \frac{\left( \prod_{i=1}^{d} \lambda_i \right)^{n/2}}{\left(2 \pi \right)^{nd/2} \hat{\abs{\vect{\Sigma}}}^{n/2} } \exp \left( -\frac{n}{2} \sum_{i=1}^{d} \lambda_i \right).
+	p(\D  \mid  \theta) = \frac{\left( \prod_{i=1}^{d} \lambda_i \right)^{n/2}}{\left(2 \pi \right)^{nd/2} \hat{\abs{\vect{\Sigma}}}^{n/2} } \exp \left( -\frac{n}{2} \sum_{i=1}^{d} \lambda_i \right).
 \end{equation}
 
 # Taking logarithms of equation \eqref{eq:prob3_13} above gives us the log-likelihood function
 \begin{equation*}
-	\ln p(\D | \theta) = \frac{n}{2} \left[ \sum_{i=1}^{d} \ln \lambda_i - d \ln 2 \pi - \ln | \hat{\vect{\Sigma}} |  \right] - \frac{n}{2} \sum_{i=1}^{d} \lambda_i,
+	\ln p(\D  \mid  \theta) = \frac{n}{2} \left[ \sum_{i=1}^{d} \ln \lambda_i - d \ln 2 \pi - \ln | \hat{\vect{\Sigma}} |  \right] - \frac{n}{2} \sum_{i=1}^{d} \lambda_i,
 \end{equation*}
 and differentiating it with respect to the eigenvalue $\lambda_j$ yields 
 \begin{equation*}
-	\frac{\partial \ln p(\D | \theta)}{\partial \lambda_j} = \frac{n}{2} \left(1 - \lambda_j^2 \right) = 0.
+	\frac{\partial \ln p(\D  \mid  \theta)}{\partial \lambda_j} = \frac{n}{2} \left(1 - \lambda_j^2 \right) = 0.
 \end{equation*}
 The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry, so it is negative definite (i.e. $\vect{x}^T \vect{H} \vect{x} < 0$ for every $\vect{x}$) when all $\lambda_j$'s are positive.
 When the Hessian is negative definite, then the solution is a maximum.
@@ -957,7 +957,7 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 \subsubsection*{Problem 3.24}
 We are tasked to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution, which is given by
 \begin{equation*}
-	p (x | \theta) = 
+	p (x  \mid  \theta) = 
 	\begin{dcases*}
 	2 \theta x \exp \left( -\theta x^2 \right) & if $x \geq 0$ \\
 	0 & otherwise.
@@ -965,7 +965,7 @@ We are tasked to find the maximum likelihood estimate of $\theta$ in the Rayleig
 \end{equation*}
 The log-likelihood function is given by
 \begin{equation*}
-	\ell(\theta)= \ln \left( p (\D | \theta) \right) 
+	\ell(\theta)= \ln \left( p (\D  \mid  \theta) \right) 
 	= 
 	\sum_{k=1}^{n} \ln \left( 2 \theta x \exp \left( -\theta x^2 \right) \right)
 	= 
