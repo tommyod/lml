@@ -2079,26 +2079,75 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 \subsection{Multilayer Neural Networks}
 
 \subsubsection*{Problem 6.5}
+The backpropagation rule for input-to-hidden weights is given by equation (21), which is
+\begin{equation*}
+	\Delta w_{ji} =
+	\eta \delta_j x_i = 
+	\eta \left[ \sum_{k=1}^{c} w_{kj} \delta_k \right] f'(\text{net}_j) x_i.
+\end{equation*}
+Notice that if $z_k = t_k$ for every value of $k$, there is nothing to learn since the error is zero.
+In this case, $\delta_k = 0$ and as a result $\Delta w_{ji} = 0$.
+The learning rate is proportional to the error $(t_k - z_k)$, but it's also weighted by $w_{kj}$.
+The higher this weight is, the more an error contributes and the further it is adjusted in the backpropagation rule.
+
+
+
+\subsubsection*{Problem 6.8}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# DONE
+# In this problem it helps to make a drawing, or study Figure 6.4 or Figure 6.2.
+
+\begin{easylist}
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers2=r, FinalMark1={)})
+## The bias is connected to $n_H + c$ weights.
+## Every one of the $d$ inputs is connected to every one of the $n_H$ hidden units, for a total of $d n_H$ weights.
+## Every hidden unit $n_H$ is connected to every one of the $c$ ouputs, for $n_H c$ weights. 
+\end{easylist}
+
+
+
+The total number of weights is therefore given by
+\begin{equation*}
+	n_H + c + d n_H  +n_H c = n_H (1 + d + c) + c.
+\end{equation*}
+
+# Consider the equation
+\begin{equation*}
+	z_k = f\left[
+	\sum_{j=1}^{n_H} w_{kj} \, f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right) + w_{k0}
+	\right]
+\end{equation*}
+for a neural network output.
+If the sign is flipped on every weight going into a hidden unit, and the weights leading out from that same unit are also flipped, then the net result is no change if the activation function obeys $f(-x) = -f(x)$.
+In other words, if the $w_{ji} \mapsto -w_{ji}$ and $w_{j0} \mapsto - w_{j0}$ in the equation above, then 
+\begin{equation*}
+	f \left( \sum_{i=1}^{d} -w_{ji} x_i - w_{j0} \right) = -f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right)
+\end{equation*}
+and a mapping $w_{kj} \mapsto -w_{kj}$ in the outer sum will cancel the sign flip.
+This only applies to odd functions where $f(-x) = -f(x)$.
+
+# If there are $n_H$ hidden units, there are $n_H!$ ways to permute them.
+For each of these permutations, every associated weight might have it's sign flipped or not, for a total of $2^{n_H}$ possibilities with respect to sign flipping.
+The total count is therefore $n_H! 2^{n_H}$ exchange symmetries (not $n_H 2^{n_H}$ as \cite{duda_pattern_2000} claims).
+This result is verified in \cite{bishop_pattern_2011} on page 232, so we assume that \cite{duda_pattern_2000} contains a typo here.
+
 \end{easylist}
 
 \subsubsection*{Problem 6.10}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# Simple calculus shows that when $f(x) = 1 /(1 + e^{ax} )$, then the derivative may be expressed in terms of the function as
+	# The rules of differentiation in calculus shows that when $f(x) = 1 /(1 + e^{ax} )$, then the derivative may be expressed in terms of the function as
 	\begin{equation*}
 		f'(x) = -a e^{ax} f^2(x).
 	\end{equation*}
 	
-	# We'll study $f(x) = a (1 - e^{-2bx}) / (1 + e^{-2bx})$, and here it pays off to ease notation somewhat.
-	Letting $g(x) := e^{-2bx}$, we have $g'(x) = -2b g(x)$ and
+	# We'll study $f(x) = a (1 - e^{-2bx}) / (1 + e^{-2bx})$, and it pays off to ease notation somewhat.
+	Letting $g(x) := e^{-2bx}$, we have $g'(x) = -2b g(x)$ and we expedite notation by writing
 	\begin{equation*}
 		f(x) = a \frac{1 - e^{-2bx}}{1 + e^{-2bx}} :=
 		a \frac{1 - g(x)}{1 + g(x)} =  a (1 - g(x)) (1 + g(x))^{-1}.
 	\end{equation*}
-	We differentiate to obtain 
+	Differentiating this and using the chain rule and product rule of calculus, we obtain
 	\begin{align*}
 		f'(x) &=  \frac{-a g'(x) (1 + g(x)) - ag'(x) (1 - g(x))}{(1 + g(x))^2} \\
 		&= \frac{4 ab g(x)}{(1 + g(x))^2} = \underbrace{a \frac{1 - g(x)}{1 + g(x)}}_{f'(x)} \frac{4bg(x)}{(1 - g(x)) (1 + g(x))}.
@@ -2109,29 +2158,314 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 	\end{equation*}
 \end{easylist}
 
-\subsubsection*{Problem 6.13}
+
+\subsubsection*{Problem 6.16}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# DONE
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Without loss of generality we assume that $J(\vect{w}) = \frac{1}{2}\vect{w}^T \vect{H} \vect{w}$, since by a transformation of the type $\vect{w} = \vect{w}' - \vect{c}$ we could transform a general, non-centered quadratic equation to this form.
+This is analogous to scaling $f(x) = a x^2 + bx + x$ in order to formulate it as $f(x') = a' x'^2$.
+
+To study convergence, we examine the learning rule, which may be written as
+\begin{align*}
+	\vect{w}_{n+1} &= \vect{w}_{n} - \eta \nabla J(\vect{w}_{n}) \\
+	&= \vect{w}_{n} - \eta  \vect{H} \vect{w}_{n} \\
+	&=  \left( \vect{I} - \eta  \vect{H} \right) \vect{w}_{n},
+\end{align*}
+and observe that $\vect{w}_{n} = \left( \vect{I} - \eta  \vect{H} \right)^n \vect{w}_{0}$.
+Convergence is ensured if $\left( \vect{I} - \eta  \vect{H} \right)^n$ goes to zero as $n \to \infty$.
+Informally, repeated application of the matrix should bring the vector to zero.
+Problems relate to ``repeated application of a matrix to a vector'' is controlled by eigenvectors and eigenvalues.
+
+We write $\left( \vect{I} - \eta  \vect{H} \right) = \vect{Q} \vect{\Lambda} \vect{Q}^T$ to express the symmetric, positive definite matrix in it's eigenvalue decomposition.
+Then we define $\vect{w}_{k}' = \vect{Q} \vect{w}_{k} = \sum_{i=1}^{d} \alpha_i \vect{v}_i$ to express $\vect{w}_{k}$ in the \emph{eigenvalue basis} of $\vect{H}$, where the $\vect{v}_i$ are the orthonormal eigenvectors. 
+This transformation is a rotation of the space, since $\vect{Q}$ is orthonormal.
+
+The expression on the left below is for the vector, and the expression on the right captures the behavior of a single eigenvector component $\vect{v}_i$.
+\begin{equation*}
+	\left(\sum_{i=1}^{d} \alpha_i \vect{v}_i\right)_{n+1} = \vect{Q} \vect{\Lambda} \left(\sum_{i=1}^{d} \alpha_i \vect{v}_i\right)_{n}
+	\quad \Leftrightarrow \quad
+	(\alpha_i \vect{v}_i)_{n+1} = \vect{Q} \lambda_i (\alpha_i \vect{v}_i)_{n+1}
+\end{equation*}
+The matrix $\vect{Q}$ is orthogonal, so it merely rotates or reflects a vector, but $\norm{\vect{v}_i} = \norm{\vect{Q} \vect{v}_i}$ so the magnitude is unchanged.
+Therefore we ignore it when considering convergence, and see that learning is ensured if $\abs{\lambda_i} < 1$ for every $i=1, 2, \dots, d$.
+Since every eigenvalue is positive, the maximal eigenvalue controls convergence.
+
+The only thing left to do is to relate the eigenvalues of $\left( \vect{I} - \eta  \vect{H} \right)$ to the eigenvalues of $ \vect{H}$.
+If a matrix is multiplied by a scalar, then so are it's eigenvalues.
+The effect of subtraction by the identity matrix is not as obvious, but if we write out the equation for the characteristic polynomials we observe that
+\begin{align*}
+	\text{eig. vals of } \left( \vect{I} - \eta  \vect{H} \right) \, &\Leftrightarrow \, \text{ zeros of } \det \left(  \vect{I} -  \eta  \vect{H} - \lambda \vect{I} \right)
+	=
+	\det \left(  \vect{I} (1 - \lambda ) - \eta  \vect{H} \right)
+	 \\
+	\text{eig. vals of } \eta  \vect{H} \, &\Leftrightarrow \, \text{ zeros of } \det \left(  \vect{I} \lambda'  - \eta   \vect{H} \right),
+\end{align*}
+and comparing we observe that $\lambda' = \lambda - 1$.
+We're really after the eigenvalues of  of $\vect{H}$, which we'll now denote by $\lambda_{\vect{H}} = \lambda' / \eta$.
+From this, we have convergence if
+\begin{align*}
+	-1 < &\lambda_{\text{max}} < 1 \\
+	-1 < &1 - \eta \lambda_{\vect{H} \text{max}} < 1 \\
+	\eta \lambda_{\vect{H} \text{max}} &< 2,
+\end{align*}
+which is the same as requiring that $\eta < \lambda_{\vect{H} \text{max}} / 2$.
+
+# The best learning rate is achieved if we manage to choose $\eta$ such that the maximal eigenvalue (in absolute value) of $\left( \vect{I} - \eta  \vect{H} \right)$ is close to zero.
+The optimal rate is given by\footnote{See \url{https://distill.pub/2017/momentum/} for details.}
+\begin{equation*}
+	\text{rate}(\eta) = \max_i \abs{1 - \eta \lambda_i}
+	= \max \left( \abs{1 - \eta \lambda_1} , \abs{1 - \eta \lambda_d}\right)
+\end{equation*}
+where $\lambda_1$ is the smallest eigenvalue of $\vect{H}$ and $\lambda_d$ is the largest.
+Convergence is fastest when these arguments are equal in absolute value, so we require that
+\begin{equation*}
+	(1 - \eta \lambda_1) = - (1 - \eta \lambda_d)
+\end{equation*}
+and solve for $\eta$ to obtain $\eta^*= 2 / (\lambda_1 + \lambda_d)$.
+The optimal learning rate is obtained by substituting this $\eta^*$ into $\text{rate}(\cdot)$.
+We consider the positive value $(1 - \eta^* \lambda_1)$, which becomes
+\begin{equation*}
+	\text{rate}(\eta^*) = (1 - \eta^* \lambda_1) = \frac{\lambda_d - \lambda_1}{\lambda_d + \lambda_1} = \frac{ \lambda_d / \lambda_1 - 1}{\lambda_d / \lambda_1 + 1},
+\end{equation*}
+and recognize that the learning rate is indeed dependent on the ratio of the largest to the smallest eigenvalue of $\vect{H}$.
+
+# An informal argument is as follows: Consider unstandardized data which is not highly correlated (i.e. the covariance matrix is nearly diagonal), but where data is from different dimensions and is on vastly different scales (i.e. the diagonal of the covariance matrix has entries on different scales).
+Assume that this data is used to train a neural network, and that the weights are initialized to sensible, small, random values.
+Changing one weight value $w_1$ might then potentially change the error drastically compared to changing another weight $w_2$, and $J(\vect{w}) \approx \frac{1}{2}\vect{w}^T \vect{H} \vect{w}$ will have diagonals on vastly different scales.
+The eigenvalues are $\lambda_1 \approx \min \operatorname{diag} \vect{H}$ and $\lambda_d \approx \max \operatorname{diag} \vect{H}$, so learning will be slow since $\text{rate}(\eta^*)$ will be close to 1.
+
+Standardizing reduces these problems.
+The data is on the same scale, so the diagonals entries of $\vect{H}$ will likely be on the same scale and learning will be faster.
+
+# Standardizing the data by subtracting means and diving by standard deviations in every dimension individually transforms the data to the same scale.
+The data might still be highly correlated.
+The whitening transform consists of scaling \emph{and} rotating the data.
+The rotation diagonalizes the covariance matrix, and the scaling makes the spectrum of eigenvalues uniform, so that the variances are all unity.
+
+
+
+
 \end{easylist}
 
-\subsubsection*{Problem 6.15}
+
+
+\subsubsection*{Problem 6.21}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The softmax function is given by equation (30) in the book, which is
+\begin{equation*}
+	z_k = f(\text{net}_k) = \frac{e^{\text{net}_k}}{\sum_{m=1}^{c} e^{\text{net}_m}} \propto e^{\text{net}_k}.
+\end{equation*}
+The learning rule when the sum squared error function is used becomes dependent on $\frac{\partial J}{\partial \text{net}_k}$ and $\frac{\partial \text{net}_k}{\partial w_{kj}}$, see equation (13) in the book.
+The only change is that now $f(\text{net}_k)$ is not a sigmoid, but the softmax function.
+To ease notation, we define $k := \text{net}_k$, and differentiate.
+\begin{equation*}
+	\frac{\partial f(k)}{\partial k}
+	=
+	e^{k} \left[ \sum_{m=1}^{c} e^{m} \right]^{-1}
+	-
+	e^{k} \left[ \sum_{m=1}^{c} e^{m} \right]^{-2} e^{k}
+	=
+	\frac{e^{k} \left[ \sum_{\substack{m=1 \\ m \neq k}}^{c} e^{m} \right]}{\left[ \sum_{m=1}^{c} e^{m} \right]^2}
+\end{equation*}
+The update rules becomes a simple modification of equation (17) from the book:
+\begin{equation*}
+	\Delta w_{kj} = \eta \delta_k y_j = \eta (t_k - z_k) 
+	\frac{e^{\text{net}_k} \left[ \sum_{\substack{m=1 \\ m \neq k}}^{c} e^{\text{net}_m} \right]}{\left[ \sum_{m=1}^{c} e^{\text{net}_m} \right]^2}
+	y_j.
+\end{equation*}
+Extending the result to $\Delta w_{ji}$ is straightforward, since $\Delta w_{ji}$ a function of $\delta_k$ above. 
+
+# When employing cross entropy, the learning rule is identical to the sum squared error above, save for $\frac{\partial J}{\partial z_k}$, which now becomes
+\begin{equation*}
+\frac{\partial J (\vect{w})}{\partial z_k} = \frac{\partial }{\partial z_k} 
+\left[
+\sum_{k=1}^{c} t_k \ln \frac{t_k}{z_k}
+\right]
+= 
+t_k \frac{z_k}{t_k} \frac{\partial }{\partial z_k}  \left( t_k z_k^{-1} \right)
+=
+- \frac{t_k}{z_k}.
+\end{equation*}
+Everything else is exactly equal to the solution to a) above.
+\end{easylist}
+
+
+
+\subsubsection*{Problem 6.24}
+
+We compare equation (7) for the 3-layer neural network with equation (32) for general additive models (GAM).
+The equations are, respectively, given by
+\begin{align*}
+	z_k &= f\left[
+	\sum_{j=1}^{n_H} w_{kj} \, f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right) + w_{k0}
+	\right] \quad \text{and}\\
+	z &= f\left[
+	\sum_{j=1}^{d} w_{kj}  f_i \left( \vect{x}_i \right) + w_{k0}
+	\right] .
+\end{align*}
+The functions $f_i(\vect{x}_i)$ in GAM may in general be multivariate.
+According to Wikipedia ``The GAM model class is quite broad, given that \emph{smooth function} is a rather broad category. For example, a covariate $\vect{x}_i$ may be multivariate and the corresponding $f_i$  a smooth function of several variables, or  $f_i$ might be the function mapping the level of a factor to the value of a random effect.''
+
+Comparing the equations, we observe that
+\begin{equation*}
+	\sum_{j=1}^{d} w_{kj}  f_i \left( \vect{x}_i \right) \cong
+	\sum_{j=1}^{n_H} w_{kj} \, f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right).
+\end{equation*}
+In the typical case, the $f$ on the right hand side a sigmoid function.
+The right hand side is a weighted sum of sigmoids, where the input to the sigmoids are again a linear function of the neural network inputs.
+The number of terms in the sum has no significance in the left-hand sum, since a function $f_i(\vect{x})$ could be defined as $f_1(\vect{x}) + f_2(\vect{x})$.
+The \emph{Kolmogorov-Arnold representation theorem} guarantees that both of these constructions can, in theory, approximate any continuous function.
+
+
+
+\subsubsection*{Problem 6.39}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# If we write out the sums, we obtain
+	\begin{equation*}
+		f(\vect{x}) = \vect{x}^T \vect{K} \vect{x} = \sum_i \sum_j x_i K_{ij} x_j.
+	\end{equation*}
+	Of course, the function $f(\cdot)$ above is a mapping from a vector $\vect{x} \in \R^d$ to a real number $\R$.
+	In this setting, the derivative is the gradient, i.e. $\nabla f(\vect{x}) = f'(\vect{x})$.
+	To find the gradient using explicit components, we write out the sums as
+	\begin{gather}
+		\nonumber \frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  = \\ 
+		\nonumber \frac{d}{d x_k} \left( \sum_i x_i \sum_j K_{ij} x_j \right)  = \\
+		\label{eqn:ch6_problem39a} \frac{d}{d x_k} \left( 
+		x_1 \left( \sum_j K_{1j} x_j \right) + 
+		x_2 \left( \sum_j K_{2j} x_j \right) + \dots +
+		x_k \left( \sum_j K_{kj} x_j \right) + \dots
+		 \right).
+	\end{gather}
+	For every term $i \neq k$ , the derivative is $x_i K_{ik}$ since every other term in the sums vanish.
+	On the $k$'th term, we apply the product rule of differentiation to obtain
+	\begin{equation*}
+		\frac{d}{d x_k} \left( x_k \left( \sum_j K_{kj} x_j \right) \right)=
+		\sum_j K_{kj} x_j  +
+		x_k \left( K_{kk} \right).
+	\end{equation*}
+	Applying these results to the non-$k$'th terms and the $k$'th term respectively, equation \eqref{eqn:ch6_problem39a} may be written in a more readable form as
+	\begin{align*}
+	\frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  &=  x_1 K_{1k} + x_2 K_{2k} + x_3 K_{3k} + \dots + 
+		\left(  \sum_j K_{kj} x_j  +
+		x_k  K_{kk}  \right)
+		+ \dots  \\
+		& =  \sum_i x_i K_{ik} + \sum_j K_{kj} x_j = 
+		\vect{K}^T \vect{x} + \vect{K} \vect{x} = 
+		\left( \vect{K}^T + \vect{K}  \right)\vect{x},
+	\end{align*}
+	where the last equality follows from
+	\begin{align*}
+		\vect{b} = \vect{A} \vect{x} \quad &\Leftrightarrow \quad
+		b_i = \sum_j A_{ij} x_j \\
+		\vect{b} = \vect{A}^T \vect{x} \quad &\Leftrightarrow \quad
+		b_i = \sum_j A_{ji} x_j.
+	\end{align*}
+	
+	# Here's an approach which does not require the use of indices, and is therefore more expedient.
+	Let $f(\vect{x}) = \vect{x}^T \vect{H} \vect{x}$, where $\vect{H}$ is symmetric.
+	We have
+	\begin{equation*}
+		f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+		\left( \delta \vect{x} \right)^T \vect{H} \vect{x} + 
+		\vect{x}^T \vect{H} \left( \delta \vect{x} \right)
+		+ O \left( \norm{ \delta \vect{x} }^2 \right),
+	\end{equation*}
+	and when $\vect{H}$ is symmetric this becomes 
+	\begin{equation*}
+			f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+			2 \left( \delta \vect{x} \right)  \vect{H} \vect{x}^T
+			+ O \left( \norm{ \delta \vect{x} }^2 \right).
+	\end{equation*}
+	Observe that $2 \vect{H} \vect{x}$ is the first-order approximation to  $f(\vect{x} + \delta \vect{x})$, i.e. the derivative.
+	
+\end{easylist}
+
+\subsubsection*{Problem 6.42}
+The weight decay rule of equation (38) in the book does not exactly lead to equation (39).
+The rule multiplies the weight found by gradient descent by the factor $(1 - \epsilon)$, such that 
+\begin{equation*}
+	\vect{w}_{n+1} = \left( \vect{w}_{n} - \eta \nabla J(\vect{w}_n ) \right) (1 - \epsilon).
+\end{equation*}
+After some algebra, we observe that this is equivalent to
+\begin{equation*}
+		\vect{w}_{n+1} = \vect{w}_{n} - \eta  \underbrace{\left(
+			(1 - \epsilon ) \nabla J(\vect{w}_n ) + \frac{\epsilon}{\eta} \vect{w}_n
+			\right)}_{\nabla J_{ef}(\vect{w}_n)} .
+\end{equation*}
+Since $\nabla \vect{w}^T \vect{w} = 2 \vect{w}$, we see that
+\begin{equation*}
+J_{ef}(\vect{w}_n) = (1 - \epsilon ) J(\vect{w}_n ) + \epsilon \frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n.
+\end{equation*}
+This is a weighted average of the ordinary error function $J(\vect{w}_n )$ and the regularization term $\frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n$, weighted by $(1 - \epsilon )$ and $\epsilon$ respectively.
+We can easily verify that 
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=r, FinalMark1={)})
+	# When $\epsilon = 0$, everything reduces to gradient descent with no weight decay.
+	# When $\epsilon = 1$, the weight vector $\vect{w}_{n+1}$ is forever stuck at $\vect{0}$.
+\end{easylist}
+This also shows that equation (39) in the book is wrong with respect to equation (38), since if $\epsilon=1$ in the book, equation (38) would always set $\vect{w}_{n+1} = \vect{0}$, while optimizing equation (39) would not---it would amount to optimizing $J(\vect{w} )$ with a regularization term.
+
+
+
+
+
+\clearpage
+\subsection{Stochastic methods}
+
+\subsubsection*{Problem 7.11}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 6.21}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\subsubsection*{Problem X.YY}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# DONE
+	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 6.24}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# DONE
-\end{easylist}
 
 \subsubsection*{Problem 6.26}
 \begin{easylist}[enumerate]
@@ -2151,105 +2485,9 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 	# sdf
 \end{easylist}
 
-\subsubsection*{Problem 6.39}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# If we write out the sums, we obtain
-	\begin{equation*}
-		f(\vect{x}) = \vect{x}^T \vect{K} \vect{x} = \sum_i \sum_j x_i K_{ij} x_j.
-	\end{equation*}
-	Of course, the function $f(\vect{x})$ is a mapping from a vector $\vect{x} \in \R^d$ to a real number $\R$.
-	In this setting, the derivative is the gradient, i.e. $\nabla f(\vect{x}) = f'(\vect{x})$.
-	To find the gradient using explicit components, we write
-	\begin{gather}
-		\nonumber \frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  = \\ 
-		\nonumber \frac{d}{d x_k} \left( \sum_i x_i \sum_j K_{ij} x_j \right)  = \\
-		\label{eqn:ch6_problem39a} \frac{d}{d x_k} \left( 
-		x_1 \left( \sum_j K_{1j} x_j \right) + 
-		x_2 \left( \sum_j K_{2j} x_j \right) + \dots +
-		x_k \left( \sum_j K_{kj} x_j \right) + \dots
-		 \right).
-	\end{gather}
-	For every term $i \neq k$ , the derivative is $x_i K_{ik}$.
-	On the $k$'th term, we apply the product rule of differentiation to obtain
-	\begin{equation*}
-		\frac{d}{d x_k} \left( x_k \left( \sum_j K_{kj} x_j \right) \right)=
-		1 \left( \sum_j K_{kj} x_j \right) +
-		x_k \left( K_{kk} \right).
-	\end{equation*}
-	Applying these results to the non-$k$'th terms and the $k$'th term respectively, equation \eqref{eqn:ch6_problem39a} becomes
-	\begin{align*}
-	\frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  &=  x_1 K_{1k} + x_2 K_{2k} + x_3 K_{3k} + \dots + 
-		\left(  \sum_j K_{kj} x_j  +
-		x_k  K_{kk}  \right)
-		+ \dots  \\
-		& =  \sum_i x_i K_{ik} + \sum_j K_{kj} x_j = 
-		\vect{K}^T \vect{x} + \vect{K} \vect{x} = 
-		\left( \vect{K}^T + \vect{K}  \right)\vect{x},
-	\end{align*}
-	where the last equality follows from
-	\begin{align*}
-		\vect{b} = \vect{A} \vect{x} \quad &\Leftrightarrow \quad
-		b_i = \sum_j A_{ij} x_j \\
-		\vect{b} = \vect{A}^T \vect{x} \quad &\Leftrightarrow \quad
-		b_i = \sum_j A_{ji} x_j.
-	\end{align*}
-	
-	# Here's an approach which does not require indices, and is therefore more expedient.
-	Let $f(\vect{x}) = \vect{x}^T \vect{H} \vect{x}$, where $\vect{H}$ is symmetric.
-	We have
-	\begin{equation*}
-		f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
-		\left( \delta \vect{x} \right)^T \vect{H} \vect{x} + 
-		\vect{x}^T \vect{H} \left( \delta \vect{x} \right)
-		+ O \left( \norm{ \delta \vect{x} }^2 \right),
-	\end{equation*}
-	and when $\vect{H}$ is symmetric this becomes 
-	\begin{equation*}
-			f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
-			2 \vect{x}^T \vect{H} \left( \delta \vect{x} \right)
-			+ O \left( \norm{ \delta \vect{x} }^2 \right).
-	\end{equation*}
-	So $2 \vect{x}^T \vect{H}$ is indeed the first-order approximation to  $f(\vect{x} + \delta \vect{x})$.
-	The reader might react to the fact that the derivative in problem a) is a column vector, while the derivative in problem b) is a row vector.
-	The gradient is really a row vector, since $\left( \nabla f(\vect{x} ) \right)^T \delta \vect{x}$ produces a real number.
-	
-\end{easylist}
 
-\subsubsection*{Problem 6.42}
-The weight decay rule of equation (38) in the book does not exactly lead to equation (39).
-The rule multiplies the weight set by gradient descent by the factor $(1 - \epsilon)$, such that 
-\begin{equation*}
-	\vect{w}_{n+1} = \left( \vect{w}_{n} - \eta \nabla J(\vect{w}_n ) \right) (1 - \epsilon).
-\end{equation*}
-Moving the terms around a little bit, we observe that this is equivalent to
-\begin{equation*}
-		\vect{w}_{n+1} = \vect{w}_{n} - \eta  \underbrace{\left(
-			(1 - \epsilon ) \nabla J(\vect{w}_n ) + \frac{\epsilon}{\eta} \vect{w}_n
-			\right)}_{\nabla J_{ef}(\vect{w}_n)} .
-\end{equation*}
-Since $\nabla \vect{w}^T \vect{w} = 2 \vect{w}$, we observe that $J_{ef}(\vect{w}_n) = (1 - \epsilon ) J(\vect{w}_n ) + \epsilon \frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n $.
-This is a weighted average of the ordinary error function $J(\vect{w}_n )$ and the regularization term $\frac{1}{2 \eta} \vect{w}_n^T \vect{w}_n$.
-We can easily verify that 
-(1) when $\epsilon = 0$, everything reduces to the ordinary gradient descent with no weight decay and
-(2) when $\epsilon = 1$, $\vect{w}_{n+1}$ is forever stuck at $\vect{0}$.
-
-This also shows that equation (39) in the book is wrong with respect to equation (38), since if $\epsilon=1$ in the book, equation (38) would always set $\vect{w}_{n+1} = \vect{0}$ while optimizing equation (39) would not---it would amount to optimizing $J(\vect{w} )$ with a regularization term.
-
-
-
-
-
-\clearpage
-
-\subsubsection*{Problem X.YY}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-
-
+\bibliographystyle{apalike}%alpha, apalike is also good
+\bibliography{bibliography}
 
 
 \end{document}
