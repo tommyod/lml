@@ -292,7 +292,34 @@ This is a quadratic programming (QP) problem, and the dual problem is easier to 
 \subsection{Multilayer Neural Networks}
 \begin{easylist}[itemize]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# TODO
+# The feedforward operation on a $d - n_H -c$ three-layer neural network is defined by the following equation for the output
+\begin{equation*}
+	z_k = f \left( \sum_{j=1}^{n_H} w_{kj} f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right) + w_{k0} \right).
+\end{equation*}
+
+- The \emph{Kolmogorov-Arnold representation theorem} implies that \emph{any} continuous function from input to output may be expressed by a three layer $d - n_H - c$ neural network with enough hidden units.
+
+# Backpropagation learns $\vect{w}$ by the gradient descent equation $\vect{w}_{n+1} = \vect{w}_{n} - \eta \nabla J(\vect{w}_{n})$. 
+The gradient, or derivative, is found by repeated application of the chain rule of calculus.
+Several protocols are available for backpropagation: stochastic, batch and on-line.
+## Backpropagation may be thought of as feature mapping.
+While the inputs $x_i$ are not necessarily linearly separable, the outputs $y_j$ of the hidden units become linearly separable as the weights are learned.
+The final linear discriminant works on this data.
+
+# Practical tips for improving learning in neural networks include standardizing features, adding noise and data augmentations, initializing weights to random values in the range $-1 / \sqrt{d} < w_{ji} < 1 / \sqrt{d}$, using momentum in the gradient descent algorithm, adding weight decay (equivalent to regularization) while learning, training with hints (output units which are subsequently removed), experimenting with various error functions.
+
+# Seconds order methods for learning the weights inluce
+## Newtons method -- uses $\vect{H}$ in addition to $\nabla J(\vect{w})$.
+## Quickprop -- two evaluations of $\nabla J(\vect{w})$ to approximate a quadratic.
+## Conjugate gradient descent -- uses conjugate directions, which consists of a sequence of line searches where a search direction does not spoil the result of the previous line direction.
+This is equivalent to a ``smart momentum.''
+
+# Other networks include:
+## Convolutional Nerual Networks (CNNs) -- translation invariant, has achieved great success on image data.
+## Recurrent Neural Networks (RNNs) -- the ouput of the previous prediction is fed into the subsequent prediction. This simulates ``memory'', and RNNs have been successful on time series data.
+## Cascade correlation -- a technique where the topology is altered by adding more units if the performance is not good enough.
+
+
 \end{easylist}
 
 
@@ -2414,7 +2441,63 @@ This also shows that equation (39) in the book is wrong with respect to equation
 \clearpage
 \subsection{Stochastic methods}
 
-\subsubsection*{Problem 7.11}
+\subsubsection*{Problem 7.4}
+Every magnet can be turned up or down, so there are $2^N$ possible configurations.
+However, flipping the sign of a state vector $\vect{s}$ does not alter $E$, so only half of the $2^N$ states correspond to (possibly) unique energy levels, i.e. $2^{N-1}$ unique energy levels.
+
+The total time required for exhaustive search will therefore be $T(N) = 2^{N-1} \cdot 10^{-8}$ seconds.
+Searching the space for $N = 100$ units would take $6.338 \cdot 10^{21}$ seconds.
+Searching the space for $N = 1000$ units would take $5.357 \cdot 10^{292}$ seconds.
+Both of these numbers are huge. Searching the space would take millions and millions of years.
+
+
+
+
+\subsubsection*{Problem 7.5}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The formula is $E \propto \sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} s_i s_j$, which is naively computed using $n^2$ flops.
+Since we have symmetry and $w_{ij} = w_{ji}$, we can write the sum as $\sum_{i=1}^{n} \sum_{j=i+1}^{n} w_{ij} s_i s_j$.
+The number of flops is then
+\begin{equation*}
+	(n-1) + (n-2) + \dots + 2 + 1 = \frac{n (n-1)}{2}.
+\end{equation*}
+Furthermore, there are $2^{n-1}$ possibly unique energy energy levels.
+So the total time is given by
+\begin{equation*}
+	T(n) = 2^{n-2} n (n-1) \cdot 10^{-10}.
+\end{equation*}
+
+# See figure \ref{fig:duda_ch7_prob5} for a plot.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.7\linewidth]{figs/duda_ch7_prob5}
+\caption{Solution to problem 7.5b).}
+\label{fig:duda_ch7_prob5}
+\end{figure}
+
+# To find the value of $n$ which may be computed in a day, we find $n$ such that
+\begin{equation*}
+	T(n) = 3600 \cdot 24 \quad \text{   or, alternatively   } \quad \ln T(n) = \ln (3600 \cdot 24).
+\end{equation*}
+Working in log-space avoids numerical overflow, since $T(n)$ grows very large very quickly.
+The answers are:
+\begin{alignat*}{2}
+	\text{A day: } &  \quad \ln T(n) = \ln (3600 \cdot 24) \quad&\Rightarrow n = 40 \\
+	\text{A year: } &  \quad \ln T(n) = \ln (3600 \cdot 24 \cdot 365) \quad&\Rightarrow n = 48 \\
+	\text{A century: } &  \quad \ln T(n) = \ln (3600 \cdot 24  \cdot 365 \cdot 100) \quad &\Rightarrow n = 55
+\end{alignat*}
+
+
+
+
+\end{easylist}
+
+
+
+
+\subsubsection*{Problem 7.6}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf

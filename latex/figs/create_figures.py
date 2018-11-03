@@ -142,10 +142,10 @@ for w1, w2, w3 in itertools.permutations(words, 3):
 
 # ## Problem 4.13
 
-# In[6]:
+# In[57]:
 
 
-get_ipython().run_cell_magic('time', '', '\nfrom scipy.stats import triang\n\n\ndef run_simulation(num_samples_from_each, simulations=10000, random_state=42):\n    """\n    Generate samples from each distribution. Check error rate.\n    """\n    np.random.seed(random_state)\n    \n    if num_samples_from_each == 0:\n        return 0.5\n    \n    # Set up distributions\n    x_dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)\n    y_dist = triang(loc=0, scale=1, c=0)  # This is p(x|w_2)\n    \n    n = num_samples_from_each\n    x_value = x_dist.rvs(size=(simulations, 1))\n    \n    x_n_vals = x_dist.rvs(size=(simulations, n))\n    y_n_vals = y_dist.rvs(size=(simulations, n))\n    \n    closest_x = np.min(np.abs(x_value - x_n_vals), axis=1).reshape(-1, 1)\n    closest_y = np.min(np.abs(x_value - y_n_vals), axis=1).reshape(-1, 1)\n    \n    errors = np.argmin(np.hstack((closest_x, closest_y)), axis=1)\n    \n    return errors.sum() / simulations\n\n\nplt.figure(figsize=FIGSIZE) \n\n# Simulation\nn = [1, 2, 3, 4, 5]\nP_e_sim = [run_simulation(k, simulations=100_000) for k in n]\n\n# Analytical\nP_e = lambda n: 1/3 + 1/((n+1) * (n+3)) + 1/(2 * (n+2) * (n+3))\nP_e_true = [P_e(k) for k in n]\n\nplt.plot(n, P_e_sim, \'-o\', label=\'$P_n(e) simulated$\')\n#plt.plot(n, P_e_true, \'-o\', label=\'$P_n(e) true$\')\n\nplt.xlabel(\'Error rate\')\nplt.xlabel(\'$n$\')\nplt.legend()\nplt.tight_layout()\nplt.savefig(\'duda_ch4_prob13_sim.pdf\')')
+get_ipython().run_cell_magic('time', '', '\nfrom scipy.stats import triang\n\n\ndef run_simulation(num_samples_from_each, simulations=10000, random_state=42):\n    """\n    Generate samples from each distribution. Check error rate.\n    """\n    np.random.seed(random_state)\n    \n    if num_samples_from_each == 0:\n        return 0.5\n    \n    # Set up distributions\n    x_dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)\n    y_dist = triang(loc=0, scale=1, c=0)  # This is p(x|w_2)\n    \n    n = num_samples_from_each\n    x_value = x_dist.rvs(size=(simulations, 1))\n    \n    x_n_vals = x_dist.rvs(size=(simulations, n))\n    y_n_vals = y_dist.rvs(size=(simulations, n))\n    \n    closest_x = np.min(np.abs(x_value - x_n_vals), axis=1).reshape(-1, 1)\n    closest_y = np.min(np.abs(x_value - y_n_vals), axis=1).reshape(-1, 1)\n    \n    errors = np.argmin(np.hstack((closest_x, closest_y)), axis=1)\n    \n    return errors.sum() / simulations\n\n\nplt.figure(figsize=FIGSIZE) \n\n# Simulation\nn = [1, 2, 3, 4, 5]\nP_e_sim = [run_simulation(k, simulations=100_000) for k in n]\n\n# Analytical\nP_e = lambda n: 1/3 + 1/((n+1) * (n+3)) + 1/(2 * (n+2) * (n+3))\nP_e_true = [P_e(k) for k in n]\n\nplt.plot(n, P_e_sim, \'-o\', label=\'$P_n(e) simulated$\')\n#plt.plot(n, P_e_true, \'-o\', label=\'$P_n(e) true$\')\n\nplt.ylabel(\'Error rate\')\nplt.xlabel(\'$n$\')\nplt.legend()\nplt.tight_layout()\nplt.savefig(\'duda_ch4_prob13_sim.pdf\')')
 
 
 # In[7]:
@@ -347,7 +347,7 @@ plt.savefig('duda_ch5_prob27_b.pdf')
 
 # ## Problem 5.32
 
-# In[21]:
+# In[13]:
 
 
 omega1 = np.array([[1, 1], [2, 2], [2, 0]])
@@ -373,8 +373,78 @@ plt.axvline(x=0, color='k')
 plt.savefig('duda_ch5_prob32.pdf')
 
 
-# In[23]:
+# In[14]:
 
 
 round(np.sqrt(2)/4, 4)
+
+
+# ## Problem 7.4
+
+# In[47]:
+
+
+T = lambda N: 2**(N-1) * 10**(-8)
+
+for N in [100, 1000]:
+    print(N, T(N))
+
+
+# ## Problem 7.5
+
+# In[106]:
+
+
+T = lambda N: 2**(N - 2) * N * (N - 1) * 10**(-10)
+logT = lambda N: (N - 2) * np.log(2) + np.log(N) + np.log(N - 1) + -10 * np.log(10)
+
+
+N = np.arange(5, 10**5)
+times = logT(N)
+
+plt.figure(figsize=FIGSIZE) 
+
+plt.semilogx(N, times, label='$T(n)$')
+
+
+plt.ylabel('Time (seconds)')
+plt.xlabel('Number of nodes')
+plt.grid(True, which="both",alpha=0.5, zorder=-15)
+plt.legend()
+plt.tight_layout(pad=1.4)
+
+locs, labels = plt.yticks()
+plt.yticks(locs, ['exp({})'.format(l.get_text()) for l in labels])
+plt.ylim([0, plt.ylim()[1]])
+
+plt.savefig('duda_ch7_prob5.pdf')
+
+
+# In[107]:
+
+
+# Problem 7.5 c)
+
+from scipy.optimize import brenth
+
+for time in [3600 * 24, 3600 * 24 * 365, 3600 * 24 * 365 * 100]:
+
+    function = lambda x: logT(x) - np.log(time)
+    print(scipy.optimize.brenth(function, 2, 100))
+
+
+# ## Computer exercise 7.2
+
+# In[108]:
+
+
+n = 3
+
+W = np.random.randn(n, n)
+W = W.T @ W
+
+for s in sorted(itertools.product(*([-1, 1] for i in range(n))), key=lambda s: np.array(s).T @ W @ np.array(s)):
+    s = np.array(s)
+    E = s.T @ W @ s
+    print(s, E)
 
