@@ -379,6 +379,34 @@ by evolutionary methods, mutating variables and operators and performing crossov
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Algorithm-independent machine learning}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# asdsdf
+\end{easylist}
+
+
+
+
 \clearpage
 \section{Solutions to ``Pattern Recognition''}
 
@@ -2612,7 +2640,7 @@ A plot showing the average reduction in energy over 500 runs in show in \ref{fig
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # One of the defining properties of an impurity function is that it should be zero when only $\omega_1$ is present, or when only $\omega_2$ is present.
-If a polynomial in $P(\omega_1)$ has two zeros, then it must at least be quadratic.
+For a polynomial to incorporate this information, it must have two zero points, and therefore it must at least be quadratic.
 
 # The simplest quadratic form of $P(\omega_1)$ obeying the boundary conditions is
 \begin{equation*}
@@ -2620,6 +2648,7 @@ If a polynomial in $P(\omega_1)$ has two zeros, then it must at least be quadrat
 \end{equation*}
 
 # Let $X$ be a Bernoulli variable, with $X \in \{0, 1\} = \{\omega_2, \omega_1 \} = C$ and $P(X = 1) = P(\omega_1)$.
+In the given problem, we do not know the true probabilities---but they may be estimated from the fractions.
 The variance of $X$ is given by
 \begin{align*}
 	\var \left[ X \right] &= \sum_{w_j \in C} P( \omega_j) \left[ \omega_j - \mu \right]^2 \\
@@ -2629,42 +2658,106 @@ The variance of $X$ is given by
 	&=  \left[ 1 - P( \omega_1) \right] \left[ P( \omega_1) \left(1 - P( \omega_1)\right) + P( \omega_1)^2 \right] \\
 	&= \left( 1 - P( \omega_1) \right) P( \omega_1).
 \end{align*}
-The sample variance is proportional to the impurity estimate defined in subproblem b).
+In other words, sample variance is proportional to the impurity estimate defined in subproblem b).
 If the variance is high, the data is impure.
+\end{easylist}
+
+
+\subsubsection*{Problem 8.14}
+We generalize the problem of a single missing attribute in a single training point to several missing attributes, and to several deficient training points.
+
+In this problem, a pattern $\vect{x} = (x_1, x_2, \dots ,x_d)$ with $d$ attributes can have between $0$ and $d-1$ missing attributes.
+Furthermore, the data set $\D = \{\vect{x}_1, \vect{x}_2, \dots, \vect{x}_n \}$ may have many training points with missing attributes.
+The data might look something like what is presented in Table \ref{table:problem8_14}.
+
+\begin{table}[ht!]
+	\centering
+	\caption{Example of what data for problem 8.14 might look like.}
+	\begin{tabular}{@{}llll@{}} \toprule
+		$x_1$	& $x_2$ & $\dots$ & $x_d$  \\ \midrule
+		0 & $\emptyset$ & $\dots$ & 1 \\
+		$\emptyset$ & $\emptyset$ & $\dots$ &  1 \\
+		1 & $\emptyset$ & $\dots$ & $\emptyset$ \\
+		$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+		0 & $\emptyset$ & $\dots$ & 1 \\ \bottomrule
+	\end{tabular}
+	\label{table:problem8_14}
+\end{table}
+
+High level Python-like pseudocode is given below. 
+The principal difference between the code below and the code for the same problem without missing attributes, is that there might now be $(n - 1 - m_i)$ possible splits, where $m_i$ are the number of data points missing from attribute $i$.
+This is in contrast to the original algorithm, where there are in general $(n-1)$ possible splits for every attribute $i$.
+\begin{Verbatim}
+for attribute=1 to d do:
+  attribute_data = data[attribute, :]
+  num_missing = count_missing(attribute_data)
+  
+  best_split = None
+  maximal_impurity_gain = -inf
+  
+  for possible_split=1 to (n - 1 - num_missing) do:
+    impurity_gain = compute_gain(attribute_data, possible_split)
+    
+    if impurity_gain > maximal_impurity_gain:
+	  best_split = (attribute, possible_split)
+	  maximal_impurity_gain = impurity_gain
+	  
+  split_along_maximal_impurity_gain(best_split)
+\end{Verbatim}
+
+
+\subsubsection*{Problem 8.16}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+	# The following tree was constructed by hand. Recall that \textsc{yes} is to the left, and \textsc{no} is to the right.
+	The notation $\omega_{ij}$ signifies a pattern $j$ from category $i$.
+	\begin{equation*}
+	\begin{tikzcd}
+	 & x_2 =0 \arrow{dr}{\text{no}} \arrow{dl}{\text{yes}} &  &  \\
+	\{\omega_{12}, \omega_{13}, \omega_{14}\} &  & x_3 = 0 \arrow{dr}{\text{no}} \arrow{dl}{\text{yes}} &  \\
+	 & \{\omega_{11}, \omega_{21}\} &  & \{\omega_{22}, \omega_{23}, \omega_{24}\} 
+	\end{tikzcd}
+	\end{equation*}
+	The leftmost leaf node assigns to $\omega_1$ with probability 1, the middle leaf node assigns to either $\omega_1$ or $\omega_2$ with probability 0.5, and the rightmost node assigns to $\omega_2$ with probability 1.
+	
+	# The resulting tree would be identical to the one given in subproblem a), but the assignment from the middle node should be $\omega_1$ with probability $2/3$.
+	
 \end{easylist}
 
 
 
 \subsubsection*{Problem 8.18}
 We will consider every alignment of $\vect{x}$ and \emph{text}.
-For each of these alignments, there will between $1$ and $m$ comparisons, depending on whether matches are found.
-There is a probability $d^{-1}$ of a match for each comparison made.
-The expected number of comparisons may be expressed as a \emph{arithmetico-geometric} sum, i.e. a sum of terms which are the product of an arithmetic and geometric sum.
+For each of these alignments, there will between $1$ and $m$ comparisons before termination, depending on whether matches are found.
+There is a probability $d^{-1}$ of a match for each comparison.
+We will see that expected number of comparisons may be expressed as a \emph{arithmetico-geometric} sum, i.e. a sum of terms which are the product of an arithmetic and geometric sum.
 
-First, observe that there are $(n - m + 1)$ alignments of $\vect{x}$ and \emph{text}.
-For every alignment, $m$ characters may be compared at most.
+We start out by observing that there are $(n - m + 1)$ alignments of $\vect{x}$ and \emph{text}.
+For every alignment, $m$ characters must be compared at most.
 Let $1 \leq  \ell \leq m$ be the number of comparisons made before the loop terminates.
-The loop terminates when no match is found.
+The loop terminates when a comparison yields no match.
 Fixating $\vect{x}$ and considering every character of \emph{text} to be randomly drawn from an alphabet $\mathcal{A}$ of $d$ characters, there is a probability of $d^{-1}$ of a match in each comparison.
 
-Let us study $P(\ell)$, the probability of $\ell$ matches before termination of the loop. We observe that
+Let us now study $P(\ell)$, the probability of $\ell$ comparisons before termination of the loop. 
+For instance $P(\ell) = 1 - 1/d$, since it represents the probability of one comparison before exiting the loop, and this happens if there is no match on the first comparison.
+More generally, we observe that
 \begin{alignat*}{2}
-	P(\ell = 1) &= 1 - \frac{1}{d} &\qquad (\text{no match}) \\
+	P(\ell = 1) &= 1 - \frac{1}{d} &\qquad (\text{no match on the first}) \\
 	P(\ell = 2) &= \left(1 - \frac{1}{d}\right) \frac{1}{d} &\qquad (\text{match, then no match}) \\
 	P(\ell = 2) &= \left(1 - \frac{1}{d}\right) \frac{1}{d^2} &\qquad (\text{match, match, then no match}) \\
 	\vdots \quad &= \quad \vdots &  \\
 	P(\ell = m) &= \left(1 - \frac{1}{d}\right) \frac{1}{d^{m-1}} + \frac{1}{d^m} &\qquad (\text{no match on final, or match on final}) \\
 \end{alignat*}
-
-We take the expected value to obtain the expected number of comparisons, and introduce a variable $r = 1/d$ for convenience.
+We now take the expected value of $\ell$ to obtain the expected number of comparisons, and introduce a variable $r = 1/d$ for notational convenience.
 \begin{align*}
-	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k
+	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) \, k
 	& = \left(1 - \frac{1}{d}\right) \left( 1 + \frac{2}{d} + \frac{3}{d^2} + \dots + \frac{m}{d^{m-1}} \right) + \frac{m}{d^m} \\
 	& = \left(1 - r\right) \left( 1 + 2r + 3r^2 + \dots + m r^{m-1} \right) + m r^m 
 \end{align*}
-Using the summation formula for a arithmetico-geometric sum\footnote{See wikipedia for the summation formula.} we obtain
+The sum in the second parenthesis in the first term is a arithmetico-geometric series.
+Using the summation formula\footnote{See Wikipedia for the summation formula of a arithmetico-geometric series.} we obtain
 \begin{align*}
-\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k
+\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) \, k
 & =\left(1 - r\right) \left( 1 + 2r + 3r^2 + \dots + m r^{m-1} \right) + m r^m \\
 &=\left(1 - r\right) \left( 
 \frac{1 - (1-m) r^m}{1 - r}
@@ -2674,30 +2767,34 @@ Using the summation formula for a arithmetico-geometric sum\footnote{See wikiped
  &=
  \frac{(1-r) - (1-r)(1+m)r^m + r(1-r^m) + (1-r)mr^m}{1-r}.
 \end{align*}
-After some algebra on this final fraction, we obtain the desired result, which is
+After some algebraic operations on this final fraction, we obtain the desired result 
 \begin{equation*}
-	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k = \frac{1 - r^m}{1 - r} = \frac{1 - d^{-m}}{1 - d^{-1}}.
+	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) \, k = \frac{1 - r^m}{1 - r} = \frac{1 - d^{-m}}{1 - d^{-1}}.
 \end{equation*}
-The expected number of comparisons is therefore $(n - m + 1) \frac{1 - d^{-m}}{1 - d^{-1}}$.
-The inequality $\frac{1 - d^{-m}}{1 - d^{-1}} \leq 2$ presented in the problem description stems from the fact that
+The problem is solved, since the expected number of comparisons is 
+\begin{equation*}
+	\text{alignments} \times \text{comparisons} = (n - m + 1) \times \frac{1 - d^{-m}}{1 - d^{-1}} .
+\end{equation*}
+The inequality $(1 - d^{-m})/(1 - d^{-1}) \leq 2$ presented in the problem description stems from the fact that the fraction is the sum of a geometric series
 \begin{equation*}
 	\frac{1 - d^{-m}}{1 - d^{-1}} = 1 + \frac{1}{d} + \frac{1}{d^2}  + \dots + \frac{1}{d^{m-1}}.
 \end{equation*}
 When $d=2$ above, the sum equals $2$. 
 Clearly, when $d > 2$ the terms become smaller, and the sum must therefore be $< 2$.
 Therefore, as long as $d \geq 2$, the sum is $\leq 2$.
+This proves the inequality when $d \geq 2$, which is a reasonable assumption considering the problem.
 
 
 \subsubsection*{Problem 8.22}
-\textbf{A naive approach} of looping through the alphabet (size $d$) for every letter in $\vect{x}$ (size $m$) would give an $O(dm)$ algorithm.
-This is not efficient.
+\textbf{A naive algorithm} which loops through the alphabet (of size $d$) for every letter in $\vect{x}$ (of size $m$) would give an $O(dm)$ algorithm.
+This is not very efficient, and faster algorithms may be constructed easily.
 
 We can construct a \textbf{better algorithm} with runtime $O(d + m)$ as follows.
 \begin{verbatim}
 1. Construct an empty lookup table for every character in the alphabet
 2. For every character and position in x, overwrite the lookup table
 \end{verbatim}
-Below is actual Python code implementing the above.
+Below is actual Python code implementing the pseudocode above.
 \begin{Verbatim}
 def last_occurence(alphabet, word):
   """
@@ -2711,15 +2808,16 @@ def last_occurence(alphabet, word):
   return mapping
 \end{Verbatim}
 It's possible to make the algorithm closer to $O(\min(m, d))$, if we know the values of $m$ and $d$ before the algorithm starts.
-If $d\gg m$ or $m \gg d$, such an algorithm can avoid looping over the longest string, but we will not pursue this here.
+If $d\gg m$ or $m \gg d$, such an algorithm can avoid looping over the longest string, but we will not pursue this any further in this problem.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The time complexity is $O(m + d)$.
-	# The space complexity is $O(d)$ in the algorithm above. We can avoid storing the empty matches (for instance by using the \texttt{collections.defaultdict} data structure in Python) and get the storage down to $O(\min(m, d))$.
-	# Using the algorithm above $d + m$ operations.
-	Since $m < d$ here, we can use a \texttt{collections.defaultdict} data structure in Python and bring it down to $m$ operations.
+	# The time complexity of the algorithm is $O(m + d)$.
+	# The space complexity is $O(d)$ in the algorithm above. We can avoid storing the empty matches (for instance by using the \texttt{collections.defaultdict} data structure in Python) and get the storage down to $O( \text{unique\_chars}(m))$.
+	# Running the algorithm above requires $d + m$ operations, so that $\vect{x}=$ ``\texttt{bonbon}'' yields $26 + 6$ operations.
+	Since $m < d$ here, we can use a \texttt{collections.defaultdict} data structure in Python and bring it down to $m = 6$ operations.
 \end{easylist}
-Below is a print showing that \texttt{collections.defaultdict} leads to faster runtime.
+Below is a print showing that \texttt{collections.defaultdict} indeed leads to faster runtime in practice.
+The \texttt{collections.defaultdict} data structure is a dictionary (hash-table) which calls a \emph{default factory function} is a value of a given key is not found.
 \begin{Verbatim}
   %timeit last_occurence(alphabet, word)
     2.32 microseconds +/- 42 ns per loop
@@ -2735,13 +2833,13 @@ Below is a print showing that \texttt{collections.defaultdict} leads to faster r
 (i) Non-negativity; 
 (ii) Reflexivity; 
 (iii) Symmetry; and 
-(iv) Triangle inequality. These properties are listed on page 187 in the book, which corresponds to section 4.6.1.
+(iv) Triangle inequality. These properties are listed on page 187 in \cite{duda_pattern_2000}, which corresponds to section 4.6.1.
 In order, we see that
 \begin{easylist}
 	## Non-negativity is always obeyed, since every cost is positive.
 	## Reflexivity is always obeyed, since if $\vect{a} = \vect{b}$ no operation is performed and the total cost of transformation is zero.
 	## Symmetry is not always obeyed. A counterexample follows.
-	## Triangle inequality is not always obeyed. A counterexample follows.
+	## The triangle inequality is not always obeyed. A counterexample follows.
 \end{easylist}
 
 # We prove counterexamples for symmetry and the triangle inequality.
@@ -2751,12 +2849,12 @@ Let $\vect{a} = \mathtt{dog}$ and $\vect{b} = \mathtt{dogs}$.
 Define the distance $D(\vect{a}, \vect{b})$ as the cost of transforming $\vect{a}$ to $\vect{b}$.
 Then $D(\vect{a}, \vect{b})$ is the distance of a single insertion to transform $\mathtt{dog} \mapsto \mathtt{dogs}$, while $D(\vect{b}, \vect{a})$ is the distance of a single deletion $\mathtt{dogs} \mapsto \mathtt{dog}$.
 If the cost of insertion and deletion differ, then $D(\vect{a}, \vect{b}) \neq D(\vect{b}, \vect{a})$.
-This provides a counterexample of the symmetry property of a metric.
+This provides a counterexample of the symmetry property of a metric when the costs of operations may be different.
 
-\textbf{Counterexample for triangle inequality} 
+\textbf{Counterexample for the triangle inequality} 
 Let $\epsilon$ be the empty string.
 Consider the transformation shown in the diagram below.
-If the cost of substitution is much greater than the cost of deletion and insertion, then $D(\mathtt{a}, \epsilon) + D(\epsilon, \mathtt{b}) < D(\mathtt{a}, \mathtt{b})$. 
+If the cost of substitution is much greater than the cost of deletion and insertion, then $D(\mathtt{a}, \epsilon) + D(\epsilon, \mathtt{b}) \ll D(\mathtt{a}, \mathtt{b})$. 
 This provides a counterexample of the triangle inequality of a metric.
 
 \begin{equation*}
@@ -2766,20 +2864,66 @@ This provides a counterexample of the triangle inequality of a metric.
  & \epsilon \arrow[swap]{ur}{\text{insertion}}  & 
 \end{tikzcd}
 \end{equation*}
-
 \end{easylist}
 
 
 
 
+\subsubsection*{Problem 8.31}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+	# A grammar generating  $\mathcal{L}(G) =
+	\{   \mathtt{a}^n \mathtt{b} \mid n \geq 1   \}$ is, for instance, given by
+	\begin{gather*}
+		\mathcal{A}  = \{a, b\} \qquad \mathcal{S}  = S \qquad
+		\mathcal{I}  = \{A\}
+		\\
+		\mathcal{P}  = \{S \to Ab, A \to a, A \to Aa\}.
+	\end{gather*}
+	
+	# Below is a derivation tree showing how $ab$ and $aaaaab$ are generated.
+	\begin{equation*}
+	\begin{tikzcd}
+	S \arrow{r} & \arrow{r} \arrow{d}  Ab & \arrow{r} \arrow{d} Aab &  \arrow{r} \arrow{d} Aaab & Aaaab \arrow{d} \arrow{r} & Aaaaab \arrow{d} \arrow{r} & \dots  \\
+	&  ab & aab & aaab & aaaab & aaaaab & &
+	\end{tikzcd}
+	\end{equation*}
+\end{easylist}
+
+
+\subsubsection*{Problem 8.32}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+	# Since $\mathbf{Type } \, 3 \subset \mathbf{Type } \, 2 \subset \mathbf{Type } \, 1$, we check if it's a \textbf{Type} 3 (regular) grammar first.
+	It's not a regular grammar, since the rule $B \to aBa$ is not of the form $\alpha \to z \beta$ or of the form $\alpha \to z$.
+	It is, however,  a \textbf{Type} 2 (context-free) grammar since every rule is of the form $I \to \gamma$.
+	In other words, every rewrite rule is from an intermediate symbol $I$ to a string $\gamma$ made up of intermediate of terminal symbols.
+	
+	# To see that the grammar generates the language $\mathcal{L}(G) =
+	 \{   \mathtt{ca}^n \mathtt{cba}^n \mathtt{b} \mid n \geq 1   \}$, we draw a derivation tree with intermediate states in the first row, and final states in the second row.
+	 The rule $B \to cb$ is highlighted in boldface.
+	\begin{equation*}
+	\begin{tikzcd}
+	S \arrow{r} & \arrow{r}  cAb & \arrow{r} \arrow{d} caBab &  \arrow{r} \arrow{d} caaBaab & caaaBaaab \arrow{d} \arrow{r} & \dots  \\
+	&   & ca\mathbf{cb}ab & caa\mathbf{cb}aab & caaa\mathbf{cb}aaab & &
+	\end{tikzcd}
+	\end{equation*}
+	Clearly moving down from $caBab$ produces $\{   \mathtt{ca}^n \mathtt{cba}^n \mathtt{b} \mid n =1   \}$, and moving $\ell$ to the right from $caBab$, and then down, produces $\{   \mathtt{ca}^n \mathtt{cba}^n \mathtt{b} \mid n = \ell + 1   \}$.
+	
+	# See the solution to subproblem b) above for derivation trees.
+\end{easylist}
 
 
 
 
+\clearpage
+\subsection{Algorithm-independent machine learning}
 
-
-
-
+\subsubsection*{Problem 9.1}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# sdf
+\end{easylist}
 
 
 \clearpage
