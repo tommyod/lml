@@ -23,6 +23,7 @@
 \usepackage{nicefrac}% Enables \nicefrac{nom}{denom}
 %\usepackage[sc]{mathpazo}% A nice font, alternative to CM
 \usepackage{booktabs}
+\usepackage{fancyvrb} % fancy verbatim
 
 % -------------------------------------------------
 % Package setup
@@ -318,8 +319,61 @@ This is equivalent to a ``smart momentum.''
 ## Convolutional Nerual Networks (CNNs) -- translation invariant, has achieved great success on image data.
 ## Recurrent Neural Networks (RNNs) -- the ouput of the previous prediction is fed into the subsequent prediction. This simulates ``memory'', and RNNs have been successful on time series data.
 ## Cascade correlation -- a technique where the topology is altered by adding more units if the performance is not good enough.
+\end{easylist}
 
 
+
+
+
+
+
+\subsection{Stochastic methods}
+\begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Stochastic methods are used to search for optimal solutions when techniques such as gradient descent is not viable.
+For instance if the model is very complex, has a a discrete nature where gradients are not fitting, or if there are time constraints.
+
+# \emph{Simulated annealing} is an optimization technique.
+To minimize the error $E(\vect{s})$ where $\vect{s} \in [-1, 1]^n$, we change a random entry of $\vect{s}$.
+\begin{easylist}
+## If the change produces a better result, then keep the new $\vect{s}$.
+## If the change does not produce a better result, we still might keep the change. 
+\end{easylist}
+The probability of keeping a change which increases $E(\vect{s})$ is a function of the temperature $T$, which typically decreases exponentially as the algorithm progresses.
+Initially simulated annealing is a random search, and as the temperature progresses it becomes a greedy search.
+
+# \emph{Deterministic simulated annealing} replaces discrete $s_i$ with analog (continuous) $s_i$.
+This forces the other magnets $s_k$ ($k \neq i$) to determine $s_i$
+\begin{equation*}
+	s_i = f(T, \ell_i) = \tanh \left( \frac{\ell_i}{T} \right).
+\end{equation*}
+As $T \to \infty$, this sigmoid function converges to a step function.
+
+# \emph{Boltzmann networks} (or Boltzmann machines) employ simulated annealing in a network to make predictions.
+First, weights $w_{ij}$ are learned so that inputs $s_j \in \alpha^i$ lead to correct outputs $s_k \in \alpha^o$ during classification.
+In the classification phase, the inputs $\alpha^i$ are \emph{clamped} (fixed), and simulated annealing produces outputs $\alpha^o$.
+If the weights $w_{ij}$ are learned correctly, then the algorithm will produce good classifications.
+## Boltzmann networks are able to perform \emph{pattern completion}. 
+
+# \emph{Evolutionary methods} take a population of classifiers through many generations.
+In each generation, new classifiers (offspring) is produced from the previous generation.
+The best classifiers are subject to (1) replication, (2) crossover and (3) mutation to produce offspring.
+The classifiers may be encoded as 2-bit chromosomes of length $L$.
+The bits represent some property of the classifier.
+
+
+# Genetic programming is the process of modifying formulas such as
+\begin{equation*}
+	\left[ (- x_1) + x_2 \right] / \left[ ( \ln x_3) - x_2 \right]
+\end{equation*}
+by evolutionary methods, mutating variables and operators and performing crossovers.
+\end{easylist}
+
+
+\subsection{Nonmetric methods}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# asdsdf
 \end{easylist}
 
 
@@ -1555,6 +1609,19 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 \end{easylist}
 
 
+
+
+
+
+
+\subsubsection*{Problem 4.8}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# TODO
+
+\end{easylist}
+
+
 \subsubsection*{Problem 4.17}
 We assume that $p(\omega_i) = 1/ c$ and $p(\vect{x} \mid \omega_i) = p(\vect{x})$.
 In this case, for any point $\vect{x}$, any guess is as good as any other, and the Bayes error rate is clearly
@@ -2443,7 +2510,9 @@ This also shows that equation (39) in the book is wrong with respect to equation
 
 \subsubsection*{Problem 7.4}
 Every magnet can be turned up or down, so there are $2^N$ possible configurations.
-However, flipping the sign of a state vector $\vect{s}$ does not alter $E$, so only half of the $2^N$ states correspond to (possibly) unique energy levels, i.e. $2^{N-1}$ unique energy levels.
+However, flipping the sign of a state vector $\vect{s}$ does not alter $E$.
+For instance $\vect{s} = (1, 1, -1)$ results in the same energy as $\vect{s} = (-1, -1, 1)$.
+Therefore, only half of the $2^N$ states correspond to (possibly) unique energy levels, i.e. $2^{N-1}$ unique energy levels.
 
 The total time required for exhaustive search will therefore be $T(N) = 2^{N-1} \cdot 10^{-8}$ seconds.
 Searching the space for $N = 100$ units would take $6.338 \cdot 10^{21}$ seconds.
@@ -2489,45 +2558,216 @@ The answers are:
 	\text{A century: } &  \quad \ln T(n) = \ln (3600 \cdot 24  \cdot 365 \cdot 100) \quad &\Rightarrow n = 55
 \end{alignat*}
 
-
-
-
 \end{easylist}
-
-
 
 
 \subsubsection*{Problem 7.6}
+We wish to show that at high temperature, every configuration is equally likely.
+The probability that a system is in a configuration of energy $E_\gamma$ is given by equation (3) in chapter 7 the book, i.e. $P(\gamma) \propto \exp(-E_\gamma / T)$.
+As $T$ goes to infinity, we have
+\begin{equation*}
+	\lim_{T \to \infty} P(\gamma) = 
+	\lim_{T \to \infty} \left( e^{-1 / T} \right)^{E_\gamma} = 1^{E_\gamma} = 1,
+\end{equation*}
+and so the probability of every state $\gamma$ is equally likely. The normalization constant $Z(T)$ makes it a true probability summing to unity.
+
+
+
+
+\subsubsection*{Computer exercise 7.2}
+A simple implementation of Algorithm 1 in from chapter 7 is found in the Python file \verb|simulated_annealing.py|.
+The answers to sub-problem a) and b) are shown in Figures \ref{fig:ch7_computer_ex2_a} and \ref{fig:ch7_computer_ex2_b} respectively.
+A plot showing the average reduction in energy over 500 runs in show in \ref{fig:ch7_computer_ex2_extra}, and it's interesting to see that the average reduction appears to be exponential.
+
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.7\linewidth]{figs/ch7_computer_ex2_a}
+\caption{Simulated annealing with $T(1) = 10$ and $c = 0.9$.
+	A total of $20$ main iterations (with fixed temperature), and $5n$ sub iterations (with the same temperature) gives $100 n = 600$ iterations.}
+\label{fig:ch7_computer_ex2_a}
+\end{figure}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figs/ch7_computer_ex2_b}
+	\caption{Simulated annealing with $T(1) = 5$ and $c = 0.5$.
+		A total of $20$ main iterations (with fixed temperature), and $5n$ sub iterations (with the same temperature) gives $100 n = 600$ iterations.}
+	\label{fig:ch7_computer_ex2_b}
+\end{figure}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figs/ch7_computer_ex2_extra}
+	\caption{Simulated annealing over 500 runs with $T(1) = 10$ and $c = 0.9$.
+		A total of $20$ main iterations (with fixed temperature), and $5n$ sub iterations (with the same temperature) gives $100 n = 600$ iterations.}
+	\label{fig:ch7_computer_ex2_extra}
+\end{figure}
+
+
+
+\clearpage
+\subsection{Nonmetric methods}
+\subsubsection*{Problem 8.10}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# One of the defining properties of an impurity function is that it should be zero when only $\omega_1$ is present, or when only $\omega_2$ is present.
+If a polynomial in $P(\omega_1)$ has two zeros, then it must at least be quadratic.
+
+# The simplest quadratic form of $P(\omega_1)$ obeying the boundary conditions is
+\begin{equation*}
+	i(P(\omega_1)) \propto P(\omega_1) \left[1 -  P(\omega_1)\right] =  P(\omega_1) P(\omega_2).
+\end{equation*}
+
+# Let $X$ be a Bernoulli variable, with $X \in \{0, 1\} = \{\omega_2, \omega_1 \} = C$ and $P(X = 1) = P(\omega_1)$.
+The variance of $X$ is given by
+\begin{align*}
+	\var \left[ X \right] &= \sum_{w_j \in C} P( \omega_j) \left[ \omega_j - \mu \right]^2 \\
+	&= P( \omega_1) \left[ \omega_1 - \mu \right]^2 + P( \omega_2) \left[ \omega_2 - \mu \right]^2 \\
+	&= P( \omega_1) \left[ 1 - \mu \right]^2 + \left( 1 - P( \omega_1) \right) \left[ 0 - \mu \right]^2 \\
+	&= P( \omega_1) \left[ 1 - P( \omega_1) \right]^2 + \left( 1 - P( \omega_1) \right) P( \omega_1)^2 \\
+	&=  \left[ 1 - P( \omega_1) \right] \left[ P( \omega_1) \left(1 - P( \omega_1)\right) + P( \omega_1)^2 \right] \\
+	&= \left( 1 - P( \omega_1) \right) P( \omega_1).
+\end{align*}
+The sample variance is proportional to the impurity estimate defined in subproblem b).
+If the variance is high, the data is impure.
 \end{easylist}
 
 
 
+\subsubsection*{Problem 8.18}
+We will consider every alignment of $\vect{x}$ and \emph{text}.
+For each of these alignments, there will between $1$ and $m$ comparisons, depending on whether matches are found.
+There is a probability $d^{-1}$ of a match for each comparison made.
+The expected number of comparisons may be expressed as a \emph{arithmetico-geometric} sum, i.e. a sum of terms which are the product of an arithmetic and geometric sum.
+
+First, observe that there are $(n - m + 1)$ alignments of $\vect{x}$ and \emph{text}.
+For every alignment, $m$ characters may be compared at most.
+Let $1 \leq  \ell \leq m$ be the number of comparisons made before the loop terminates.
+The loop terminates when no match is found.
+Fixating $\vect{x}$ and considering every character of \emph{text} to be randomly drawn from an alphabet $\mathcal{A}$ of $d$ characters, there is a probability of $d^{-1}$ of a match in each comparison.
+
+Let us study $P(\ell)$, the probability of $\ell$ matches before termination of the loop. We observe that
+\begin{alignat*}{2}
+	P(\ell = 1) &= 1 - \frac{1}{d} &\qquad (\text{no match}) \\
+	P(\ell = 2) &= \left(1 - \frac{1}{d}\right) \frac{1}{d} &\qquad (\text{match, then no match}) \\
+	P(\ell = 2) &= \left(1 - \frac{1}{d}\right) \frac{1}{d^2} &\qquad (\text{match, match, then no match}) \\
+	\vdots \quad &= \quad \vdots &  \\
+	P(\ell = m) &= \left(1 - \frac{1}{d}\right) \frac{1}{d^{m-1}} + \frac{1}{d^m} &\qquad (\text{no match on final, or match on final}) \\
+\end{alignat*}
+
+We take the expected value to obtain the expected number of comparisons, and introduce a variable $r = 1/d$ for convenience.
+\begin{align*}
+	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k
+	& = \left(1 - \frac{1}{d}\right) \left( 1 + \frac{2}{d} + \frac{3}{d^2} + \dots + \frac{m}{d^{m-1}} \right) + \frac{m}{d^m} \\
+	& = \left(1 - r\right) \left( 1 + 2r + 3r^2 + \dots + m r^{m-1} \right) + m r^m 
+\end{align*}
+Using the summation formula for a arithmetico-geometric sum\footnote{See wikipedia for the summation formula.} we obtain
+\begin{align*}
+\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k
+& =\left(1 - r\right) \left( 1 + 2r + 3r^2 + \dots + m r^{m-1} \right) + m r^m \\
+&=\left(1 - r\right) \left( 
+\frac{1 - (1-m) r^m}{1 - r}
++ 
+\frac{r(1 - r^m)}{(1 - r)^2}
+ \right) + m r^m \\
+ &=
+ \frac{(1-r) - (1-r)(1+m)r^m + r(1-r^m) + (1-r)mr^m}{1-r}.
+\end{align*}
+After some algebra on this final fraction, we obtain the desired result, which is
+\begin{equation*}
+	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) k = \frac{1 - r^m}{1 - r} = \frac{1 - d^{-m}}{1 - d^{-1}}.
+\end{equation*}
+The expected number of comparisons is therefore $(n - m + 1) \frac{1 - d^{-m}}{1 - d^{-1}}$.
+The inequality $\frac{1 - d^{-m}}{1 - d^{-1}} \leq 2$ presented in the problem description stems from the fact that
+\begin{equation*}
+	\frac{1 - d^{-m}}{1 - d^{-1}} = 1 + \frac{1}{d} + \frac{1}{d^2}  + \dots + \frac{1}{d^{m-1}}.
+\end{equation*}
+When $d=2$ above, the sum equals $2$. 
+Clearly, when $d > 2$ the terms become smaller, and the sum must therefore be $< 2$.
+Therefore, as long as $d \geq 2$, the sum is $\leq 2$.
 
 
+\subsubsection*{Problem 8.22}
+\textbf{A naive approach} of looping through the alphabet (size $d$) for every letter in $\vect{x}$ (size $m$) would give an $O(dm)$ algorithm.
+This is not efficient.
+
+We can construct a \textbf{better algorithm} with runtime $O(d + m)$ as follows.
+\begin{verbatim}
+1. Construct an empty lookup table for every character in the alphabet
+2. For every character and position in x, overwrite the lookup table
+\end{verbatim}
+Below is actual Python code implementing the above.
+\begin{Verbatim}
+def last_occurence(alphabet, word):
+  """
+  Returns a mapping F[char] -> last occurrence in word.
+  """
+  mapping = {i:-1 for i in alphabet}  # This is O(d)
+
+  for index, char in enumerate(word):  # This is O(m)
+    mapping[char] = index
+
+  return mapping
+\end{Verbatim}
+It's possible to make the algorithm closer to $O(\min(m, d))$, if we know the values of $m$ and $d$ before the algorithm starts.
+If $d\gg m$ or $m \gg d$, such an algorithm can avoid looping over the longest string, but we will not pursue this here.
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The time complexity is $O(m + d)$.
+	# The space complexity is $O(d)$ in the algorithm above. We can avoid storing the empty matches (for instance by using the \texttt{collections.defaultdict} data structure in Python) and get the storage down to $O(\min(m, d))$.
+	# Using the algorithm above $d + m$ operations.
+	Since $m < d$ here, we can use a \texttt{collections.defaultdict} data structure in Python and bring it down to $m$ operations.
+\end{easylist}
+Below is a print showing that \texttt{collections.defaultdict} leads to faster runtime.
+\begin{Verbatim}
+  %timeit last_occurence(alphabet, word)
+    2.32 microseconds +/- 42 ns per loop
+  %timeit last_occurence_defaultdict(alphabet, word)
+    1.17 microseconds +/- 3.17 ns per loop
+\end{Verbatim}
 
 
+\subsubsection*{Problem 8.26}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+# The properties of a metric $D(\vect{a}, \vect{b})$ are
+(i) Non-negativity; 
+(ii) Reflexivity; 
+(iii) Symmetry; and 
+(iv) Triangle inequality. These properties are listed on page 187 in the book, which corresponds to section 4.6.1.
+In order, we see that
+\begin{easylist}
+	## Non-negativity is always obeyed, since every cost is positive.
+	## Reflexivity is always obeyed, since if $\vect{a} = \vect{b}$ no operation is performed and the total cost of transformation is zero.
+	## Symmetry is not always obeyed. A counterexample follows.
+	## Triangle inequality is not always obeyed. A counterexample follows.
+\end{easylist}
 
+# We prove counterexamples for symmetry and the triangle inequality.
 
+\textbf{Counterexample for symmetry} 
+Let $\vect{a} = \mathtt{dog}$ and $\vect{b} = \mathtt{dogs}$.
+Define the distance $D(\vect{a}, \vect{b})$ as the cost of transforming $\vect{a}$ to $\vect{b}$.
+Then $D(\vect{a}, \vect{b})$ is the distance of a single insertion to transform $\mathtt{dog} \mapsto \mathtt{dogs}$, while $D(\vect{b}, \vect{a})$ is the distance of a single deletion $\mathtt{dogs} \mapsto \mathtt{dog}$.
+If the cost of insertion and deletion differ, then $D(\vect{a}, \vect{b}) \neq D(\vect{b}, \vect{a})$.
+This provides a counterexample of the symmetry property of a metric.
 
+\textbf{Counterexample for triangle inequality} 
+Let $\epsilon$ be the empty string.
+Consider the transformation shown in the diagram below.
+If the cost of substitution is much greater than the cost of deletion and insertion, then $D(\mathtt{a}, \epsilon) + D(\epsilon, \mathtt{b}) < D(\mathtt{a}, \mathtt{b})$. 
+This provides a counterexample of the triangle inequality of a metric.
 
+\begin{equation*}
+\begin{tikzcd}
+\mathtt{a} \arrow{rr}{\text{substitution}}
+\arrow[swap]{dr}{\text{deletion}} &  & \mathtt{b} \\
+ & \epsilon \arrow[swap]{ur}{\text{insertion}}  & 
+\end{tikzcd}
+\end{equation*}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{easylist}
 
 
 
