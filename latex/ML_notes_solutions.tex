@@ -512,6 +512,52 @@ The types are respectively called regular, context free, context sensitive and f
 
 \subsection{Algorithm-independent machine learning}
 \begin{easylist}[itemize]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The \emph{no free lunch theorem} states that using the off-training set error, and assuming equally likely target functions $F(\vect{x})$, no algorithm is better than another.
+Any statement about algorithms is a statement about the target function $F(\vect{x})$.
+
+# The \emph{ugly duckling theorem} states that no feature representation is universally ``best.'' 
+If pattern similarity is based on the number of possible shared predicates ($f_1$ OR $f_2$, etc) then any two patterns are equally similar.
+The best feature representation depends on the target function $F(\vect{x})$.
+
+# The \emph{minimum description length} is a version of Occam's razor.
+The best hypothesis $h$ (model) is the one compressing the data the most, i.e. the minimizer $h^*$ of
+\begin{equation*}
+	K(h, \D) = K(h) + K(\D \text{ using } h),
+\end{equation*}
+where $K(\cdot)$ is the Kolmogorov complexity (length of smallest computer program).
+
+# The \emph{bias-variance trade-off} is exemplified by
+\begin{equation*}
+	\E_\D \left[  \left( g(\vect{x}; \D) - F(\vect{x}) \right)^2  \right]
+	=
+	\underbrace{\E_\D \left[ g(\vect{x}; \D) - F(\vect{x})  \right]^2}_{\text{bias}^2}
+	+
+	\underbrace{\E_\D \left[  \left( g(\vect{x}; \D) - \E \left[ g(\vect{x}; \D) \right] \right)^2  \right]}_{\text{variance}},
+\end{equation*}
+and informally states that there is a trade-off between bias and variance.
+In the regression setting, the bias is the average error over many data sets, while the variance is the variability of the estimate over many data sets.
+High variance typically implies many parameters (over-fitting), while high bias implies few parameters (under-fitting).
+
+# The \emph{Jackknife} re-sampling method involves removing the $i$th data point from $\D = \{\vect{x}_1, \vect{x}_2, \dots, \vect{x}_n\}$ and computing a statistic.
+This is done for every data point, and the final result is averaged.
+
+# The \emph{bootstrap} method involves re-samling $n$ data points from $\D$ with replacement $B$ times.
+The statistic is computed $B$ times, and is then averaged.
+\begin{equation*}
+	\hat{\theta}^{*(\cdot)} = \frac{1}{B} \sum_{b=1}^{B} \hat{\theta}^{*(b)}
+	\qquad 
+	\var_{\text{boot}} [ \hat{\theta} ]
+	=
+	\frac{1}{B} \sum_{b=1}^{B}
+	\left( \hat{\theta}^{*(b)} - \hat{\theta}^{*(\cdot)} \right)^2 
+\end{equation*}
+\end{easylist}
+
+
+
+\subsection{Unsupervised learning and clustering}
+\begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# asdsdf
 \end{easylist}
@@ -1769,7 +1815,52 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 \subsubsection*{Problem 4.8}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# TODO
+# We are given that $P(\omega_i) = 1 / c$ and 
+\begin{equation*}
+	p(x \mid \omega_i) = 
+	\begin{dcases}
+	1 & 0 \leq x \leq \frac{cr}{c-1} \\
+	1 & i \leq x \leq i + 1 - \frac{cr}{c-1} \\
+	0 & \text{elsewhere}
+	\end{dcases}.
+\end{equation*}
+It helps to visualize this function.
+The first line in the function definition above is for a common, overlapping area of the probability space.
+The second line defines an area of the space where each category $\omega_i$ has a non-overlapping area of the probability density function.
+In other words: the value of a random $x$ is in an overlapping part of the probability space with probability $\frac{cr}{c-1}$, and in a non-overlapping part of the space with probability $1 - \frac{cr}{c-1}$.
+The value of $r$ is between $0$ and $\frac{c-1}{c}$.
+
+Every point $x$ has $p(x \mid \omega_i)$ equal to 0 or 1.
+To find the probability of error, we consider regions of the space with overlapping distributions, denoted $o$, and non-overlapping regions, in turn.
+The Bayes error is 
+\begin{align*}
+	P^* &= P (\text{e})  = \int P(e \mid x) p(x) \, dx \\
+	&=P (\text{e} \mid o) P (o) +
+	 P (\text{e} \mid \text{not } o) P (\text{not } o ) \\
+	 &= \frac{c-1}{c} \frac{cr}{c-1}  +
+	 0  \left(1 - \frac{cr}{c-1} \right) = r
+\end{align*}
+
+# The nearest neighbor error rate is given by equation (45) in Chapter 4, which is 
+\begin{equation*}
+	P = \int \left[1 - \sum_{i=1}^{c} P^2\left( \omega_i \mid x \right) \right]
+	p(x) \, dx.
+\end{equation*}
+We'll integrate over the non-zero regions of the probability density.
+In the non-overlapping regions, the integral becomes becomes
+\begin{equation*}
+	P_\text{non-overlapping} = \int \left[1 - \sum_{i=1}^{c} P^2\left( \omega_i \mid x \right) \right] p(x) \, dx
+	= \int \left[1 - 1 \right]
+	p(x) \, dx = 0.
+\end{equation*}
+This makes intuitive sense, this there is no error in non-overlapping regions in the limit of many data points.
+In the overlapping regions, we have
+\begin{equation*}
+P_\text{overlapping}
+= \int \left[1 - \sum_{i=1}^{c} \frac{1}{c^2} \right] p(x) \, dx
+= \int_{0}^{\frac{cr}{c-1}} \left[1 - \frac{1}{c} \right] \, dx = r = P^*.
+\end{equation*}
+In other words, the Bayes error $P^*$ equals the nearest neighbor error $P$, which both equal $r$.
 
 \end{easylist}
 
@@ -3033,11 +3124,100 @@ This provides a counterexample of the triangle inequality of a metric.
 \clearpage
 \subsection{Algorithm-independent machine learning}
 
-\subsubsection*{Problem 9.1}
+\subsubsection*{Problem 9.9}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The binomial theorem is
+\begin{equation*}
+	(x + y)^n = \sum_{r=0}^{n} \binom{n}{r} x^r y^{n-r}
+	= x^n + n x^{n-1}y + \dots + n xy^{n-1} + y^n,
+\end{equation*}
+and when we substitute $x=y=1$ the result immediately follows, since
+\begin{equation*}
+2^n = (1 + 1)^n = \sum_{r=0}^{n} \binom{n}{r} 1^r 1^{n-r} 
+= \sum_{r=0}^{n} \binom{n}{r}.
+\end{equation*}
+
+# The \emph{base case} of the inductive argument is straightforward, we have
+\begin{equation*}
+	K(1) = \sum_{r=0}^{1} \binom{1}{r} = \binom{1}{0} + \binom{1}{1} = 1 + 1 = 2.
+\end{equation*}
+
+To solve the problem of the \emph{inductive step}, we will need to use following three observations:
+\begin{equation*}
+	\binom{n}{r} = \binom{n-1}{r} + \binom{n-1}{r-1}
+	\qquad 
+	\binom{n}{n} = 1
+	\qquad 
+	\binom{n}{0} = 1
+\end{equation*}
+The first one might be familiar from the construction of Pascals triangle, and the second two are easily derived when driving out $\binom{n}{r} = n! / (n-r)! r!$.
+
+The strategy is to write out $K(n+1)$, strip off the first and last term in the sum, apply the first identity above, and then collect terms to obtain $K(n)$ twice.
+We proceed:
+\begin{align*}
+	K(n+1) &= \sum_{r=0}^{n+1} \binom{n+1}{r} \\
+	&= \binom{n+1}{0} + \sum_{r=1}^{n} \left[\binom{n+1}{r}\right] + \binom{n+1}{n+1} \\
+	&= 1 + \sum_{r=1}^{n} \left[\binom{n}{r} + \binom{n}{r-1}\right] + 1 \\
+	&= \left[1 + \sum_{r=1}^{n} \binom{n}{r}\right] +\left[ \sum_{r=1}^{n} \binom{n}{r-1} + 1\right] \\
+	&= \sum_{r=0}^{n} \binom{n}{r} + \sum_{r=0}^{n} \binom{n}{r} =
+	K(n) + K(n) = 2K(n)
+\end{align*}
+If $K(n+1) = 2K(n)$ and $K(1) = 2$, then $K(n) = 2^n$ for all $n$, which is what we wanted to prove in this problem.
 \end{easylist}
+
+
+
+
+\subsubsection*{Problem 9.23}
+We prove that the average of the leave-one-out means $\mu_{(\cdot)}$ is equivalent to the sample mean $\hat{\mu} = \bar{x}$ by substitution.
+Staring with the definition of $\mu_{(\cdot)}$, we have
+\begin{align*}
+	\mu_{(\cdot)} &= \frac{1}{n} \sum_{i=1}^{n} \mu_{(i)}
+	= \frac{1}{n} \sum_{i=1}^{n} \left[  \frac{n \bar{x} - x_i}{n-1} \right]
+	= \frac{1}{n(n-1)} \sum_{i=1}^{n} \left[  n \bar{x} - x_i \right] \\
+	&= \frac{1}{n(n-1)} \left[ n^2 \bar{x} - n \bar{x} \right]
+	=
+	\frac{n\bar{x} - \bar{x}}{n-1} = \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i.
+\end{align*}
+
+\subsubsection*{Problem 9.26}
+There is an error in equation (23) in chapter 9 in the book.
+The equation cannot possibly measure the variance (the uncertainty) of a mean value.
+To see this, consider two data sets and the results of applying equation (23):
+\begin{align*}
+	\D_1 = \left\{0,0,1, 1\right\}  & \mapsto_{(23)} 0.75 \\ 
+	\D_2 = \left\{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1\right\}  & \mapsto_{(23)} 4.75
+\end{align*}
+Clearly we are more certain about the mean of $\D_2$ than $\D_1$, but this is not reflected in the estimate of the variance of the mean.
+Equation (23) should be
+\begin{equation*}
+\hat{\sigma}^2 = \frac{1}{n (n-1)} \sum_{i=1}^{n} \left( x_i - \hat{\mu} \right)^2,
+\end{equation*}
+since
+\begin{equation*}
+	\var \left[ \bar{X} \right] = \var \left[ \frac{1}{n} \sum_{i=1}^{n}  X_i \right]
+	= \frac{1}{n^2} \sum_{i=1}^{n} \var \left[    X_i \right]
+	= \frac{1}{n} \var \left[    X \right]
+	= \frac{1}{n (n-1)} \sum_{i=1}^{n} \left( x_i - \hat{\mu} \right)^2.
+\end{equation*}
+Then $\D_1  \mapsto 0.08333$ and $\D_2  \mapsto 0.0131578$, which is more in line with what we'd expect---more observations reduce the uncertainty.
+
+Onto the problem at hand: to show that equation (26) reduces to the above, we write
+\begin{equation*}
+	\mu_{(i)} - \mu_{(\cdot)} = \left[  \frac{n \bar{x} - x_i}{n-1} \right] - \bar{x} = \frac{\bar{x} - x_i}{n-1}.
+\end{equation*}
+Squaring this and pulling $(n-1)^2$ out of the sum yields the relationship
+\begin{equation*}
+	\var \left[ \hat{\mu} \right] = \frac{n-1}{n} 
+	\sum_{i=1}^{n} \left( \mu_{(i)} - \mu_{(\cdot)} \right)^2
+	= \frac{n-1}{n} 
+	\sum_{i=1}^{n} \left( \frac{\bar{x} - x_i}{n-1} \right)^2
+	= \frac{1}{n (b-1)} 
+	\sum_{i=1}^{n} \left(\bar{x} - x_i \right)^2
+\end{equation*}
+as desired.
+
 
 
 \clearpage
@@ -3059,6 +3239,10 @@ This provides a counterexample of the triangle inequality of a metric.
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
+
+
+\clearpage
+\subsection{Unsupervised learning and clustering}
 
 \subsubsection*{Problem 6.37}
 \begin{easylist}[enumerate]
