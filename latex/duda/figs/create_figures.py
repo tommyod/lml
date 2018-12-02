@@ -142,7 +142,7 @@ for w1, w2, w3 in itertools.permutations(words, 3):
 
 # ## Problem 4.13
 
-# In[57]:
+# In[6]:
 
 
 get_ipython().run_cell_magic('time', '', '\nfrom scipy.stats import triang\n\n\ndef run_simulation(num_samples_from_each, simulations=10000, random_state=42):\n    """\n    Generate samples from each distribution. Check error rate.\n    """\n    np.random.seed(random_state)\n    \n    if num_samples_from_each == 0:\n        return 0.5\n    \n    # Set up distributions\n    x_dist = triang(loc=0, scale=1, c=1)  # This is p(x|w_1)\n    y_dist = triang(loc=0, scale=1, c=0)  # This is p(x|w_2)\n    \n    n = num_samples_from_each\n    x_value = x_dist.rvs(size=(simulations, 1))\n    \n    x_n_vals = x_dist.rvs(size=(simulations, n))\n    y_n_vals = y_dist.rvs(size=(simulations, n))\n    \n    closest_x = np.min(np.abs(x_value - x_n_vals), axis=1).reshape(-1, 1)\n    closest_y = np.min(np.abs(x_value - y_n_vals), axis=1).reshape(-1, 1)\n    \n    errors = np.argmin(np.hstack((closest_x, closest_y)), axis=1)\n    \n    return errors.sum() / simulations\n\n\nplt.figure(figsize=FIGSIZE) \n\n# Simulation\nn = [1, 2, 3, 4, 5]\nP_e_sim = [run_simulation(k, simulations=100_000) for k in n]\n\n# Analytical\nP_e = lambda n: 1/3 + 1/((n+1) * (n+3)) + 1/(2 * (n+2) * (n+3))\nP_e_true = [P_e(k) for k in n]\n\nplt.plot(n, P_e_sim, \'-o\', label=\'$P_n(e) simulated$\')\n#plt.plot(n, P_e_true, \'-o\', label=\'$P_n(e) true$\')\n\nplt.ylabel(\'Error rate\')\nplt.xlabel(\'$n$\')\nplt.legend()\nplt.tight_layout()\nplt.savefig(\'duda_ch4_prob13_sim.pdf\')')
@@ -381,7 +381,7 @@ round(np.sqrt(2)/4, 4)
 
 # ## Problem 7.4
 
-# In[47]:
+# In[15]:
 
 
 T = lambda N: 2**(N-1) * 10**(-8)
@@ -392,7 +392,7 @@ for N in [100, 1000]:
 
 # ## Problem 7.5
 
-# In[106]:
+# In[16]:
 
 
 T = lambda N: 2**(N - 2) * N * (N - 1) * 10**(-10)
@@ -420,7 +420,7 @@ plt.ylim([0, plt.ylim()[1]])
 plt.savefig('duda_ch7_prob5.pdf')
 
 
-# In[107]:
+# In[17]:
 
 
 # Problem 7.5 c)
@@ -435,7 +435,7 @@ for time in [3600 * 24, 3600 * 24 * 365, 3600 * 24 * 365 * 100]:
 
 # ## Computer exercise 7.2
 
-# In[108]:
+# In[18]:
 
 
 n = 3
@@ -447,4 +447,139 @@ for s in sorted(itertools.product(*([-1, 1] for i in range(n))), key=lambda s: n
     s = np.array(s)
     E = s.T @ W @ s
     print(s, E)
+
+
+# ## Problem 9.34
+
+# In[19]:
+
+
+from scipy.stats import norm, uniform
+
+D = np.array([0.2, 0.5, 0.4, 0.3, 0.9, 0.7, 0.6])
+
+print('MLE for normal model:', norm.fit(D))
+print('MLE for uniform model:', uniform.fit(D))
+
+plt.figure(figsize=FIGSIZE) 
+
+plt.scatter(D, np.zeros_like(D), label='Data', color='k')
+x = np.linspace(0, 1.25, num=2**10)
+
+plt.plot(x, norm(*norm.fit(D)).pdf(x), 
+         label=f'Normal. L = {round(np.log(norm(*norm.fit(D)).pdf(D)).sum(), 3)}')
+
+plt.plot(x, uniform(*uniform.fit(D)).pdf(x), 
+         label=f'Uniform. L = {round(np.log(uniform(*uniform.fit(D)).pdf(D)).sum(), 3)}')
+
+plt.ylabel('$P(x)$')
+plt.xlabel('$x$')
+plt.legend()
+plt.tight_layout()
+plt.savefig('duda_ch9_prob34.pdf')
+
+
+# ## Problem 9.37
+
+# In[139]:
+
+
+from scipy.stats import binom
+
+plt.figure(figsize=FIGSIZE)
+alpha = 0.05  # Confidence interval
+
+for n in [10]:
+    
+    to_plot_high = []
+    to_plot_low = []
+
+    for k in range(0, n + 1)
+        p = p / k
+
+        # Use the ppf (Percent point function)
+        # (inverse cumulative probability density function)
+        # to find the limits of \hat{p} given a true value of p
+        if p == 0:
+            low_p_hat = 0
+        else:
+            low_p_hat = binom(n=n, p=p).ppf(alpha/2) / n
+            
+        if p == 1:
+            high_p_hat = 1
+        else:
+            high_p_hat = binom(n=n, p=p).ppf(1 - alpha/2) / n
+            
+        # Print information (debugging)
+        # print(p, low_p_hat)
+        # print(f'When n={n} and p={p}, the lower bound is {low_p_hat}.')
+
+        to_plot_high.append((low_p_hat, p))
+        to_plot_low.append((high_p_hat, p))
+
+    plt.plot([x for (x, y) in to_plot_high], [y for (x, y) in to_plot_high], 
+             label=f'n = {n}', 
+             color=plt.get_cmap('hot')(0.1 + np.sqrt(n) / 75))
+
+    plt.plot([x for (x, y) in to_plot_low], [y for (x, y) in to_plot_low],
+            color=plt.get_cmap('hot')(0.1 + np.sqrt(n) / 75))
+    
+plt.ylabel('$p$')
+plt.xlabel('$\hat{p}$')
+plt.legend(fontsize=8)
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(f'duda_ch9_prob37_k{k}.pdf')
+
+
+# In[140]:
+
+
+from scipy.stats import binom
+
+plt.figure(figsize=FIGSIZE)
+alpha = 0.05  # Confidence interval
+
+for n in [10, 15, 20, 30, 50, 100, 250, 1000]:
+    
+    to_plot_high = []
+    to_plot_low = []
+
+    k = 15
+    for p in range(0, k + 1):
+        p = p / k
+
+        # Use the ppf (Percent point function)
+        # (inverse cumulative probability density function)
+        # to find the limits of \hat{p} given a true value of p
+        if p == 0:
+            low_p_hat = 0
+        else:
+            low_p_hat = binom(n=n, p=p).ppf(alpha/2) / n
+            
+        if p == 1:
+            high_p_hat = 1
+        else:
+            high_p_hat = binom(n=n, p=p).ppf(1 - alpha/2) / n
+            
+        # Print information (debugging)
+        # print(p, low_p_hat)
+        # print(f'When n={n} and p={p}, the lower bound is {low_p_hat}.')
+
+        to_plot_high.append((low_p_hat, p))
+        to_plot_low.append((high_p_hat, p))
+
+    plt.plot([x for (x, y) in to_plot_high], [y for (x, y) in to_plot_high], 
+             label=f'n = {n}', 
+             color=plt.get_cmap('hot')(0.1 + np.sqrt(n) / 75))
+
+    plt.plot([x for (x, y) in to_plot_low], [y for (x, y) in to_plot_low],
+            color=plt.get_cmap('hot')(0.1 + np.sqrt(n) / 75))
+    
+plt.ylabel('$p$')
+plt.xlabel('$\hat{p}$')
+plt.legend(fontsize=8)
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(f'duda_ch9_prob37_k{k}.pdf')
 

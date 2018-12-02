@@ -29,9 +29,8 @@
 % Package setup
 % -------------------------------------------------
 
-\newcommand{\Title}{Learning Machine Learning}
-\newcommand{\Subtitle}{A summary of main ideas and concepts}
-\newcommand{\Author}{tommyod}
+\newcommand{\Title}{Solutions to ``Pattern Classification'' by Duda et al.}
+\newcommand{\Author}{\texttt{tommyod} @ github}
 \newcommand{\listSpace}{-0.5em}% Global list space
 
 \title{\Title}
@@ -81,14 +80,21 @@
 % Document start
 % -------------------------------------------------
 \begin{document}
-	
 \maketitle
 \begin{abstract}
 This document contains some notes and solutions to the book ``Pattern Classification'' by Duda et al.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.35\linewidth]{figs/duda}
+	\caption{The front cover of \cite{duda_pattern_2000}.}
+	\label{fig:duda1}
+\end{figure}
 \end{abstract}
 
+\clearpage
 \tableofcontents
-
+\clearpage
 \section{Notes from ``Pattern Classification''}
 \setcounter{subsection}{1}
 \subsection{Bayesian Decision Theory}
@@ -513,21 +519,21 @@ The types are respectively called regular, context free, context sensitive and f
 \subsection{Algorithm-independent machine learning}
 \begin{easylist}[itemize]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The \emph{no free lunch theorem} states that using the off-training set error, and assuming equally likely target functions $F(\vect{x})$, no algorithm is better than another.
+# The \emph{no free lunch theorem} states that using the off-training set error, and assuming equally likely target functions $F(\vect{x})$, no algorithm is universally superior.
 Any statement about algorithms is a statement about the target function $F(\vect{x})$.
 
-# The \emph{ugly duckling theorem} states that no feature representation is universally ``best.'' 
+# The \emph{ugly duckling theorem} states that no feature representation is universally superior. 
 If pattern similarity is based on the number of possible shared predicates ($f_1$ OR $f_2$, etc) then any two patterns are equally similar.
-The best feature representation depends on the target function $F(\vect{x})$.
+The best feature representation consequently depends on the target function $F(\vect{x})$.
 
 # The \emph{minimum description length} is a version of Occam's razor.
-The best hypothesis $h$ (model) is the one compressing the data the most, i.e. the minimizer $h^*$ of
+In this framework, the best hypothesis $h$ (model) is the one compressing the data the most, i.e. the minimizer $h^*$ of
 \begin{equation*}
 	K(h, \D) = K(h) + K(\D \text{ using } h),
 \end{equation*}
 where $K(\cdot)$ is the Kolmogorov complexity (length of smallest computer program).
 
-# The \emph{bias-variance trade-off} is exemplified by
+# The \emph{bias-variance trade-off} is exemplified by the equation
 \begin{equation*}
 	\E_\D \left[  \left( g(\vect{x}; \D) - F(\vect{x}) \right)^2  \right]
 	=
@@ -535,12 +541,13 @@ where $K(\cdot)$ is the Kolmogorov complexity (length of smallest computer progr
 	+
 	\underbrace{\E_\D \left[  \left( g(\vect{x}; \D) - \E \left[ g(\vect{x}; \D) \right] \right)^2  \right]}_{\text{variance}},
 \end{equation*}
-and informally states that there is a trade-off between bias and variance.
+and informally states that there is always a trade-off between bias and variance.
 In the regression setting, the bias is the average error over many data sets, while the variance is the variability of the estimate over many data sets.
 High variance typically implies many parameters (over-fitting), while high bias implies few parameters (under-fitting).
 
 # The \emph{Jackknife} re-sampling method involves removing the $i$th data point from $\D = \{\vect{x}_1, \vect{x}_2, \dots, \vect{x}_n\}$ and computing a statistic.
 This is done for every data point, and the final result is averaged.
+From this the variance of the statistic may be assessed. 
 
 # The \emph{bootstrap} method involves re-samling $n$ data points from $\D$ with replacement $B$ times.
 The statistic is computed $B$ times, and is then averaged.
@@ -552,6 +559,46 @@ The statistic is computed $B$ times, and is then averaged.
 	\frac{1}{B} \sum_{b=1}^{B}
 	\left( \hat{\theta}^{*(b)} - \hat{\theta}^{*(\cdot)} \right)^2 
 \end{equation*}
+
+
+# \emph{Bagging} consists of taking an average over model predictions.
+\emph{Boosting} entails using the result of model $h^{n}$ to train model $h^{n+1}$.
+Informally, the next model specializes on the data in $\D$ which the sequence of models so far has not performed well on.
+
+## Adaptive Boosting (\emph{AdaBoost}) is a well known boosting algorithm.
+It samples data $\vect{x}_i$ using probability weights $w_i$.
+If a model $h^n$ does a poor job, the associated weights $w_i^{n+1}$ are increased exponentially. 
+This causes exponential error decay on training data.
+
+# \emph{Learning with queries} involves the model choosing the next data point to learn from.
+It assumes the existence of an oracle which can give the correct answer to any input, but using this oracle might come with a cost.
+Efficient learning involves choosing points where the classifier is uncertain, i.e. where $P(\omega_1 \mid \vect{x}) \approx P(\omega_2 \mid \vect{x})$.
+
+# \emph{Maximum-likelihood model comparison} picks the maximum of
+\begin{equation*}
+	P(\D \mid h_i ) \simeq 
+	\underbrace{P(\D \mid \hat{\vect{\theta}}, h_i)}_{\text{best-fit likelihood}}
+	\underbrace{P(\hat{\vect{\theta}} \mid h_i) \Delta \vect{\theta}}_{\text{Occam factor}}
+	= 
+	P(\D \mid \hat{\vect{\theta}}, h_i)
+	\frac{\Delta \vect{\theta}}{\Delta^0 \vect{\theta}},
+\end{equation*}
+where $\Delta \vect{\theta}$ is the volume of the possible parameter space given the data $\D$, and $\Delta^0 \vect{\theta}$ is the prior volume of the possible parameter before seeing data.
+After some simplifications, this becomes a two step process: (1) compute maximum likelihood estimate $\hat{\vect{\theta}}$ from the data, then (2) compute the likelihood value given $\hat{\vect{\theta}}$.
+
+# Mixture models can be used to combine classifiers using discriminant functions.
+The final discriminant function is $g = \sum_{i=1}^{k} w_i g_i(\vect{x}, \vect{\theta}_i)$, and an underlying mixture model of the following form is assumed:
+\begin{equation*}
+	p(\vect{y} \mid \vect{x}, \vect{\Theta}^0)
+	= \sum_{r=1}^{k}
+	\underbrace{P(r \mid \vect{x}, \vect{\theta}_0^0 )}_{\text{prob. of model }r}
+	p(\vect{y} \mid \vect{x}, \vect{\theta}_r^0 )
+\end{equation*}
+
+
+
+
+
 \end{easylist}
 
 
@@ -559,7 +606,7 @@ The statistic is computed $B$ times, and is then averaged.
 \subsection{Unsupervised learning and clustering}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# asdsdf
+	# TODO :)
 \end{easylist}
 
 
@@ -570,15 +617,6 @@ The statistic is computed $B$ times, and is then averaged.
 
 This section contains solutions to problems in ``Pattern Classification'' by Duda et al.
 There are approximately 8 solved problems from each chapter.
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=0.25\linewidth]{figs/duda}
-\caption{The front cover of \cite{duda_pattern_2000}.}
-\label{fig:duda}
-\end{figure}
-
-
 
 \setcounter{subsection}{1}
 \subsection{Bayesian Decision Theory}
@@ -3168,6 +3206,79 @@ If $K(n+1) = 2K(n)$ and $K(1) = 2$, then $K(n) = 2^n$ for all $n$, which is what
 
 
 
+\subsubsection*{Problem 9.13}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# The $n$ length string \texttt{010110111011110...} has the pattern \texttt{01-011-0111-01111}, which may be generated using a for-loop.
+To generate $n$ bits, we need a counter $c$ keeping track of the number of \texttt{1}s. 
+For instance, to generate the $2 + 3 + 4 + 5 = 14$ bit string \texttt{01-011-0111-01111} the counter must go to $4$.
+Similarly, to generate the $2 + 3 + 4 + 5  + 6= 20$ bit string \texttt{01-011-0111-01111-011111} the counter must go to $5$.
+
+More generally, to generate $n$ the counter $c$ must go to approximately 
+\begin{equation*}
+	1 + 2 + 3 + \dots + c = n = \frac{c(c-1)}{2}.
+\end{equation*}
+Therefore, we need a counter going to $\sim \sqrt{n}$ to generate a $n$ bit string.
+Storing $c$ requires $\log_2 c$ bits, so the complexity is $O \left( \log_2 \sqrt{n} \right)$.
+
+# We must iterate over $\sim n/2$ zeros, then output a \texttt{1}, then iterate over $\sim n/2$ zeros again.
+To do this, we need a counter going to $n$, storing this requires $\log_2 n$ bits, so the Kolmogorov complexity is $O \left( \log_2 n \right)$.
+
+# The complexity is $O(1)$, since there exists programs of finite size which will yield any arbitrarily large number of consecutive digits of $e$.
+This is the same reason as why $\pi$ is $O(1)$, as explained in section 9.2.3 in \cite{duda_pattern_2000}.
+
+# Also constant, for the same reason as the previous question.
+
+# Assuming a finite size program which generates the digits of $\pi$ one-by-one exists, we use a counter to substitute every 100th digit of $\pi$ in the base-2 number system to a \texttt{1}.
+The counter resets after hitting 100, so it's storage is constant.
+The total complexity is $O(1)$, i.e. constant.
+
+# Same as in the previous question, but storing the counter requires $\log_2 n$ bits.
+ Therefore the complexity is $O \left( \log_2 n \right)$.
+\end{easylist}
+
+
+\subsubsection*{Problem 9.18}
+We use $\var\left[ X \right] = \E\left[ (X -  \E\left[X \right])^2 \right] = \E \left[X^2\right] + \E \left[X\right]^2$, solve for $\E \left[X^2\right]$ and substitute $X \mapsto g(\vect{x}; \D) -F (\vect{x})$.
+Doing this, we observe that
+\begin{align*}
+	\E \left[X^2\right] 
+	&= \E \left[X\right]^2 +  \var\left[ X \right] 
+	\\
+	\E \left[\left(  g(\vect{x}; \D) -F (\vect{x}) \right)^2\right] 
+	&= 
+	\underbrace{\E \left[g(\vect{x}; \D) - F (\vect{x}) \right]^2}_{\text{bias}^2} +  
+	\underbrace{\var\left[ g(\vect{x}; \D) -F (\vect{x}) \right] }_{\text{variance}}.
+\end{align*}
+The last term for the variance is not immediately recognizable as the term given in the book, but we observe that
+\begin{align*}
+	\var\left[ g(\vect{x}; \D) -F (\vect{x}) \right]
+	& =
+	\E \left[ \left( g(\vect{x}; \D) -F (\vect{x}) - \E \left[ g(\vect{x}; \D) -F (\vect{x}) \right] \right)^2 \right] \\
+	&= 
+	\E \left[ \left( g(\vect{x}; \D)  - \E \left[ g(\vect{x}; \D) \right] \right)^2 \right]
+\end{align*}
+since $\E \left[ F (\vect{x}) \right] = F (\vect{x})$.
+In other words,  $F (\vect{x})$ is the true function and it's expected value is itself.
+Combining the results above, we have
+\begin{equation*}
+	\E \left[\left(  g(\vect{x}; \D) -F (\vect{x}) \right)^2\right] 
+	= 
+	\underbrace{\E \left[g(\vect{x}; \D) - F (\vect{x}) \right]^2}_{\text{bias}^2} +  
+	\underbrace{\E \left[ \left( g(\vect{x}; \D)  - \E \left[ g(\vect{x}; \D) \right] \right)^2 \right]}_{\text{variance}}
+\end{equation*}
+as stated.
+
+The \emph{bias} can be negative, for instance if the estimate is much lower in value than the true function. 
+However, the \emph{squared bias} is always non-negative.
+The \emph{variance} is non-negative, since
+\begin{equation*}
+	\var\left[ X \right] = \E\left[ (X -  \E\left[X \right])^2 \right]
+\end{equation*}
+by definition, and the squared term is always non-negative.
+
+
+
 
 \subsubsection*{Problem 9.23}
 We prove that the average of the leave-one-out means $\mu_{(\cdot)}$ is equivalent to the sample mean $\hat{\mu} = \bar{x}$ by substitution.
@@ -3219,6 +3330,71 @@ Squaring this and pulling $(n-1)^2$ out of the sum yields the relationship
 as desired.
 
 
+\subsubsection*{Problem 9.34}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# We find the maximum likelihood estimate for $x_\ell$ and $x_u$ to be
+	\begin{equation*}
+		\hat{x}_\ell = \min \D = 0.2 \qquad 
+		\hat{x}_u = \max \D = 0.9.
+	\end{equation*}
+	Noe that these maximum likelihood estimates are \emph{biased}.
+	The value of $\hat{x}_\ell$ will be greater than the true value of $x_\ell$, and the value of $\hat{x}_u$ will be smaller than the true value of $x_u$.
+	The unbiased estimates are
+	\begin{align*}
+		\hat{x}_u &= \min \D + \frac{n}{n-1} \left( \max \D - \min \D \right) \\
+		\hat{x}_\ell &= \min \D - \frac{1}{n-1} \left( \max \D - \min \D \right)
+	\end{align*}
+	
+	# The estimates are $\hat{\mu} = 0.514$ and $\hat{\sigma} = 0.223$, and the maximum likelihood estimate of $\sigma$ is biased.
+	
+	# The problem states that there is no prior reason to assume one model over the other, so $P(h_1) = P(h_2) = 0.5$.
+	We will not make any assumptions on the range of parameter values in $\vect{\theta}$, so the term $p(\hat{\vect{\theta}} \mid h_i) \Delta \vect{\theta}$ in equation (42) in the book is set to 1.
+	What's left is to evaluate $\ln P(\D \mid \hat{\vect{\theta}}, h_i)$, which becomes
+	\begin{align*}
+		\ln P(\D \mid \hat{\vect{\theta}}, h_1) &= 
+		\sum_{i=1}^{n} \ln p(x_i | \hat{x}_\ell = 0.2, \hat{x}_u = 0.9) = \left(\frac{1}{0.7}\right)^{7} \approx 2.497 \\
+		\ln P(\D \mid \hat{\vect{\theta}}, h_2) &= 
+		\sum_{i=1}^{n} \ln p(x_i | \hat{\mu} = 0.514, \hat{\sigma} = 0.223) \approx 0.567
+	\end{align*}
+\end{easylist}
+	
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.65\linewidth]{figs/duda_ch9_prob34}
+\caption{Plot of data and models for problem 9.34.}
+\label{fig:duda_ch9_prob34}
+\end{figure}
+
+
+\subsubsection*{Problem 9.37}
+The plot for this problem found in figure \ref{fig:duda_ch9_prob37_k50}.
+To create the plot, and outer loop for values of $n$ was used.
+For each value of $n$, a true value of $p$ was set.
+Then given $(n, p)$, a range of value for a 95 \% confidence interval was computed.
+These values were stored and plotted.
+Notice that the graph is somewhat jagged when $n$ is small because of the discrete structure of the problem.
+	
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.7\linewidth]{figs/duda_ch9_prob37_k15}
+\caption{Plot associated with problem 9.37.}
+\label{fig:duda_ch9_prob37_k50}
+\end{figure}
+
+\subsubsection*{Problem 9.40}
+We wish to maximize the likelihood $P(\D \mid \theta) = P(k \mid p)$, where the model is given by the binomial distribution 
+$P(k \mid p) = \binom{n}{k} p^k (1-p)^{n-k}$.
+The log-likelihood becomes
+\begin{equation*}
+	\ln P(k \mid p) = \ln \binom{n}{k} + k \ln p + (n-k) \ln (1-p),
+\end{equation*}
+and differentiating with respect to $p$ and setting this to zero yields
+\begin{equation*}
+\frac{\partial \ln P(k \mid p)}{\partial p} = \frac{k}{p} + \frac{n-k}{p-1} = 0.
+\end{equation*}
+The maximum likelihood is the $\hat{p}$ such that the above expression is zero, and solving for $p$ yields $\hat{p} = k / n$ as stated in the problem text.
+
 
 \clearpage
 \subsubsection*{Problem X.YY}
@@ -3253,26 +3429,8 @@ as desired.
 
 
 
-\clearpage
-\section{Notes from ``Pattern Recognition and Machine Learning''}
-\subsection{test}
-
-\clearpage
-\section{Solutions to ``Pattern Recognition and Machine Learning''}
-
-This section contains solutions to problems in ``Pattern Recognition and Machine Learning'' by Christopher M. Bishop.
-There are approximately TODO solved problems from each chapter.
-
-\begin{figure}[ht!]
-	\centering
-	\includegraphics[width=0.25\linewidth]{figs/bishop.jpg}
-	\caption{The front cover of \cite{bishop_pattern_2011}.}
-	\label{fig:bishop}
-\end{figure}
-
-
 \bibliographystyle{apalike}%alpha, apalike is also good
-\bibliography{bibliography}
+\bibliography{../bibliography}
 
 
 \end{document}
