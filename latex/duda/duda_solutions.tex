@@ -82,11 +82,25 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-This document contains some notes and solutions to the book ``Pattern Classification'' by Duda et al.
+	
+This document contains solutions to selected exercises from the book ``Pattern Recognition'' by Richard O. Duda, Peter E. Hart and David G. Stork.
+Although it was written in 2001, the second edition has truly stood the test of time---it's a much-cited, well-written introductory text to the exciting field of \emph{pattern recognition}(or simply \emph{machine learning}).
+At the time of writing, the book has close to 40 000 citations according to Google.
+
+While short chapter summaries are included in this document, they are not intended to substitute the book in any way.
+The summaries will largely be meaningless without the book, which I recommend buying if you're interested in the subject.
+
+The solutions and notes were typeset in \LaTeX{} to facilitate my own learning process.
+Machine learning has rightfully garnered considerable attention in recent years, and while many online resources are worthwhile it seems reasonable to favor books when attempting to learn the material thoroughly. 
+
+I hope you find my solutions helpful if you are stuck. 
+Remember to make an attempt at solving the problems yourself before peeking.
+More likely than not, the solutions can be improved by a reader such as yourself. 
+If you would like to contribute, please submit a pull request at \url{https://github.com/tommyod/lml/}.
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.35\linewidth]{figs/duda}
+	\includegraphics[width=0.30\linewidth]{figs/duda}
 	\caption{The front cover of \cite{duda_pattern_2000}.}
 	\label{fig:duda1}
 \end{figure}
@@ -3353,9 +3367,9 @@ as desired.
 	What's left is to evaluate $\ln P(\D \mid \hat{\vect{\theta}}, h_i)$, which becomes
 	\begin{align*}
 		\ln P(\D \mid \hat{\vect{\theta}}, h_1) &= 
-		\sum_{i=1}^{n} \ln p(x_i | \hat{x}_\ell = 0.2, \hat{x}_u = 0.9) = \left(\frac{1}{0.7}\right)^{7} \approx 2.497 \\
+		\sum_{i=1}^{n} \ln p(x_i \mid  \hat{x}_\ell = 0.2, \hat{x}_u = 0.9) = \left(\frac{1}{0.7}\right)^{7} \approx 2.497 \\
 		\ln P(\D \mid \hat{\vect{\theta}}, h_2) &= 
-		\sum_{i=1}^{n} \ln p(x_i | \hat{\mu} = 0.514, \hat{\sigma} = 0.223) \approx 0.567
+		\sum_{i=1}^{n} \ln p(x_i \mid  \hat{\mu} = 0.514, \hat{\sigma} = 0.223) \approx 0.567
 	\end{align*}
 \end{easylist}
 	
@@ -3397,33 +3411,82 @@ The maximum likelihood is the $\hat{p}$ such that the above expression is zero, 
 
 
 \clearpage
-\subsubsection*{Problem X.YY}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-
-\subsubsection*{Problem 6.26}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-\subsubsection*{Problem 6.31}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-
-\clearpage
 \subsection{Unsupervised learning and clustering}
 
-\subsubsection*{Problem 6.37}
+\subsubsection*{Problem 10.14}
+From the solution to problem 6.39, we know that the derivative of $\vect{x}^T \vect{A} \vect{x}$ is $(\vect{A} + \vect{A}^T)\vect{x}$.
+To find the minimizer, we differentiate with respect to $\vect{x}$:
+\begin{equation*}
+	\frac{\partial J(\vect{x})}{\partial \vect{x}} = \sum_{k=1}^{m}
+	\left( \vect{\Sigma}^{-1} + \vect{\Sigma}^{-T} \right)
+	\left( \vect{x}_k - \vect{x}^* \right) = \vect{0}.
+\end{equation*}
+Since $\vect{\Sigma}$ is non-singular, we require that 
+\begin{equation*}
+	\sum_{k=1}^{m}
+	\left( \vect{x}_k - \vect{x}^* \right) = \vect{0}
+	\quad 
+	\Leftrightarrow
+	\quad 
+	\sum_{k=1}^{m}
+	 \vect{x}_k  = m \vect{x}^*.
+\end{equation*}
+Dividing by $m$, we see that $\vect{x}^* = \bar{\vect{x}^*}$, which is what we wanted to demonstrate.
+
+
+
+
+
+
+\subsubsection*{Problem 10.16}
+A distance computation between two $d$-dimensional vectors is $O(d)$.
+Pseudocode makes the runtime calculation evident.
+\begin{Verbatim}
+for each iteration (T):
+  for each data point (n):
+    for each cluster center (c):
+      compute distance dist(x_j, mu_i) (d)
+\end{Verbatim}
+The algorithm has runtime $O(T) \cdot O(n) \cdot O(c) \cdot O(d) = O(Tncd)$.
+
+
+
+
+
+
+\subsubsection*{Problem 10.32}
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# An example of $\vect{x}$ when $d=3$ is $(1, 1, -1)$.
+Let's study the similarity measure under the assumption that $x_i, y_i \in \left\{-1, 1\right\}$.
+From the definition, we have that
+\begin{equation*}
+	s(\vect{x}, \vect{y}) = \frac{\vect{x}^T \vect{y}}{\norm{\vect{x}} \norm{\vect{y}}}
+	=
+	\frac{\sum_{i=1}^{d} x_i y_i}{\sqrt{d} \sqrt{d}}
+	=
+	\frac{\sum_{i=1}^{d} \left[ x_i = y_i \right] - \sum_{i=1}^{d} \left[ x_i \neq y_i \right]}{d},
+\end{equation*}
+where $\left[ \, \cdot \,  \right]$ is the Iverson bracket, returning 1 if the condition in the bracket is true, and 0 if it's false.
+An interpretation is therefore
+\begin{equation*}
+s(\vect{x}, \vect{y}) 
+= 
+\frac{\sum_{i=1}^{d} \left[ x_i = y_i \right] - \sum_{i=1}^{d} \left[ x_i \neq y_i \right]}{d}
+= \frac{\text{num equal} - \text{num different}}{\text{total number}}.
+\end{equation*}
+
+# This is shown using some algebra, we have
+\begin{align*}
+	\norm{\vect{x} - \vect{y}}^2 &= \sum_{i=1}^{d} (x_i - y_i)^2 =
+	\sum_{i=1}^{d} x_i^2 
+	-
+	\sum_{i=1}^{d} 2x_i y_i^2
+	+ 
+	\sum_{i=1}^{d}  y_i^2 \\
+	&= d - 2 \vect{x}^T \vect{y} -d = 2d - 2d \frac{\vect{x}^T \vect{y}}{d}
+	= 2s (1 - s(\vect{x}, \vect{y}) ).
+\end{align*}
 \end{easylist}
 
 
