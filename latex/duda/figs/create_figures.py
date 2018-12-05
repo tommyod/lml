@@ -583,3 +583,30 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig(f'duda_ch9_prob37_k{k}.pdf')
 
+
+# ## Problem 10.12
+
+# In[16]:
+
+
+mu1, sigma1= 0, 1
+mu2, sigma2= 0, 1/2
+
+dist1 = stats.norm(loc=mu1, scale=sigma1)
+dist2 = stats.norm(loc=mu2, scale=sigma2)
+
+
+x = np.linspace(-3, 3, num=2**8)
+
+plt.figure(figsize=FIGSIZE)
+plt.plot(x, dist1.pdf(x), label='$N(0, 1)$')
+plt.plot(x, dist2.pdf(x), label='$N(0, 1/2)$')
+plt.axvline(x=np.log(2), color='k', ls='--', label='$ln 2$')
+plt.axvline(x=-np.log(2), color='k', ls='--', label='$-ln 2$')
+#plt.scatter([x_star], [0], label='$x^*$', marker='|')
+#plt.plot(x, bayes_error, '--', label='$P(error)$')
+plt.legend()
+plt.grid()
+plt.tight_layout()
+plt.savefig('duda_ch10_prob12.pdf')
+

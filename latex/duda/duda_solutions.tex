@@ -2746,7 +2746,7 @@ The \emph{Kolmogorov-Arnold representation theorem} guarantees that both of thes
 	Let $f(\vect{x}) = \vect{x}^T \vect{H} \vect{x}$, where $\vect{H}$ is symmetric.
 	We have
 	\begin{equation*}
-		f(\vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+		f(vect{x} + \delta \vect{x}) - f( \vect{x}) = 
 		\left( \delta \vect{x} \right)^T \vect{H} \vect{x} + 
 		\vect{x}^T \vect{H} \left( \delta \vect{x} \right)
 		+ O \left( \norm{ \delta \vect{x} }^2 \right),
@@ -3412,6 +3412,347 @@ The maximum likelihood is the $\hat{p}$ such that the above expression is zero, 
 
 \clearpage
 \subsection{Unsupervised learning and clustering}
+
+
+\subsubsection*{Problem 10.7}
+The log-likelihood is given by
+\begin{equation*}
+	\ell(\alpha) = \sum_{k=1}^{n} \ln p \left( \vect{x}_k \mid \alpha \right)
+	= \sum_{k=1}^{n} \ln  \left( 
+	\sum_{j=1}^{c} p \left( \vect{x}_k \mid \omega_j,  \alpha \right) P(\omega_j)
+	 \right).
+\end{equation*}
+We use the first definition, differentiate with respect to alpha, and then expand the sum and differentiate through it with respect to $\alpha$.
+We obtain
+\begin{align*}
+	\frac{\partial \ell(\alpha)}{ \partial \alpha}
+	&= \sum_{k=1}^{n} \frac{1}{p \left( \vect{x}_k \mid \alpha \right)}
+	\frac{\partial}{\partial \alpha}
+	 p \left( \vect{x}_k \mid \alpha \right) 	\\
+	&= \sum_{k=1}^{n} \frac{1}{p \left( \vect{x}_k \mid \alpha \right)}
+	\frac{\partial}{\partial \alpha}
+	\left( \sum_{j=1}^{c} p \left( \vect{x}_k \mid \omega_j,  \alpha \right) P(\omega_j) \right) \tag{by definition}	
+	\\
+	&= \sum_{k=1}^{n} \frac{1}{p \left( \vect{x}_k \mid \alpha \right)}
+	 \sum_{j=1}^{c} P(\omega_j) \frac{\partial p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha} 
+	 \\
+	 &= \sum_{k=1}^{n} \sum_{j=1}^{c} \frac{P(\omega_j)}{p \left( \vect{x}_k \mid \alpha \right)}
+	   \frac{\partial p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha} . \tag{constant into sum}
+\end{align*}
+Since $(\ln x)' = x' / x$ by the chain rule of calculus, the equation $x' = x (\ln x)'$ holds too.
+Using this on the last factor, we obtain
+\begin{equation*}
+	\sum_{k=1}^{n} \sum_{j=1}^{c} \frac{P(\omega_j)}{p \left( \vect{x}_k \mid \alpha \right)}
+	\frac{\partial p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha}
+	=
+	\sum_{k=1}^{n} \sum_{j=1}^{c} \frac{P(\omega_j)}{p \left( \vect{x}_k \mid \alpha \right)} 
+	p \left( \vect{x}_k \mid \omega_j,  \alpha \right)
+	\frac{\partial \ln p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha}.
+\end{equation*}
+As stated in the problem, the first two factors may be simplified using Bayes theorem, since
+\begin{equation*}
+	P( \omega_j \mid \vect{x}_k, \alpha) 
+	= 
+	\frac{p(\vect{x}_k \mid  \omega_j, \alpha) P(\omega_j \mid \alpha)}{p( \vect{x}_k,\mid \alpha)}
+	= 
+	\frac{p(\vect{x}_k \mid  \omega_j, \alpha) P(\omega_j)}{p( \vect{x}_k,\mid \alpha)}
+\end{equation*}
+when $\omega_j$ is independent of $\omega_j$.
+We have completed the problem.
+Applying the simplification due to Bayes theorem yields the desired result.
+
+
+\subsubsection*{Problem 10.11}
+\begin{easylist}[enumerate]
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Solving this problem requires knowledge of matrix calculus.
+We will differentiate the second term, and then the first term, and finally combine the results.
+The reason we start with the second term is that is is easier.
+
+\textbf{Second term}
+Let's start by differentiating $\vect{x}^T \vect{A} \vect{x}$ with respect to an element $A_{ij}$.
+This is functionally equivalent to the second term in the problem statement, and solving this solves the original problem.
+If $\vect{A}$ is symmetric, then
+\begin{equation*}
+	\frac{\partial \vect{x}^T \vect{A} \vect{x}}{\partial A_{ij}}
+	=
+	\frac{\partial \sum_i \sum_j x_i A_{ij} x_j}{\partial A_{ij}}
+	=
+	\begin{rcases}
+		\begin{dcases}
+		x_i x_j & \text{ if } i = j \\
+		2x_i x_j & \text{ if } i \neq j
+		\end{dcases}
+	\end{rcases}
+	= \left(2 - \delta_{ij}\right) x_i x_j.
+\end{equation*}
+
+\textbf{First term}
+Let's now consider differentiating $f(\vect{A}) = \ln \left( \det \vect{A} \right)$ with respect to $A_{ij}$.
+This is functionally equivalent to the first term in the problem statement.
+We'll make use of Jacobi's formula\footnote{See Wikipedia for details: \url{https://en.wikipedia.org/wiki/Jacobi's_formula}}, which is given by
+\begin{equation*}
+	\frac{d}{dt} \det \vect{A}(t) = \operatorname{tr} \left (\operatorname{adj}(\vect{A}(t)) \, \frac{d\vect{A}(t)}{dt}\right ),
+\end{equation*}
+where $\operatorname{tr}(\vect{A})$ is the trace of $\vect{A}$ and $\operatorname{adj}(\vect{A})$ is the adjugate of $\vect{A}$.
+
+We differentiate using the chain rule and apply Jacobi's formula to obtain
+\begin{equation*}
+	\frac{\partial \ln \left( \det \vect{A} \right)}{\partial A_{ij}}
+	=
+	\frac{1}{\det \vect{A}}
+	\frac{\partial \det \vect{A} }{\partial A_{ij}}
+	=
+	\frac{1}{\det \vect{A}}
+	\operatorname{tr} \left(  \operatorname{adj}(\vect{A}) \, \frac{\partial \vect{A}}{\partial A_{ij}} \right).
+\end{equation*}
+Now comes the part where we consider the diagonal elements $i=j$ and off-diagonal elements $i \neq j$ separately.
+We carry out the differentiation $d\vect{A} / \partial A_{ij}$ and obtain
+\begin{equation*}
+\frac{1}{\det \vect{A}}
+\operatorname{tr} \left(  \operatorname{adj}(\vect{A}) \, \frac{\partial \vect{A}}{\partial A_{ij}} \right)
+=
+\begin{rcases}
+\begin{dcases}
+\frac{1}{\det \vect{A}}
+\operatorname{tr} \left(  \operatorname{adj}(\vect{A}) \, \left[  \vect{E}_{ii} \right] \right) & \text{ if } i = j \\
+\frac{1}{\det \vect{A}}
+\operatorname{tr} \left(  \operatorname{adj}(\vect{A}) \, \left[  \vect{E}_{ij} + \vect{E}_{ji} \right] \right) & \text{ if } i \neq j
+\end{dcases}
+\end{rcases},
+\end{equation*}
+where by $\vect{E}_{ij}$ we mean a matrix of zero every expect in the $ij$th position.
+We do not show it here, but by the definition of $\vect{E}_{ij}$ and the trace, it should not be too hard to see that $\operatorname{tr} \left(  \vect{A} \,  \vect{E}_{ij}  \right) = A_{ji}$.
+Using the above in combination with the fact that $\operatorname{adj}(\vect{A})_{ji} / \det \vect{A} = \vect{A}^{-1}_{ji}$ and the fact that the inverse of a symmetric matrix is symmetric, we observe that the above expression may be written using the Kroneker delta symbol $\delta_{ij}$ as
+\begin{equation*}
+\begin{rcases}
+\begin{dcases}
+\frac{\operatorname{adj}(\vect{A})_{ii}}{\det \vect{A}}
+    & \text{ if } i = j \\
+\frac{\operatorname{adj}(\vect{A})_{ji}}{\det \vect{A}}
+ +
+ \frac{\operatorname{adj}(\vect{A})_{ij}}{\det \vect{A}}  & \text{ if } i \neq j
+\end{dcases}
+\end{rcases}
+=
+\begin{rcases}
+\begin{dcases}
+\vect{A}^{-1}_{ii}  & \text{ if } i = j \\
+\vect{A}^{-1}_{ji} + \vect{A}^{-1}_{ij}   & \text{ if } i \neq j
+\end{dcases}
+\end{rcases}
+=
+(2 - \delta{ij}) \vect{A}^{-1}_{ij}.
+\end{equation*}
+\textbf{Putting it all together}
+In conclusion, we have showed that
+\begin{equation*}
+	\frac{\partial \vect{x}^T \vect{A} \vect{x}}{\partial A_{ij}} 
+	= 
+	\left(2 - \delta_{ij}\right) x_i x_j
+	\quad \text{and} \quad
+	\frac{\partial \ln \left( \det \vect{A} \right)}{\partial A_{ij}} 
+	=
+	(2 - \delta_{ij}) \vect{A}^{-1}_{ij}
+\end{equation*}
+when $A$ is a symmetric matrix.
+
+Applying the two results above to the problem at hand yields
+\begin{align*}
+	\frac{\partial }{\partial \sigma^{pq}(i)} \left( \ln p \left( \vect{x}_k \mid \omega_i , \vect{\theta}_i \right) \right)
+	& =
+	\frac{\partial }{\partial \sigma^{pq}(i)} \left(
+	\ln \frac{\abs{\vect{\Sigma}_i^{-1}}^{1/2}}{(2 \pi)^{d/2}}
+	 - \frac{1}{2}
+	 \left( \vect{x}_k - \vect{\mu}_i \right)^T
+	 \vect{\Sigma}_i^{-1}
+	 \left( \vect{x}_k - \vect{\mu}_i \right)
+	 \right) \\
+	 & =
+	 \frac{\partial }{\partial \sigma^{pq}(i)} \left(
+	 \frac{1}{2}\ln \abs{\vect{\Sigma}_i^{-1}}
+	 - \frac{1}{2}
+	 \left( \vect{x}_k - \vect{\mu}_i \right)^T
+	 \vect{\Sigma}_i^{-1}
+	 \left( \vect{x}_k - \vect{\mu}_i \right)
+	 \right) \\
+	 & =
+	 \left(1 - \frac{\delta_{pq}}{2} \right) \sigma_{pq}(i)
+	 -
+	 \left(1 - \frac{\delta_{pq}}{2} \right)
+	 \left( x_p(k) - \mu_p(i) \right)
+	 \left( x_q(k) - \mu_q(i) \right) \\
+	 & =
+	 \left(1 - \frac{\delta_{pq}}{2} \right) 
+	 \left[
+	 \sigma_{pq}(i)
+	 - 
+	 \left( x_p(k) - \mu_p(i) \right)
+	 \left( x_q(k) - \mu_q(i) \right)
+	 \right],
+\end{align*}
+which corresponds with equation (23) in chapter 10 in the book.
+
+# We will extend the result from the previous sub-problem to every entry in the matrix, then solve the maximum likelihood estimate for $\vect{\Sigma}$.
+
+If we extend the differentiation formulas from the previous sub-problem to every entry in the matrix, we see that
+\begin{equation*}
+	\frac{\partial \vect{x}^T \vect{A} \vect{x}}{\partial \vect{A}} = \vect{x} \vect{x}^T 
+	\qquad \text{and} \qquad
+	\frac{\partial \ln (\det \vect{A})}{\partial \vect{A}} =  \vect{A}^{-1}.
+\end{equation*}
+Applying this to the second factor in the solution to problem 7, and ignoring constants, we obtain a result proportional to
+\begin{equation*}
+	\frac{\partial }{\partial \vect{\Sigma}^{-1}} \left( \ln p \left( \vect{x}_k \mid \omega_i , \vect{\theta}_i \right) \right) = 
+	\vect{\Sigma} - \left( \vect{x}_k - \vect{\mu}_i \right)\left( \vect{x}_k - \vect{\mu}_i \right)^T.
+\end{equation*}
+
+We must solve the equation
+\begin{align}
+	\nonumber &\frac{\partial \ell }{\partial \vect{\Sigma}^{-1}}   =  
+	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\left[ \vect{\Sigma} - \left( \vect{x}_k - \vect{\mu}_i \right) \left( \vect{x}_k - \vect{\mu}_i \right)^T \right] = \vect{0} \\
+	&  \Rightarrow  \,
+	\vect{\Sigma} \sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	=
+	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\left[ \vect{x}_k \vect{x}_k^T - 2 \vect{x}_k \vect{\mu}_i^T + \vect{\mu}_i \vect{\mu}_i^T \right] \label{eqn:ch10_prob10}
+\end{align}
+for $\vect{\Sigma}$.
+We'll look at each term of Equation \eqref{eqn:ch10_prob10} separately.
+
+Notice first that the left hand side of equation \eqref{eqn:ch10_prob10} becomes
+\begin{equation*}
+	\vect{\Sigma}
+	\sum_{k=1}^{n} \sum_{k=1}^{c} P 
+	\left( \omega_i \mid \vect{x}_k, \vect{\theta}\right) 
+	=
+	\vect{\Sigma}n \sum_{k=1}^{n} \sum_{k=1}^{c} 
+	 p \left(  \vect{x}_k, \omega_i \mid \vect{\theta} \right) 
+	 =  \vect{\Sigma} n,
+\end{equation*}
+where we made use of Bayes theorem.
+
+Moving onto the right hand side of Equation \eqref{eqn:ch10_prob10}, we see that
+\begin{equation*}
+	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\vect{x}_k \vect{x}_k^T
+	= 
+	\sum_{k=1}^{n}
+	\vect{x}_k \vect{x}_k^T,
+\end{equation*}
+since the sum of the probabilities of each class $c$ must sum to unity for each data point $k$.
+
+The cross term of the right-hand side of Equation \eqref{eqn:ch10_prob10} becomes
+\begin{align*}
+	- 2 \sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)  \vect{x}_k \vect{\mu}_i^T 
+	& =
+	- 2  \sum_{k=1}^{c} \left( \sum_{k=1}^{n} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)  \vect{x}_k \right) \vect{\mu}_i^T \\
+	& =
+	- 2  \sum_{k=1}^{c} \left( \sum_{k=1}^{n} n P \left(  \vect{x}_k \mid \omega_i , \vect{\theta}\right) P(\omega_i \mid \vect{\theta} ) \vect{x}_k \right) \vect{\mu}_i^T \\
+	& =
+	- 2  \sum_{k=1}^{c} 
+	n \vect{\mu}_i P(\omega_i \mid \vect{\theta})
+	 \vect{\mu}_i^T
+	 = 
+	 -2 n \sum_{k=1}^{c} 
+	 P(\omega_i \mid \vect{\theta} ) \vect{\mu}_i
+	 \vect{\mu}_i^T,
+\end{align*}
+where the second equality comes from Bayes theorem. 
+The second to last equality comes from $\sum_{k=1}^{n} p(\vect{x}_k \mid \omega_i) \vect{x}_k = \vect{\mu}_i$.
+
+Finally, the rightmost term of the right-hand side of Equation \eqref{eqn:ch10_prob10} becomes
+\begin{equation*}
+	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\vect{\mu}_i \vect{\mu}_i^T
+	=
+	n \sum_{k=1}^{c} P \left( \omega_i \mid  \vect{\theta}\right)
+	\vect{\mu}_i \vect{\mu}_i^T,
+\end{equation*}
+where Bayes theorem was used.
+
+Putting these results back into Equation \eqref{eqn:ch10_prob10}, we obtain
+\begin{equation*}
+	\vect{\Sigma} n
+	=
+	\sum_{k=1}^{n}
+	\vect{x}_k \vect{x}_k^T
+	-
+	n \sum_{k=1}^{c} P \left( \omega_i \mid  \vect{\theta}\right)
+	\vect{\mu}_i \vect{\mu}_i^T,
+\end{equation*}
+and diving through by $n$ gives the desired result.
+\end{easylist}
+
+\subsubsection*{Problem 10.12}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+	# Creating a plot of $p(x \mid \omega_1) = \N(0, 1)$ and $p(x \mid \omega_2) = \N(0, 1/2)$ is illuminating.
+	See figure \ref{fig:ch10_prob12} for such a plot.
+	
+		\begin{figure}[ht!]
+			\centering
+			\includegraphics[width=0.6\linewidth]{figs/duda_ch10_prob12.pdf}
+			\caption{Plot for problem 12, chapter 10.}
+			\label{fig:ch10_prob12}
+		\end{figure}
+	
+	
+	The likelihood of the mixture is given by 
+	\begin{equation*}
+		\ell (x_1 \mid  P(\omega_1)) = p(x_1) = \frac{P(\omega_1)}{\sqrt{2 \pi}} e^{-x_1^2 / 2}
+		+
+		\frac{(1 - P(\omega_1))}{\sqrt{ \pi}} e^{-x_1^2 },
+	\end{equation*}
+	and taking logarithms will not aid us in our attempt to maximize this function.
+	
+	Notice that for a given value of $x_1$, the likelihood is linear in $P(\omega_1)$, since
+	\begin{equation*}
+		f( P(\omega_1) ) = P(\omega_1) \, p(x \mid \omega_1) - (1 - P(\omega_1)) \, p(x \mid \omega_1),
+	\end{equation*}
+	and it's derivative is $f'(P( \omega_1)) = p(x \mid \omega_1) - p(x \mid \omega_2)$.
+	Since $0 \leq P(\omega_1) \leq 1$, there are two cases to consider:
+	
+	\begin{easylist}[enumerate]
+		\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
+	## If $f'(P( \omega_1))  > 0$, the likelihood is maximized by the choice $P(\omega_1) = 1$.
+	## If $f'(P( \omega_1)) < 0$, the likelihood is maximized by the choice $P(\omega_1) = 0$.
+	\end{easylist}
+	
+	If remains to see for which values of $x_1$ the derivative is positive or negative.
+	
+	We take logarithms to study when $p(x \mid \omega_1) > p(x \mid \omega_2)$ and vice versa, since this determines the sign of the derivative.
+	We compare $p(x \mid \omega_1) = \N(0, 1)$ and $p(x \mid \omega_2) = \N(0, 1/2)$ by equating them, taking logarithms and using some algebra:
+	\begin{equation*}
+	\frac{1}{\sqrt{2}} e^{-x_1^2 / 2}
+	=
+	e^{-x_1^2 }
+	\quad
+	\Leftrightarrow
+	\quad
+	\ln 2 = x_1^2.
+	\end{equation*}
+	When $x_1^2 < \ln 2$, we find that $e^{-x_1^2 } > \frac{1}{\sqrt{2}} e^{-x_1^2 / 2}$.
+	This implies that $p(x \mid \omega_2) > p(x \mid \omega_1)$ and the derivative of the linear function is negative.
+	In that case the likelihood is maximized by $P(\omega_1) = 0$, as claimed in the problem.
+\end{easylist}
+	
+	\begin{easylist}[enumerate]
+		\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)}, Start1=2)
+	
+
+	 
+	 # This is simply the reverse case of what we saw in the previous problem. 
+	 When $x_1^2 > \ln 2$ we find that $p(x \mid \omega_1) > p(x \mid \omega_2)$ and the derivative is positive.
+	 In this case the likelihood is maximized by $P(\omega_1) = 1$.
+	 
+	 # With two Gaussians having the same mean, but different stanard deviations, the maximum likelihood estimate of $P(\omega_1)$ is either $0$ or $1$.
+	 The maximum likelihood assigns all weight to the prior corresponding to the class with the largest class-conditional density $p(x \mid \omega_i)$.
+	
+
+
+\end{easylist}
 
 \subsubsection*{Problem 10.14}
 From the solution to problem 6.39, we know that the derivative of $\vect{x}^T \vect{A} \vect{x}$ is $(\vect{A} + \vect{A}^T)\vect{x}$.
