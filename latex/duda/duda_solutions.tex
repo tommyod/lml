@@ -3415,15 +3415,16 @@ The maximum likelihood is the $\hat{p}$ such that the above expression is zero, 
 
 
 \subsubsection*{Problem 10.7}
-The log-likelihood is given by
+The log-likelihood of a mixture is given by the expression
 \begin{equation*}
 	\ell(\alpha) = \sum_{k=1}^{n} \ln p \left( \vect{x}_k \mid \alpha \right)
 	= \sum_{k=1}^{n} \ln  \left( 
 	\sum_{j=1}^{c} p \left( \vect{x}_k \mid \omega_j,  \alpha \right) P(\omega_j)
 	 \right).
 \end{equation*}
-We use the first definition, differentiate with respect to alpha, and then expand the sum and differentiate through it with respect to $\alpha$.
-We obtain
+We'll use the first expression above, differentiate with respect to the parameter $\alpha$, and then expand the sum and differentiate through it with respect to $\alpha$.
+
+Executing the plan outlined above, we observe that
 \begin{align*}
 	\frac{\partial \ell(\alpha)}{ \partial \alpha}
 	&= \sum_{k=1}^{n} \frac{1}{p \left( \vect{x}_k \mid \alpha \right)}
@@ -3440,7 +3441,7 @@ We obtain
 	   \frac{\partial p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha} . \tag{constant into sum}
 \end{align*}
 Since $(\ln x)' = x' / x$ by the chain rule of calculus, the equation $x' = x (\ln x)'$ holds too.
-Using this on the last factor, we obtain
+Using this on the last factor, we observe that 
 \begin{equation*}
 	\sum_{k=1}^{n} \sum_{j=1}^{c} \frac{P(\omega_j)}{p \left( \vect{x}_k \mid \alpha \right)}
 	\frac{\partial p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha}
@@ -3449,7 +3450,7 @@ Using this on the last factor, we obtain
 	p \left( \vect{x}_k \mid \omega_j,  \alpha \right)
 	\frac{\partial \ln p \left( \vect{x}_k \mid \omega_j,  \alpha \right)}{\partial \alpha}.
 \end{equation*}
-As stated in the problem, the first two factors may be simplified using Bayes theorem, since
+As stated in the problem text, the first two factors may be simplified using Bayes theorem, since
 \begin{equation*}
 	P( \omega_j \mid \vect{x}_k, \alpha) 
 	= 
@@ -3457,9 +3458,8 @@ As stated in the problem, the first two factors may be simplified using Bayes th
 	= 
 	\frac{p(\vect{x}_k \mid  \omega_j, \alpha) P(\omega_j)}{p( \vect{x}_k,\mid \alpha)}
 \end{equation*}
-when $\omega_j$ is independent of $\omega_j$.
-We have completed the problem.
-Applying the simplification due to Bayes theorem yields the desired result.
+when $\omega_j$ is independent of $\alpha$, i.e. $P(\omega_j \mid \alpha) = P(\omega_j )$.
+We have completed the problem, since applying the simplification due to Bayes theorem yields the desired result.
 
 
 \subsubsection*{Problem 10.11}
@@ -3467,7 +3467,7 @@ Applying the simplification due to Bayes theorem yields the desired result.
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Solving this problem requires knowledge of matrix calculus.
 We will differentiate the second term, and then the first term, and finally combine the results.
-The reason we start with the second term is that is is easier.
+The reason we start with the second term is that it is easier.
 
 \textbf{Second term}
 Let's start by differentiating $\vect{x}^T \vect{A} \vect{x}$ with respect to an element $A_{ij}$.
@@ -3488,13 +3488,13 @@ If $\vect{A}$ is symmetric, then
 \end{equation*}
 
 \textbf{First term}
-Let's now consider differentiating $f(\vect{A}) = \ln \left( \det \vect{A} \right)$ with respect to $A_{ij}$.
+Let's now consider differentiating $f(\vect{A}) = \ln \left( \det \vect{A} \right)$ with respect to an element $A_{ij}$.
 This is functionally equivalent to the first term in the problem statement.
 We'll make use of Jacobi's formula\footnote{See Wikipedia for details: \url{https://en.wikipedia.org/wiki/Jacobi's_formula}}, which is given by
 \begin{equation*}
 	\frac{d}{dt} \det \vect{A}(t) = \operatorname{tr} \left (\operatorname{adj}(\vect{A}(t)) \, \frac{d\vect{A}(t)}{dt}\right ),
 \end{equation*}
-where $\operatorname{tr}(\vect{A})$ is the trace of $\vect{A}$ and $\operatorname{adj}(\vect{A})$ is the adjugate of $\vect{A}$.
+where $\operatorname{tr}(\vect{A})$ is the trace of $\vect{A}$, and $\operatorname{adj}(\vect{A})$ is the adjugate of $\vect{A}$.
 
 We differentiate using the chain rule and apply Jacobi's formula to obtain
 \begin{equation*}
@@ -3521,9 +3521,9 @@ We carry out the differentiation $d\vect{A} / \partial A_{ij}$ and obtain
 \end{dcases}
 \end{rcases},
 \end{equation*}
-where by $\vect{E}_{ij}$ we mean a matrix of zero every expect in the $ij$th position.
+where by $\vect{E}_{ij}$ we mean a matrix of zeros everywhere except in the $ij$th position.
 We do not show it here, but by the definition of $\vect{E}_{ij}$ and the trace, it should not be too hard to see that $\operatorname{tr} \left(  \vect{A} \,  \vect{E}_{ij}  \right) = A_{ji}$.
-Using the above in combination with the fact that $\operatorname{adj}(\vect{A})_{ji} / \det \vect{A} = \vect{A}^{-1}_{ji}$ and the fact that the inverse of a symmetric matrix is symmetric, we observe that the above expression may be written using the Kroneker delta symbol $\delta_{ij}$ as
+Using the above in combination with the fact that $\operatorname{adj}(\vect{A})_{ji} / \det (\vect{A}) = \vect{A}^{-1}_{ji}$ and the fact that the inverse of a symmetric matrix is symmetric, we observe that the above expression may be written using the Kroneker delta symbol $\delta_{ij}$ as
 \begin{equation*}
 \begin{rcases}
 \begin{dcases}
@@ -3542,10 +3542,10 @@ Using the above in combination with the fact that $\operatorname{adj}(\vect{A})_
 \end{dcases}
 \end{rcases}
 =
-(2 - \delta{ij}) \vect{A}^{-1}_{ij}.
+(2 - \delta_{ij}) \vect{A}^{-1}_{ij}.
 \end{equation*}
 \textbf{Putting it all together}
-In conclusion, we have showed that
+We have established that if $\vect{A}$ is a symmetric matrix, then
 \begin{equation*}
 	\frac{\partial \vect{x}^T \vect{A} \vect{x}}{\partial A_{ij}} 
 	= 
@@ -3553,9 +3553,8 @@ In conclusion, we have showed that
 	\quad \text{and} \quad
 	\frac{\partial \ln \left( \det \vect{A} \right)}{\partial A_{ij}} 
 	=
-	(2 - \delta_{ij}) \vect{A}^{-1}_{ij}
+	(2 - \delta_{ij}) \vect{A}^{-1}_{ij}.
 \end{equation*}
-when $A$ is a symmetric matrix.
 
 Applying the two results above to the problem at hand yields
 \begin{align*}
@@ -3591,61 +3590,61 @@ Applying the two results above to the problem at hand yields
 	 \left( x_q(k) - \mu_q(i) \right)
 	 \right],
 \end{align*}
-which corresponds with equation (23) in chapter 10 in the book.
+which corresponds with Equation (23) in chapter 10 in the book as expected.
 
-# We will extend the result from the previous sub-problem to every entry in the matrix, then solve the maximum likelihood estimate for $\vect{\Sigma}$.
+# We will extend the result from the previous sub-problem to every entry in the matrix, then solve for the maximum likelihood estimate for $\vect{\Sigma}$.
 
-If we extend the differentiation formulas from the previous sub-problem to every entry in the matrix, we see that
+If we extend the differentiation formulas from the previous sub-problem to every entry in the matrix, we recognize that
 \begin{equation*}
 	\frac{\partial \vect{x}^T \vect{A} \vect{x}}{\partial \vect{A}} = \vect{x} \vect{x}^T 
 	\qquad \text{and} \qquad
 	\frac{\partial \ln (\det \vect{A})}{\partial \vect{A}} =  \vect{A}^{-1}.
 \end{equation*}
-Applying this to the second factor in the solution to problem 7, and ignoring constants, we obtain a result proportional to
+Applying these equations to the second factor in the solution to problem 7, and ignoring constants, we obtain a result proportional to
 \begin{equation*}
 	\frac{\partial }{\partial \vect{\Sigma}^{-1}} \left( \ln p \left( \vect{x}_k \mid \omega_i , \vect{\theta}_i \right) \right) = 
 	\vect{\Sigma} - \left( \vect{x}_k - \vect{\mu}_i \right)\left( \vect{x}_k - \vect{\mu}_i \right)^T.
 \end{equation*}
 
-We must solve the equation
+Our problem becomes that of solving the equation
 \begin{align}
 	\nonumber &\frac{\partial \ell }{\partial \vect{\Sigma}^{-1}}   =  
-	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
 	\left[ \vect{\Sigma} - \left( \vect{x}_k - \vect{\mu}_i \right) \left( \vect{x}_k - \vect{\mu}_i \right)^T \right] = \vect{0} \\
 	&  \Rightarrow  \,
-	\vect{\Sigma} \sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\vect{\Sigma} \sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
 	=
-	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
 	\left[ \vect{x}_k \vect{x}_k^T - 2 \vect{x}_k \vect{\mu}_i^T + \vect{\mu}_i \vect{\mu}_i^T \right] \label{eqn:ch10_prob10}
 \end{align}
 for $\vect{\Sigma}$.
-We'll look at each term of Equation \eqref{eqn:ch10_prob10} separately.
+We will now examine each term of Equation \eqref{eqn:ch10_prob10} separately.
 
 Notice first that the left hand side of equation \eqref{eqn:ch10_prob10} becomes
 \begin{equation*}
 	\vect{\Sigma}
-	\sum_{k=1}^{n} \sum_{k=1}^{c} P 
+	\sum_{k=1}^{n} \sum_{i=1}^{c} P 
 	\left( \omega_i \mid \vect{x}_k, \vect{\theta}\right) 
 	=
-	\vect{\Sigma}n \sum_{k=1}^{n} \sum_{k=1}^{c} 
+	\vect{\Sigma}n \sum_{k=1}^{n} \sum_{i=1}^{c} 
 	 p \left(  \vect{x}_k, \omega_i \mid \vect{\theta} \right) 
 	 =  \vect{\Sigma} n,
 \end{equation*}
-where we made use of Bayes theorem.
+where we have made use of Bayes theorem.
 
-Moving onto the right hand side of Equation \eqref{eqn:ch10_prob10}, we see that
+Moving to the right hand side of Equation \eqref{eqn:ch10_prob10}, we see that
 \begin{equation*}
-	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
 	\vect{x}_k \vect{x}_k^T
 	= 
 	\sum_{k=1}^{n}
 	\vect{x}_k \vect{x}_k^T,
 \end{equation*}
-since the sum of the probabilities of each class $c$ must sum to unity for each data point $k$.
+since the sum of the probabilities of each class $c$ must be $1$ for each data point $k$.
 
 The cross term of the right-hand side of Equation \eqref{eqn:ch10_prob10} becomes
 \begin{align*}
-	- 2 \sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)  \vect{x}_k \vect{\mu}_i^T 
+	- 2 \sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)  \vect{x}_k \vect{\mu}_i^T 
 	& =
 	- 2  \sum_{k=1}^{c} \left( \sum_{k=1}^{n} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)  \vect{x}_k \right) \vect{\mu}_i^T \\
 	& =
@@ -3660,19 +3659,19 @@ The cross term of the right-hand side of Equation \eqref{eqn:ch10_prob10} become
 	 \vect{\mu}_i^T,
 \end{align*}
 where the second equality comes from Bayes theorem. 
-The second to last equality comes from $\sum_{k=1}^{n} p(\vect{x}_k \mid \omega_i) \vect{x}_k = \vect{\mu}_i$.
+In the the second to last equality we used $\sum_{k=1}^{n} p(\vect{x}_k \mid \omega_i) \vect{x}_k = \vect{\mu}_i$.
 
 Finally, the rightmost term of the right-hand side of Equation \eqref{eqn:ch10_prob10} becomes
 \begin{equation*}
-	\sum_{k=1}^{n} \sum_{k=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
+	\sum_{k=1}^{n} \sum_{i=1}^{c} P \left( \omega_i \mid \vect{x}_k, \vect{\theta}\right)
 	\vect{\mu}_i \vect{\mu}_i^T
 	=
 	n \sum_{k=1}^{c} P \left( \omega_i \mid  \vect{\theta}\right)
 	\vect{\mu}_i \vect{\mu}_i^T,
 \end{equation*}
-where Bayes theorem was used.
+where again Bayes theorem was used.
 
-Putting these results back into Equation \eqref{eqn:ch10_prob10}, we obtain
+Putting all these results back into Equation \eqref{eqn:ch10_prob10}, we finally see that
 \begin{equation*}
 	\vect{\Sigma} n
 	=
@@ -3689,7 +3688,7 @@ and diving through by $n$ gives the desired result.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
 	# Creating a plot of $p(x \mid \omega_1) = \N(0, 1)$ and $p(x \mid \omega_2) = \N(0, 1/2)$ is illuminating.
-	See figure \ref{fig:ch10_prob12} for such a plot.
+	See figure \ref{fig:ch10_prob12} for such a plot, which reveals the significance of $\ln 2$ immediately.
 	
 		\begin{figure}[ht!]
 			\centering
@@ -3705,13 +3704,13 @@ and diving through by $n$ gives the desired result.
 		+
 		\frac{(1 - P(\omega_1))}{\sqrt{ \pi}} e^{-x_1^2 },
 	\end{equation*}
-	and taking logarithms will not aid us in our attempt to maximize this function.
+	and using the logarithm will not aid us in our attempt to maximize this function.
 	
 	Notice that for a given value of $x_1$, the likelihood is linear in $P(\omega_1)$, since
 	\begin{equation*}
-		f( P(\omega_1) ) = P(\omega_1) \, p(x \mid \omega_1) - (1 - P(\omega_1)) \, p(x \mid \omega_1),
+		f( P(\omega_1) ) = p(x_1) = P(\omega_1) \, p(x \mid \omega_1) + (1 - P(\omega_1)) \, p(x \mid \omega_1),
 	\end{equation*}
-	and it's derivative is $f'(P( \omega_1)) = p(x \mid \omega_1) - p(x \mid \omega_2)$.
+	and it's derivative with respect to $P( \omega_1)$ is $f'(P( \omega_1)) = p(x \mid \omega_1) - p(x \mid \omega_2)$.
 	Since $0 \leq P(\omega_1) \leq 1$, there are two cases to consider:
 	
 	\begin{easylist}[enumerate]
@@ -3720,7 +3719,7 @@ and diving through by $n$ gives the desired result.
 	## If $f'(P( \omega_1)) < 0$, the likelihood is maximized by the choice $P(\omega_1) = 0$.
 	\end{easylist}
 	
-	If remains to see for which values of $x_1$ the derivative is positive or negative.
+	If remains to investigate for which values of $x_1$ the derivative is positive or negative.
 	
 	We take logarithms to study when $p(x \mid \omega_1) > p(x \mid \omega_2)$ and vice versa, since this determines the sign of the derivative.
 	We compare $p(x \mid \omega_1) = \N(0, 1)$ and $p(x \mid \omega_2) = \N(0, 1/2)$ by equating them, taking logarithms and using some algebra:
@@ -3745,7 +3744,7 @@ and diving through by $n$ gives the desired result.
 	 When $x_1^2 > \ln 2$ we find that $p(x \mid \omega_1) > p(x \mid \omega_2)$ and the derivative is positive.
 	 In this case the likelihood is maximized by $P(\omega_1) = 1$.
 	 
-	 # With two Gaussians having the same mean, but different stanard deviations, the maximum likelihood estimate of $P(\omega_1)$ is either $0$ or $1$.
+	 # With two Gaussians having the same mean, but different stanard deviations, the maximum likelihood estimate of $P(\omega_1)$ is either $0$ or $1$ when one data point $x_1$ is seen.
 	 The maximum likelihood assigns all weight to the prior corresponding to the class with the largest class-conditional density $p(x \mid \omega_i)$.
 	
 
@@ -3753,14 +3752,15 @@ and diving through by $n$ gives the desired result.
 \end{easylist}
 
 \subsubsection*{Problem 10.14}
-From the solution to problem 6.39, we know that the derivative of $\vect{x}^T \vect{A} \vect{x}$ is $(\vect{A} + \vect{A}^T)\vect{x}$.
-To find the minimizer, we differentiate with respect to $\vect{x}$:
+From the solution to Problem 6.39, we know that the derivative of $\vect{x}^T \vect{A} \vect{x}$ is $(\vect{A} + \vect{A}^T)\vect{x}$.
+This result is also in Appendix A.2 in \cite{duda_pattern_2000}.
+To find the minimizer, we differentiate with respect to $\vect{x}$ and find that
 \begin{equation*}
 	\frac{\partial J(\vect{x})}{\partial \vect{x}} = \sum_{k=1}^{m}
 	\left( \vect{\Sigma}^{-1} + \vect{\Sigma}^{-T} \right)
 	\left( \vect{x}_k - \vect{x}^* \right) = \vect{0}.
 \end{equation*}
-Since $\vect{\Sigma}$ is non-singular, we require that 
+Since $\vect{\Sigma}$ may be moved outside of the sum and is non-singular, we require that 
 \begin{equation*}
 	\sum_{k=1}^{m}
 	\left( \vect{x}_k - \vect{x}^* \right) = \vect{0}
@@ -3770,7 +3770,7 @@ Since $\vect{\Sigma}$ is non-singular, we require that
 	\sum_{k=1}^{m}
 	 \vect{x}_k  = m \vect{x}^*.
 \end{equation*}
-Dividing by $m$, we see that $\vect{x}^* = \bar{\vect{x}^*}$, which is what we wanted to demonstrate.
+Dividing by $m$, we see that $\vect{x}^* = \bar{\vect{x}}$, which is what we wanted to demonstrate.
 
 
 
@@ -3779,24 +3779,64 @@ Dividing by $m$, we see that $\vect{x}^* = \bar{\vect{x}^*}$, which is what we w
 
 \subsubsection*{Problem 10.16}
 A distance computation between two $d$-dimensional vectors is $O(d)$.
-Pseudocode makes the runtime calculation evident.
+Pseudocode makes the runtime evident, since we essentially only need to count the number of loops.
 \begin{Verbatim}
 for each iteration (T):
   for each data point (n):
     for each cluster center (c):
       compute distance dist(x_j, mu_i) (d)
 \end{Verbatim}
-The algorithm has runtime $O(T) \cdot O(n) \cdot O(c) \cdot O(d) = O(Tncd)$.
+The algorithm has runtime $O(T) \cdot O(n) \cdot O(c) \cdot O(d) = O(Tncd)$ as claimed.
 
 
 
+\subsubsection*{Problem 10.21}
+Let us assume that $n \geq c$ and that there exists an empty subset.
+Then there must exist at least one non-empty subset with more than one sample. 
+An example would be $\left\{ \left\{ \vect{x}_1 \right\}, \left\{  \right\}, \left\{ \vect{x}_2, \vect{x}_3 \right\}  \right\}$, where the second subset is empty, and the third subset has more than one sample.
+We show that moving a sample from a non-empty subset $\D_\text{non-empty}$ to an empty subset $\D_\text{empty}$ always decreases $J_e$.
 
+The sum-of-squared error over the empty subset $\D_\text{empty}$ does not contribute to $J_e$, since it's only defined over non-empty subsets.
+Moving a single sample to $\D_\text{empty}$ contributes 
+\begin{equation*}
+	\sum_{i=1}^{1} \norm{\vect{x}_i - \vect{m}}^2
+	=
+	\norm{\vect{x}_1 - \vect{x}}^2
+	=
+	\norm{\vect{x}_1 - \vect{x}_1}^2
+	=
+	0
+\end{equation*}
+to $J_e$, i.e. no contribution at all.
+In summary, moving a sample to $\D_\text{empty}$ does not alter the contribution to $J_e$ from the subset $\D_\text{empty}$---it's zero in both cases.
+
+The sum-of-squared error over the non-empty subset $\D_\text{non-empty}$ does contribute to $J_e$.
+If $\D_\text{non-empty}$ contains $n$ samples whose mean is $\vect{m}$, the contribution is
+\begin{equation*}
+\sum_{i=1}^{n} \norm{\vect{x}_i - \vect{m}}^2.
+\end{equation*}
+Now we remove a sample $\vect{x}_n$ from the subset, to put in the empty subset instead.
+As long as the sample $\vect{x}_n$ that we remove is not identical to the mean, we have
+\begin{equation*}
+	\sum_{i=1}^{n} \norm{\vect{x}_i - \vect{m}}^2
+	=
+	\sum_{i=1}^{n-1} \norm{\vect{x}_i - \vect{m}}^2
+	+ \norm{\vect{x}_n - \vect{m}}^2
+	 > 
+	 \sum_{i=1}^{n-1} \norm{\vect{x}_i - \vect{m}}^2.
+\end{equation*}
+In summary, moving a sample from $\D_\text{non-empty}$ \emph{does} alter the contribution to $J_e$ from the subset $\D_\text{non-empty}$---it always decreases.
+
+Combining the statements above reveals that if any empty subset exists, we can always decrease $J_e$.
+As a result there are no empty subsets in a partition that minimizes $J_e$.
+As an example, the partition $\left\{ \left\{ \vect{x}_1 \right\}, \left\{ \vect{x}_2 \right\}, \left\{ \vect{x}_3 \right\}  \right\}$ will be superior to $\left\{ \left\{ \vect{x}_1 \right\}, \left\{  \right\}, \left\{ \vect{x}_2, \vect{x}_3 \right\}  \right\}$.
 
 
 \subsubsection*{Problem 10.32}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# An example of $\vect{x}$ when $d=3$ is $(1, 1, -1)$.
+# 
+%An example of $\vect{x}$ when $d=3$ is $(1, 1, -1)$.
 Let's study the similarity measure under the assumption that $x_i, y_i \in \left\{-1, 1\right\}$.
 From the definition, we have that
 \begin{equation*}
@@ -3812,10 +3852,12 @@ An interpretation is therefore
 s(\vect{x}, \vect{y}) 
 = 
 \frac{\sum_{i=1}^{d} \left[ x_i = y_i \right] - \sum_{i=1}^{d} \left[ x_i \neq y_i \right]}{d}
-= \frac{\text{num equal} - \text{num different}}{\text{total number}}.
+= \frac{\text{num equal} - \text{num different}}{\text{total number}},
 \end{equation*}
+and we also note that $-1 \leq s(\vect{x}, \vect{y})  \leq 1 $ are tights bounds, realized when every element is different, or element entry is equal, respectively.
 
-# This is shown using some algebra, we have
+# This is shown using algebra.
+We solve the problem by realizing that
 \begin{align*}
 	\norm{\vect{x} - \vect{y}}^2 &= \sum_{i=1}^{d} (x_i - y_i)^2 =
 	\sum_{i=1}^{d} x_i^2 
@@ -3827,6 +3869,105 @@ s(\vect{x}, \vect{y})
 	= 2s (1 - s(\vect{x}, \vect{y}) ).
 \end{align*}
 \end{easylist}
+
+
+\subsubsection*{Problem 10.35}
+The smallest increase happens when we merge clusters so that their contribution to $J_e$ increases by as little as possible.
+We consider the error from clusters $i$ and $j$ before and after merging, and show that the difference in contribution to $J_e$ is given by the expression in the problem statement.
+
+The contribution before merging is
+\begin{equation*}
+	\sum_{\vect{x}_i \in \D_i} \norm{\vect{x}_i - \vect{m}_i}^2
+	+
+	\sum_{\vect{x}_j \in \D_j} \norm{\vect{x}_j - \vect{m}_j}^2.
+\end{equation*}
+The contribution after merging is
+\begin{equation*}
+	\sum_{\vect{x}_k \in \D_i \cup \D_j} \norm{\vect{x}_k - \vect{m}}^2
+	=
+	\sum_{\vect{x}_i \in \D_i} \norm{\vect{x}_i - \vect{m}}^2
+	+
+	\sum_{\vect{x}_j \in \D_j} \norm{\vect{x}_j - \vect{m}}^2,
+\end{equation*}
+where $\vect{m} = \vect{m}_i n_i / (n_i +n_j)  + \vect{m}_j n_j / (n_i +n_j) $ is the new mean after merging the clusters.
+
+We now compute the difference, which becomes
+\begin{align}
+	\nonumber \text{diff} &= \text{after merging} - \text{before merging} \\
+	 \nonumber&= \left( \sum_{\vect{x}_i \in \D_i} \norm{\vect{x}_i - \vect{m}}^2
+	+
+	\sum_{\vect{x}_j \in \D_j} \norm{\vect{x}_j - \vect{m}}^2 \right)
+	-
+	\left(
+	\sum_{\vect{x}_i \in \D_i} \norm{\vect{x}_i - \vect{m}_i}^2
+	+
+	\sum_{\vect{x}_j \in \D_j} \norm{\vect{x}_j - \vect{m}_j}^2
+	\right) \\
+	 \label{eq:ch10_problem35} &=
+	\sum_{\vect{x}_i \in \D_i}
+	\left( \norm{\vect{x}_i - \vect{m}}^2 - \norm{\vect{x}_i - \vect{m}_i}^2 \right)
+	+
+	\sum_{\vect{x}_j \in \D_j}
+	\left( \norm{\vect{x}_j - \vect{m}}^2 - \norm{\vect{x}_j - \vect{m}_j}^2 \right)
+\end{align}
+To make progress with Equation \eqref{eq:ch10_problem35}, we note that
+\begin{align*}
+	\sum_{\vect{x}_i \in \D_i} \norm{\vect{x}_i - \vect{m}}^2 - \norm{\vect{x}_i - \vect{m}_i}^2
+	&=
+	\sum_{\vect{x}_i \in \D_i} \norm{ (\vect{x}_i - \vect{m}_i) - (\vect{m} - \vect{m}_i)}^2 - \norm{\vect{x}_i - \vect{m}_i}^2 \\
+	&= \sum_{\vect{x}_i \in \D_i} 
+	\norm{ \vect{x}_i - \vect{m}_i}^2 
+	+
+	\norm{\vect{m} - \vect{m}_i}^2
+	- \norm{\vect{x}_i - \vect{m}_i}^2 \\
+	&= \sum_{\vect{x}_i \in \D_i} 
+	\norm{\vect{m} - \vect{m}_i}^2,
+\end{align*}
+where we have used the fact that the cross term $\sum_{\vect{x}_j \in \D_j} -2 (\vect{x}_i - \vect{m}_i)^T (\vect{m} - \vect{m}_i)$ is zero. 
+
+Substituting this result back into Equation \eqref{eq:ch10_problem35} we obtain
+\begin{align}
+\nonumber \text{diff} &= \text{after merging} - \text{before merging} \\
+&= 
+\nonumber \sum_{\vect{x}_i \in \D_i} 
+\norm{\vect{m} - \vect{m}_i}^2 +
+\sum_{\vect{x}_j \in \D_j} 
+\norm{\vect{m} - \vect{m}_j}^2 \\
+&= 
+\label{eq:ch10problem35_2} n_i
+\norm{\vect{m} - \vect{m}_i}^2 +
+n_j
+\norm{\vect{m} - \vect{m}_j}^2.
+\end{align}
+
+Now we compute the difference 
+\begin{equation*}
+	\vect{m} - \vect{m}_i =
+	 \left( \vect{m}_i \frac{n_i}{n_i + n_j}
+	 +
+	 \vect{m}_j \frac{n_j}{n_i + n_j}
+	  \right)
+	  -
+	  \vect{m}_i
+	  = 
+	  \frac{n_j}{n_i + n_j} (\vect{m}_j - \vect{m}_i),
+\end{equation*}
+and use this result in Equation \eqref{eq:ch10problem35_2} to see that
+\begin{align*}
+	 \text{diff} &= \text{after merging} - \text{before merging} \\
+	&= 
+	n_i
+	\frac{n_j^2}{(n_i + n_j)^2} \norm{\vect{m}_j - \vect{m}_i}^2
+	+
+	n_j
+	\frac{n_i^2}{(n_i + n_j)^2} \norm{\vect{m}_i - \vect{m}_j}^2 \\
+	&=  \frac{n_i n_j}{(n_i + n_j)^2}
+	 \left( n_j + n_i\right) \norm{\vect{m}_i - \vect{m}_j}^2 \\
+	 &= \frac{n_i n_j}{n_i + n_j} \norm{\vect{m}_i - \vect{m}_j}^2.
+\end{align*}
+This is the difference is the sum-of-squared error before and after merging.
+Of course it is never negative, since merging can only increase $J_e$.
+The smallest increase results from merging clusters $i$ and $j$ so that this difference is minimized.
 
 
 
