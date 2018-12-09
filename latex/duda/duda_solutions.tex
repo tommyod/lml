@@ -674,7 +674,7 @@ Making use of $x^*$ from the previous problem, we obtain
 	&= \frac{1}{2} \left[  P(\alpha_1  \mid  \omega_2) +  P(\alpha_2 \mid  \omega_1) \right] \\
 	&= \frac{1}{2} \left[ E_1 +  \Phi \left(  \frac{\mu_1 - \mu_2}{\sigma_2} + \frac{\sigma_1}{\sigma_2}  \Phi^{-1} \left(1 - E_1 \right) \right) \right].
 \end{align*}
-In the last equality we used the results from the previous problems.
+In the last equality we used the results from the previous subproblems.
 
 # We substitute the given values into the equations, and obtain $x^* \approx 0.6449$. The total error rate is $P(\text{error}) \approx 0.2056$.
 # The Bayes error rate, as a function of $x^*$, is given by
@@ -683,7 +683,7 @@ In the last equality we used the results from the previous problems.
 	= \frac{1}{2} \left[ p( x > x^* \mid  \omega_1)  + p( x < x^*  \mid  \omega_2) \right]   \\
 	= \frac{1}{2} \left[ \left( 1 - \Phi \left( \frac{x^* - \mu_1}{\sigma_1}\right)\right) +  \Phi \left( \frac{x^* - \mu_2}{\sigma_2}\right)  \right]
 \end{align*}
-The Bayes error rate is depicted in Figure \ref{fig:duda_ch2_prob6}.
+The Bayes error rate for this problem is depicted in Figure \ref{fig:duda_ch2_prob6}.
 
 \begin{figure}[ht!]
 \centering
@@ -698,13 +698,13 @@ The Bayes error rate is depicted in Figure \ref{fig:duda_ch2_prob6}.
 \subsubsection*{Problem 2.12}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The key observation is that the maximal value $P(\omega_{\text{max}}  \mid  \vect{x} )$ is greater than, or equal to, the average. Therefore we obtain
+# A useful observation is that the maximal value $P(\omega_{\text{max}}  \mid  \vect{x} )$ is greater than, or equal to, the average. Therefore we obtain
 \begin{equation*}
 	P(\omega_{\text{max}}  \mid  \vect{x} ) \geq \frac{1}{c} \sum_{i=1}^{c} P(\omega_i  \mid  \vect{x}) = \frac{1}{c},
 \end{equation*}
 where the last equality is due to probabilities summing to unity.
 # The minimum error rate is achieved by choosing $\omega_{\text{max}}$, the most likely state of nature. 
-The average probability of error over the data space is therefore the probability that $\omega_{\text{max}}$ is \emph{not} the true state of nature for a given $\vect{x}$, that is:
+The average probability of error over the data space is therefore the probability that $\omega_{\text{max}}$ is \emph{not} the true state of nature for a given $\vect{x}$, i.e.
 \begin{equation*}
 	P(\text{error}) = \E_x \left[ 1 - P(\omega_{\text{max}}  \mid  \vect{x} ) \right] = 1 - \int P(\omega_{\text{max}}  \mid  \vect{x} ) p(\vect{x}) \, d \vect{x}.
 \end{equation*}
@@ -713,7 +713,7 @@ The average probability of error over the data space is therefore the probabilit
 \begin{equation*}
 	P(\text{error}) = 1 - \int P(\omega_{\text{max}}  \mid  \vect{x} ) p(\vect{x}) \, d \vect{x} \leq 1 - \int \frac{1}{c} p(\vect{x}) \, d \vect{x} = 1 - \frac{1}{c} = \frac{c-1}{c},
 \end{equation*}
-where we used $\int p(\vect{x}) \, d \vect{x} = 1$.
+where we have used the fact that $\int p(\vect{x}) \, d \vect{x} = 1$.
 
 
 # A situation where $P(\text{error}) = (c-1)/c$ arises when $P(\omega_i) = 1/c$ for every $i$. Then the maximum value is equal to the average value, and the inequality in problem a) becomes an equality.
@@ -724,7 +724,7 @@ where we used $\int p(\vect{x}) \, d \vect{x} = 1$.
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # The entropy is given by $\H\left[p(x)\right] = - \int p(x) \ln p(x) \, dx$.
-The optimization problem gives the synthetic function
+The optimization problem gives the synthetic function (or Lagrange function)
 \begin{align*}
 	H_s = - \int p(x) \ln p(x) \, dx + \sum_{k=1} ^{q} \lambda_k \left( \int b_k(x) p(x) \, dx - a_k \right),
 \end{align*}
@@ -736,6 +736,7 @@ H_s &= - \int p(x) \ln p(x) \, dx + \sum_{k=0} ^{q} \lambda_k  \int b_k(x) p(x) 
 \left[ \ln p(x) - \sum_{k=0} ^{q} \lambda_k b_k(x) \right] \, dx - \sum_{k=0} ^{q} \lambda_k a_k ,
 \end{align*}
 which is what we were asked to show.
+
 # Differentiating the equation above with respect to $p(x)$ and equating it to zero we obtain
 \begin{equation*}
 	- \int \left(  1 \left[ \ln p(x) - \sum_{k=0} ^{q} \lambda_k b_k(x) \right] + p(x) \left[ \frac{1}{p(x)} \right] \right) \, dx = 0.
@@ -749,7 +750,7 @@ and solving this equation for $p(x)$ gives the desired answer.
 
 \subsubsection*{Problem 2.21}
 We are asked to compute the entropy of the (1) Gaussian distribution, (2) triangle distribution and (3) uniform distribution. 
-Every p.d.f has $\mu = 0$ and standard deviation $\sigma$, and we must write every p.d.f parameterized using $\sigma$.
+Every probability density function (pdf) has $\mu = 0$ and standard deviation $\sigma$, and we must write every pdf parameterized using $\sigma$.
 \paragraph{Gaussian} We use the definition $\H\left[p(x)\right] = - \int p(x) \ln p(x) \, dx$ to compute  
 \begin{equation*}
 	\H\left[p(x)\right] = 
@@ -757,7 +758,7 @@ Every p.d.f has $\mu = 0$ and standard deviation $\sigma$, and we must write eve
 	\exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right) 
 	\left[ \ln \left( \frac{1}{\sqrt{2 \pi} \sigma } \right) - \frac{1}{2} \frac{x^2}{\sigma^2} \right] \, dx.
 \end{equation*}
-Let us denote $K = \frac{1}{\sqrt{2 \pi} \sigma} $ to simplify notation. We obtain
+Let us denote the constant by $K = \frac{1}{\sqrt{2 \pi} \sigma} $ to simplify notation. We obtain
 \begin{align*}
 	- \int & K
 	\exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right) 
@@ -765,13 +766,13 @@ Let us denote $K = \frac{1}{\sqrt{2 \pi} \sigma} $ to simplify notation. We obta
 	- K \ln K \int & 
 	\exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right) \, dx + K \int  \frac{1}{2} \frac{x^2}{\sigma^2} \exp \left( - \frac{1}{2} \frac{x^2}{\sigma^2} \right)  \, dx
 \end{align*}
-The first term is simply negative $\ln K$, since it's the normal distribution with an additional factor $-\ln K$.
+The first term evaluates to $-\ln K$, since it's the normal distribution with an additional factor $-\ln K$.
 The second term is not as straightforward.
 We change variables to $y = x / \left( \sqrt{2} \sigma \right)$, and write it as
 \begin{equation*}
 	K \int  y^2 \exp \left( - y^2 \right) \sqrt{2} \sigma \, dy,
 \end{equation*}
-which can be solved by using the following observation (from integration by parts)
+and this integral is solved by using the following observation (from integration by parts):
 \begin{equation*}
 	\int 1 e^{-x^2} \, dx = \underbrace{\left. x e^{-x^2} \right|}_{0\text{ at } \pm \infty} - \int x (-2x) e^{-x^2} \, dx.
 \end{equation*}
@@ -792,9 +793,9 @@ The triangle distribution may be written in the form
 \end{equation*}
 where $h$ is the height and $b$ is the width to the left of, and to the right of, $x=0$.
 
-Since the integral must evaluate to unity, we impose $hb = 1$ and obtain $f(x;b) = \frac{1}{b} \left( 1- \frac{x}{b}\right)$.
+Since the integral must evaluate to unity, we impose the constraint $hb = 1$ and obtain $f(x;b) = \frac{1}{b} \left( 1- \frac{x}{b}\right)$.
 We wish to parameterize the triangle distribution using the standard deviation $\sigma$ instead of width $b$.
-We can use $\var(X) = \E(X^2) - \E(X)^2$ to find the variance, since in this case $\E(X)^2 = \mu^2 = 0$ since the function is centered on $x=0$.
+We can use $\var(X) = \E(X^2) - \E(X)^2$ to find the variance, since in this case $\E(X)^2 = \mu^2 = 0$ as a result of the function being centered on $x=0$.
 Computing $\E(X^2)$ yields $b^2 / 6$, so $b^2 = 6 \sigma^2$.
 The revised triangle distribution then becomes
 \begin{equation*}
@@ -817,7 +818,7 @@ where the last integral can be evaluated using integration by parts.
 The entropy of the triangle distribution turns out to be $1/2 + \ln \sqrt{6} \sigma$.
 
 \paragraph{Uniform}
-Using the same logic as with the triangle distribution to normalize a uniform distribution, and then parameterizing by $\sigma$, we obtain
+Using the same logic as with the triangle distribution, we first normalize a uniform distribution, and then parameterize by $\sigma$, to obtain
 \begin{equation*}
 u(x; \sigma) =
 \left\{\!\begin{aligned}
@@ -830,10 +831,11 @@ u(x; \sigma) =
 0 &\quad \text{ if } \abs{x} \geq \sqrt{3}\sigma.
 \end{aligned}\right.
 \end{equation*}
-Computing the entropy is easier than in the case of the Gaussian and the triangle distribution, we simply evaluate the integral as
+Computing the entropy is more straightforward than in the case of the Gaussian and the triangle distribution.
+We simply evaluate the integral as
 \begin{equation*}
 \H\left[p(x)\right] =2  \int_0^{\sqrt{3} \sigma} \frac{1}{2\sqrt{3}\sigma} \ln \frac{1}{2\sqrt{3}\sigma}  \, dx = \ln 2 \sqrt{3} \sigma.
-\end{equation*}.
+\end{equation*}
 
 Let's briefly compare the results of our computations as follows:
 \begin{align*}
@@ -842,7 +844,7 @@ Let's briefly compare the results of our computations as follows:
 	H_\text{Uniform}(\sigma) &= \ln 2 \sqrt{3} \sigma = 0 + \ln 2 \sqrt{3} + \ln \sigma \approx 1.2425 + \ln \sigma
 \end{align*}
 This verifies that out of the three distributions, the Gaussian has the maximal entropy.
-This was expected, since the Gaussian maximizes the entropy over \emph{any} continuous p.d.f. having a prescribed mean and variance.
+This was expected, since the Gaussian maximizes the entropy over \emph{any} continuous probability density function having a prescribed mean and variance.
 
 
 
@@ -943,7 +945,14 @@ The normalization constant becomes $1$ , since the proportionality term becomes 
 \subsubsection*{Problem 2.28}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# We prove that if $p(x_i - \mu_i, x_j - \mu_j) = p(x_i - \mu_i) p(x_j - \mu_j)$, then $\sigma_{ij} = \E \left[ (x_i - \mu_i) (x_j - \mu_j)\right] = 0.$
+# We prove that if 
+\begin{equation*}
+	p(x_i - \mu_i, x_j - \mu_j) = p(x_i - \mu_i) p(x_j - \mu_j),
+\end{equation*}
+then
+\begin{equation*}
+\sigma_{ij} = \E \left[ (x_i - \mu_i) (x_j - \mu_j)\right] = 0.
+\end{equation*}
 With words: we prove that statistical independence implies zero covariance.
 \begin{gather*}
 	 \E \left[ (x_i - \mu_i) (x_j - \mu_j)\right] = \\
@@ -954,14 +963,18 @@ With words: we prove that statistical independence implies zero covariance.
 	   \right) \, dx_i
 \end{gather*}
 If the term in the parenthesis is identically zero, then $\sigma_{ij} = 0$.
-This is indeed true, since we find that
+This is indeed true, since the integral is
 \begin{equation*}
 	\int p(x_j - \mu_j) (x_j - \mu_j) \, dx_j = \E \left[ (x_j - \mu_j)\right]
 	= \E \left[x_j\right] -  \E \left[\mu_j\right] = \mu_j - \mu_j = 0.
 \end{equation*}
 # We wish to prove the converse of a) in the Gaussian case.
 To achieve this, we must show that
-$\sigma_{ij} = 0$ when $p(x_i - \mu_i, x_j - \mu_j) = p(x_i - \mu_i) p(x_j - \mu_j)$.
+$\sigma_{ij} = 0$ when 
+\begin{equation*}
+	p(x_i - \mu_i, x_j - \mu_j) = p(x_i - \mu_i) p(x_j - \mu_j).
+\end{equation*}
+
 Let's simplify the notation to $x$ and $y$ instead of $x_i$ and $x_j$.
 If $\sigma_{xy} = 0$, then the covariance matrix is a diagonal matrix $\vect{D} = \operatorname{diag}(\sigma_x^2, \sigma_y^2)$.
 We write the probability $p(x_i - \mu_i, x_j - \mu_j)$ as $p(x,y)$, where the means $\mu_x$ and $\mu_y$ are both zero.
@@ -974,7 +987,7 @@ We write
 	\frac{1}{(2\pi)^{1/2} \sigma_y} \exp \left( - \frac{1}{2} \left( y^2 / \sigma_y^2 \right) \right)
 	= p(x) p(y).
 \end{gather*}
-This proves that when $\sigma_{xy} = 0$, the covariance matrix is diagonal, and the Gaussian factors into products and we have statistical independence.
+This demonstrates that when $\sigma_{xy} = 0$, the covariance matrix is diagonal, and the Gaussian factors into products and we have statistical independence.
 
 # This problem asks us to find a counterexample of the above, i.e. an example showing that $\sigma_{xy} \nRightarrow p(x, y) = p(x) p(y)$.
 The probability density function
@@ -982,7 +995,11 @@ The probability density function
 	p(x, y) = K \frac{1}{1 + x^2 + y^2}, \quad K^{-1} = \iint_{\R} \frac{1}{1 + x^2 + y^2} \, dx dy
 \end{equation*}
 achieves this.
-The covariance is zero, since $\sigma_{xy} = \E \left[ (x - 0) (y - 0)\right] = \iint_{\R} \frac{x y}{1 + x^2 + y^2} \, dx dy = \iint_{\R} I(x, y) \, dx dy$ is zero because the integrand $I(x, y)$ is an odd function.
+The covariance is zero, since 
+\begin{equation*}
+	\sigma_{xy} = \E \left[ (x - 0) (y - 0)\right] = \iint_{\R} \frac{x y}{1 + x^2 + y^2} \, dx dy = \iint_{\R} I(x, y) \, dx dy
+\end{equation*}
+is zero because the integrand $I(x, y)$ is an odd function.
 
 On the other hand, $p(x, y)$ does \emph{not} factor into $p(x) p(y)$.
 We have proved that $\sigma_{xy} \nRightarrow p(x, y) = p(x) p(y)$ by finding a counterexample.
@@ -992,8 +1009,8 @@ We have proved that $\sigma_{xy} \nRightarrow p(x, y) = p(x) p(y)$ by finding a 
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # We'll assume that $\mu_1 < \mu_2$.
 Since $\sigma_1 = \sigma_2 = \sigma$, the minimum probability of error is achieved by setting the decision threshold to $x^* = (\mu_1 + \mu_2)/2$.
-To follow the derivation below, it helps to draw the real line and two Gaussians.
-The probability of error is then
+When following the derivation below, it is illuminating to draw the real line and two Gaussians.
+The probability of error is
 \begin{align*}
 	P_e &= P(x \in R_2, \omega_1) + P(x \in R_1, \omega_2) \\
 	&= 
@@ -1020,7 +1037,7 @@ This holds if the derivative is negative as $a \to \infty$, since then the funct
 	f'(x) = -\exp\left( -a^2 / 2\right) \left( 1 - \frac{1}{a^2}\right),
 \end{equation*}
 which is negative as long as $\abs{a} \geq 1$.
-Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
+Alternatively, we can simple note that both factors in $f(a)$ go to zero as $a \to \infty$.
 \end{easylist}
 
 \subsubsection*{Problem 2.43}
@@ -1031,7 +1048,7 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 	\begin{equation*}
 	P(\omega_j  \mid  \vect{x}) \propto p(  \vect{x}  \mid  \omega_j) P(\omega_j)
 	\end{equation*}
-	We use the fact that $p(  \vect{x}  \mid  \omega_j) = \prod_{i = 1}^{d} p(  x_i \mid  \omega_j)$, which follows from the fact that the entries are statistically independent.
+	We use the equation $p(  \vect{x}  \mid  \omega_j) = \prod_{i = 1}^{d} p(  x_i \mid  \omega_j)$, which follows from the fact that the entries are statistically independent.
 	Furthermore, we see that
 	\begin{equation*}
 	p(  x_i \mid  \omega_j) = 
@@ -1061,7 +1078,7 @@ Alternatively, we see that both factors in $f(a)$ go to zero as $a \to \infty$.
 \subsubsection*{Problem 3.2}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The maximum likelihood estimate for $\theta$ is $\max_\theta p(x  \mid  \theta) = \max_\theta \prod_{i=1}^{n} p(x_i  \mid  \theta)$.
+# The maximum likelihood estimate for $\theta$ is $\max_\theta p(\D  \mid  \theta) = \max_\theta \prod_{i=1}^{n} p(x_i  \mid  \theta)$.
 The probability of a single sample $p(x_i  \mid  \theta)$ is given by the expression
 \begin{equation*}
 	p(x_i  \mid  \theta) = 
@@ -1076,10 +1093,11 @@ Therefore $\theta$ must be larger than, or equal to, $\max_k x_k$ for the likeli
 On the other hand, the product equals $1 /\theta^n$, and taking logarithms we obtain $-n \ln \theta$.
 This function is maximized when $\theta$ is as small as possible.
 
-The conclusion is that $\theta$ must be $\geq \max_k x_k$ to avoid the likelihood being zero, and also as small as possible to maximize the likelihood.
+The conclusion is that $\theta$ must be greater than or equal to $\max_k x_k$ to avoid the likelihood being zero, and also as small as possible to maximize the likelihood.
 Therefore the maximum likelihood is given by $\hat{\theta} = \max_k x_k = \max \D$.
 
-# Skipping this plot. The explanation of why the other points are not needed is given in part a) of the problem.
+# Skipping this plot. 
+The explanation of why the other data points are not needed is given in part a) of the problem.
 \end{easylist}
 
 \subsubsection*{Problem 3.4}
@@ -1088,18 +1106,18 @@ The maximum likelihood estimate is
 	p( \D  \mid  \vect{\theta}) = \prod_{k = 1}^{n} p( \vect{x}  \mid  \vect{\theta}) = \prod_{k = 1}^{n} \prod_{i=1}^{d}
 	\theta_{i}^{x_{ik}} \left( 1 - \theta_i \right)^{\left(  1 - x_{ik} \right)}.
 \end{equation*}
- The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D  \mid  \vect{\theta}) $, which is explicitly given by
+ The log likelihood $\ell(\vect{\theta})$ is $ \ln p( \D  \mid  \vect{\theta}) $, which is given by the expression
  \begin{equation*}
  	\ell(\vect{\theta}) = \sum_{k = 1}^{n} \sum_{i=1}^{d}
  	x_{ik} \ln \theta_i + (1 - x_{ik}) \ln \left( 1 - \theta_i\right).
  \end{equation*}
 Differentiating $\ell(\vect{\theta})$ with respect to $\theta_i$, every term in the sum $\sum_{i=1}^{d}$ vanishes except the $i$'th.
-We perform the differentiation and equate the result to zero, yielding
+We perform the differentiation and equate the result to zero, which yields
 \begin{equation*}
 	\frac{d \ell(\vect{\theta})}{\theta_i} = \sum_{k=1}^{n} \left[ \frac{x_{ik}}{\theta_i} + \frac{x_{ik} - 1}{1 - \theta_i} \right] =
 	 \sum_{k=1}^{n} \left[ x_{ik} - \theta_i \right] = 0.
 \end{equation*}
-Solving this for $\theta_i$ yields $\theta_i = n^{-1} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = n^{-1} \sum_{k=1}^{n} \vect{x}_k$.
+Solving this for $\theta_i$ gives us $\theta_i = n^{-1} \sum_{k=1}^{n} x_{ik}$, or in vector notation, $\vect{\theta} = n^{-1} \sum_{k=1}^{n} \vect{x}_k$.
 This is what the problem asked us to show.
 
 
@@ -1114,7 +1132,7 @@ Let's write the outer product as $\vect{a}\vect{b}^T = a_i \oplus b_j$, the trac
 \begin{equation*}
 	\operatorname{tr}(\vect{a}\vect{b}^T) = \sum_{i = j} a_i \oplus b_j = \sum_{i} a_i b_i.
 \end{equation*}
-In other words, the effect of $\sum_{i = j}$ on a summand is to replace $i$ by $j$, or vice versa.
+We note that the effect of $\sum_{i = j}$ on a summand is to replace $i$ by $j$, or vice versa.
 
 In summation notation, $\vect{a}^T \vect{A} \vect{a} = \sum_i \sum_j A_{ij} a_j a_i$.
 Using the definitions above, and recalling that $\vect{A} \vect{a}$ is just a vector with value $\sum_j A_{ij} a_j$ in the $i$'th index, we see that
@@ -1141,10 +1159,11 @@ and by using $\operatorname{tr}\left(\vect{A} + \vect{B}\right) = \operatorname{
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, Numbers2=r, FinalMark1={)})
 ## The determinant is the product of the eigenvalues, i.e. $\det \vect{A} = \prod_{i=1}^{d} \lambda_i$.
 This can be proved by taking the determinant of the eigenvalue decomposition of $\vect{A}$, i.e. $\vect{A}  = \vect{Q}  \vect{\Lambda} \vect{Q}^T$, since the determinant of an orthogonal matrix is unity and $\vect{\Lambda}$ has eigenvalues on the diagonal, the result is that $\det \vect{A} = \abs{\vect{A}} = \prod_{i=1}^{d} \lambda_i$.
-## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials, but will not be sketched here.
+## The trace is the sum of the eigenvalues, i.e. $\operatorname{tr} \vect{A} =\sum_{i=1}^{d} \lambda_i$. The proof for this involves characteristic polynomials, but is not sketched here.
 \end{easylist}
 
-The term involving $\vect{\Sigma}^{-1}$ is transformed in the following way: if $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, then $\abs{\vect{A}} = \abs{\vect{\Sigma}^{-1}} | \hat{\vect{\Sigma}} |$. We then write
+The term involving $\vect{\Sigma}^{-1}$ is transformed in the following way: if $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, then $\abs{\vect{A}} = \abs{\vect{\Sigma}^{-1}} | \hat{\vect{\Sigma}} |$. 
+We then write the determinant of the inverse matrix as
 \begin{equation*}
 	\abs{\vect{\Sigma}^{-1}} = \frac{\abs{\vect{A}}}{| \hat{\vect{\Sigma}} |} = \frac{\prod_{i=1}^{d} \lambda_i}{| \hat{\vect{\Sigma}} |}.
 \end{equation*}
@@ -1163,7 +1182,7 @@ Substituting these transformation into the previous equation yields the required
 	p(\D  \mid  \theta) = \frac{\left( \prod_{i=1}^{d} \lambda_i \right)^{n/2}}{\left(2 \pi \right)^{nd/2} \hat{\abs{\vect{\Sigma}}}^{n/2} } \exp \left( -\frac{n}{2} \sum_{i=1}^{d} \lambda_i \right).
 \end{equation}
 
-# Taking logarithms of equation \eqref{eq:prob3_13} above gives us the log-likelihood function
+# Taking logarithms of Equation \eqref{eq:prob3_13} above gives us the log-likelihood function
 \begin{equation*}
 	\ln p(\D  \mid  \theta) = \frac{n}{2} \left[ \sum_{i=1}^{d} \ln \lambda_i - d \ln 2 \pi - \ln | \hat{\vect{\Sigma}} |  \right] - \frac{n}{2} \sum_{i=1}^{d} \lambda_i,
 \end{equation*}
@@ -1171,9 +1190,9 @@ and differentiating it with respect to the eigenvalue $\lambda_j$ yields
 \begin{equation*}
 	\frac{\partial \ln p(\D  \mid  \theta)}{\partial \lambda_j} = \frac{n}{2} \left(1 - \lambda_j^2 \right) = 0.
 \end{equation*}
-The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry, so it is negative definite (i.e. $\vect{x}^T \vect{H} \vect{x} < 0$ for every $\vect{x}$) when all $\lambda_j$'s are positive.
+The Hessian matrix (second derivative) is a diagonal matrix with $-2\lambda_j$ on the $(j, j)$'th entry, so it is negative definite (i.e. $\vect{x}^T \vect{H} \vect{x} < 0$ for every $\vect{x} \neq 0$) when all $\lambda_j$'s are positive.
 When the Hessian is negative definite, then the solution is a maximum.
-Therefore we take $\lambda_j = 1$ as the solution for every $j$ (and not $\lambda_j = -1$, which is not a maximal point).
+Therefore we take $\lambda_j = 1$ as the solution for every $j$ (and not $\lambda_j = -1$, which is not a maximum point).
 
 If every eigenvalues of $\vect{A}$ is $1$, then $\vect{A} = \vect{I}$.
 Recall that $\vect{A} = \vect{\Sigma}^{-1} \hat{\vect{\Sigma}}$, so when we substitute the identity for $\vect{A}$ we obtain $\vect{\Sigma}^{-1} \hat{\vect{\Sigma}} = \vect{I}$.
@@ -1183,7 +1202,7 @@ The likelihood is maximized when we take $\hat{\vect{\Sigma}}$ to be $ n^{-1} \s
 \subsubsection*{Problem 3.15}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# Starting with equation (31) from the book, we get rid of $\sigma_n^2$ by substituting the expression given in equation (32) to obtain
+# Starting with Equation (31) from the book, we get rid of $\sigma_n^2$ by substituting the expression given in Equation (32) to obtain
 \begin{equation*}
 \mu_n =
 \underbrace{ \left[ \frac{1}{\frac{n}{\sigma^2} + \frac{1}{\sigma_0^2}} \right]}_{\sigma^2_n}
@@ -1206,15 +1225,16 @@ We cancel terms, use the dogmatism $n_0 = \sigma^2 / \sigma_0^2$, and realize th
  \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{0} x_k = 
  \frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k.
 \end{align*}
+
 ## One interpretation of $\mu_n$ is that it's a weighted average of the real samples and the fictitious samples, since
 \begin{equation*}
 	\mu_n = 
 	\frac{n}{n + n_0} \left[ \frac{1}{n} \sum_{k = 0}^{n} n \right] 
 	+
 	\frac{n_0}{n + n_0} \left[ \frac{1}{n_0} \sum_{k = -n_0 + 1}^{0} x_k \right] = 
-	\frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k
+	\frac{1}{n + n_0} \sum_{k = -n_0 + 1}^{n} x_k.
 \end{equation*}
-An interpretation of $\sigma_n^2$ is more straightforward if we consider it's inverse, the \emph{precision} $\sigma_n^{-2}$.
+An interpretation of $\sigma_n^2$ is more straightforward if we consider it's reciprocal, the \emph{precision} $\sigma_n^{-2}$.
 The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}$, so the number of fictitious samples provides an initial estimate for the precision, and as more real data points are added the precision is increased linearly.
 	
 \end{easylist}
@@ -1240,7 +1260,7 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 	Some algebra reveals that this equality requires $\vect{A}$ to have a left and right inverse.
 	It must therefore be square, against since no non-square matrix has a left-inverse and a right-inverse.
 	
-	# Our staring point is the equations
+	# The staring point are the equations
 	\begin{equation*}
 		\vect{\Sigma}_n^{-1} = n \vect{\Sigma}^{-1} + \vect{\Sigma}_0^{-1}
 		\quad \text{ and } \quad
@@ -1281,12 +1301,12 @@ The precision can be written as $\sigma_n^{-2} = n \sigma^{-2} + n_0 \sigma^{-2}
 		+
 		 \frac{1}{n} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{n}  \vect{\Sigma}  \right)^{-1}   \vect{\mu}_0 
 	\end{align*}
-	Where we made use of both equalities given in the theorem from subproblem a).
+	Where we made use of both equalities given by the theorem in subproblem a).
 \end{easylist}
 
 
 \subsubsection*{Problem 3.24}
-We are tasked to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution, which is given by
+Our task is to find the maximum likelihood estimate of $\theta$ in the Rayleigh distribution, which is given by the expression
 \begin{equation*}
 	p (x  \mid  \theta) = 
 	\begin{dcases*}
@@ -1302,7 +1322,7 @@ The log-likelihood function is given by
 	= 
 	\sum_{k=1}^{n} - \theta x_i^2 + \ln 2 \theta x_i.
 \end{equation*}
-Differentiating the log-likelihood with respect to $\theta$ yields
+Differentiating the log-likelihood with respect to $\theta$ and equating it to zero yields
 \begin{equation*}
 	\ell'(\theta) =
 	\sum_{k=1}^{n} \left(-  x_i^2 + \frac{2 x_i}{2 \theta x_i}\right)
@@ -1321,14 +1341,14 @@ and solving this equation for $\theta$ reveals the desired answer.
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # A simple $\Theta(n^2)$ algorithm is given by
 \begin{lstlisting}
-	f = 0
-	for i=0 to n-1 do:
-	   f = f + a[i] * x**i
-	end
+    f = 0
+    for i=0 to n-1 do:
+      f = f + a[i] * x**i
+    end
 \end{lstlisting}
 Assuming that the computation of $x^i$ requires $i-1$ flops, the complexity for iteration $i$ is $\Theta(i)$, and the full complexity becomes $1 + 2 + 3 + \dots + (n-1) = \Theta(n^2)$.
 
-# The waste in the algorithm from problem a) above stems from having to compute powers of $x$ many times.
+# The waste in the algorithm from subproblem a) above stems from having to compute powers of $x$ many times.
 If we know $x^{k-1}$, then $x^k = x^{k-1} x$, and there is no need to compute $x^k$ as $\underbrace{x \cdot x \cdot \ldots \cdot x}_{k \text{ times}}$.
 Define $S_k := \sum_{i=k}^{n-1} a_i x^{i-k}$, then
 \begin{equation*}
@@ -1336,10 +1356,10 @@ Define $S_k := \sum_{i=k}^{n-1} a_i x^{i-k}$, then
 \end{equation*}
 Clearly $S_k = a_k + x S_{k+1}$, looping backwards we can use the following algorithm
 \begin{lstlisting}
-	f = a_[n-1]
-	for i=n-2 to 0 do:
-	   f = a[i] + x * f
-	end
+    f = a_[n-1]
+    for i=n-2 to 0 do:
+      f = a[i] + x * f
+    end
 \end{lstlisting}
 which requires a constant number flops in each iteration.
 The computational complexity is therefore $\Theta(n)$.
@@ -1358,18 +1378,18 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 \subsubsection*{Problem 3.35}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimension.
+	# The complexity of computing $\hat{\vect{\mu}}_n$ is $O\left(nd\right)$, where $n$ is the number of data points and $d$ is the dimensionality of the data.
 	Adding $n$ vectors of length $d$ requires $d(n-1)$ floating point operations (flops), diving through by $n$ requires another $d$ flops.
 	The resulting complexity is therefore $d(n-1) + d = O(nd)$.
 	
 	The complexity of computing $\vect{C}_n$ is $O\left(nd^2\right)$.
-	For each term in the sum, we compute the subtraction by $d$ flops, then the outer product using $d^2$ flops.
+	For each term in the sum, we compute the subtraction using $d$ flops, followed by the outer product using $d^2$ flops.
 	This is done of each of the $n$ terms, so we need $n(d + d^2)$ flops to compute the terms.
 	We then add the terms, requiring $d^2(n-1)$ flops.
 	Diving requires $d^2$ flops.
-	In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \sim 2nd^2 = O(nd^2)$ flops.
+	In total, the cost is $n(d + d^2) + d^2(n-1) + d^2 \simeq 2nd^2 = O(nd^2)$ flops.
 	
-	# We will show that these equations are indeed correct by two different methods.
+	# We will show that these equations are correct by two different methods.
 	
 	
 	The recursive definition of $\hat{\vect{\mu}}_n$ may be proved by induction.
@@ -1387,8 +1407,8 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	and this proves the recursive relation for $\hat{\vect{\mu}}_{n+1}$.
 	
 	We will prove that the recursive equation for $\vect{C}_{n+1}$ is correct by deriving it from the definition.
-	This is a somewhat tedious computation, and the strategy will be to write $\vect{C}_{n+1}$ as a function of known terms, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
-	We staring by writing the definition of $\vect{C}_{n+1}$, which is
+	This is a somewhat tedious computation, and the strategy involves writing $\vect{C}_{n+1}$ as a function of known quantities, i.e. $\vect{C}_{n}$, $\hat{\vect{\mu}}_n$, $\hat{\vect{\mu}}_{n+1}$ and $\vect{x}_{n+1}$.
+	We begin by writing the definition of $\vect{C}_{n+1}$, which is
 	\begin{equation*}
 	\vect{C}_{n+1} = \frac{1}{n} \sum_{k=1}^{n+1} \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right) \left( \vect{x}_k - \hat{\vect{\mu}}_{n+1}\right)^T.
 	\end{equation*}
@@ -1406,7 +1426,7 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	\left( \hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} \right)
 	\right) ^T.
 	\end{equation}
-	The last term in each product may be written as
+	The last term in each factor above may be written as
 	\begin{equation*}
 	\hat{\vect{\mu}}_{n+1} - \hat{\vect{\mu}}_{n} = \frac{1}{n +1} \left( \vect{x}_{n+1} -  \hat{\vect{\mu}}_{n} \right).
 	\end{equation*}
@@ -1414,7 +1434,7 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	\begin{equation*}
 	(\vect{a} - \vect{b}) (\vect{a} - \vect{b})^T = \vect{a} \vect{a}^T - \vect{a} \vect{b}^T - \vect{b}\vect{a}^T + \vect{b} \vect{b}^T,
 	\end{equation*}
-	and we expand it as such to obtain the following sum
+	and we expand it as such to obtain the sum
 	\begin{align}
 	\begin{split}
 	\label{eqn:eq3_problem35_2}
@@ -1422,10 +1442,10 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)\left( \vect{x}_k  - \hat{\vect{\mu}}_n \right)^T 
 	+  \left( \vect{x}_{k}  - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T \\
 	+ &   \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)   \left( \vect{x}_k  - \hat{\vect{\mu}}_n \right) 
-	+  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
+	+  \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right) \frac{1}{n+1}\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T.
 	\end{split}
 	\end{align}
-	and we will study each of the four preceding terms in order.
+	We will study each of the four preceding terms in order.
 	
 	The \textbf{first term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
 	\begin{equation*}
@@ -1453,7 +1473,7 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)
 	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
 	\end{equation*}
-	where we used the same logic as in computations related to the second term.
+	where we used the same logic as in the computations related to the second term.
 	
 	The \textbf{fourth term} in Equation \eqref{eqn:eq3_problem35_2} may be written as
 	\begin{equation*}
@@ -1462,7 +1482,7 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	\left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)^T,
 	\end{equation*}
 	since the entire term is constant with respect to the index $k$.
-	We multiplied the last term with $(n+1)$ to get it out of the sum, canceled part of the fraction, and applied the $n^{-1}$ fraction from outside the sum.
+	We multiplied the last term with $n+1$ to get it out of the sum, canceled part of the fraction, and applied the $n^{-1}$ fraction from outside the sum.
 	
 	Let's return Equation \eqref{eqn:eq3_problem35_2} again, and write $\vect{w}_k = \left( \vect{x}_{n+1} - \hat{\vect{\mu}}_n \right)$ to ease notation.
 	Using our findings from above, the sum becomes
@@ -1481,20 +1501,22 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 	The calculation of $\vect{C}_{n+1}$ is dominated by an outer product, which has $O(d^2)$ complexity, and a matrix addition, which is $O(d^2)$ too.
 	The overall complexity is for the iterative sample covariance matrix $\vect{C}_{n+1}$ is therefore $O(d^2)$.
 	
-	# When data arrives in a stream (on-line learning), the recursive methods are clearly superior to  application of the naive formulas.
+	# When data arrives in a stream (on-line learning), the recursive methods are clearly superior to application of the naive formulas.
 	Consider data iteratively entering a learning system.
 	If we compute $\hat{\vect{\mu}}_{1}, \hat{\vect{\mu}}_{2}, \dots, \hat{\vect{\mu}}_{n}$ naively, the overall complexity is
 	\begin{equation*}
 	1d + 2d + \dots + nd = \left(1 + 2 + \dots + n\right) d = O(n^2 d).
 	\end{equation*}
-	If we compute the sequence using the iterative equation, the complexity resolves to
+	
+	If we compute the sequence using the recursive equation, the complexity resolves to
 	\begin{equation*}
 	1d + 1d + \dots + 1d = \left(1 + 1 + \dots + 1\right) d = O(n d).
 	\end{equation*}
-	Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formulas result in $O(nd^2)$ complexity. 
-	If data arrives sequentially and predictions are to be made before all of the data has arrived, then clearly the recursive formulas are superior.
+	Using the same logic, naive computation of $\vect{C}_{1}, \vect{C}_{2}, \dots, \vect{C}_{n}$ will have complexity $O(n^2 d^2)$, while using the recursive formula result in $O(nd^2)$ complexity. 
+	
+	If data arrives sequentially and predictions are to be made before all of the data has arrived, then the recursive formulas are superior.
 	They also require less intermediate storage.
-	It would be interesting to know the numerical stability of both approaches.
+	It would be interesting to examine the numerical stability of both approaches.
 	
 \end{easylist}
 
@@ -1505,13 +1527,14 @@ and the algorithm evaluates this using the right-hand side, from the inside and 
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # We'll prove the Sherman-Morrison-Woodbury matrix identity by demonstrating that it reduces to $I = I$.
-Recall that $1 + \vect{y}^T A^{-1} \vect{x}$ is a scalar.
+Recall that $1 + \vect{y}^T \vect{A}^{-1} \vect{x}$ is a scalar.
+The algebra is
 \begin{align*}
-\left(A + \vect{x}\vect{y}^T\right)^{-1} &= A^{-1} - \frac{A^{-1}\vect{x}\vect{y}^TA^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
-\left(A + \vect{x}\vect{y}^T\right)\left(A + \vect{x}\vect{y}^T\right)^{-1} &= \left(A + \vect{x}\vect{y}^T\right)A^{-1} - \left(A + \vect{x}\vect{y}^T\right)\frac{A^{-1}\vect{x}\vect{y}^TA^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
-I &= I + \vect{x} \vect{y}^T A^{-1} - \frac{\vect{x}\vect{y}^T A^{-1} + \vect{x}\vect{y}^T A^{-1} \vect{x}\vect{y}^T A^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
-I &= I + \vect{x} \vect{y}^T A^{-1} - \frac{ \vect{x} \left( 1 + \vect{y}^T A^{-1} \vect{x} \right) \vect{y}^T A^{-1}}{1 + \vect{y}^T A^{-1} \vect{x}} \\
-I &= I + \vect{x} \vect{y}^T A^{-1} - \vect{x} \vect{y}^T A^{-1} 
+\left(A + \vect{x}\vect{y}^T\right)^{-1} &= \vect{A}^{-1} - \frac{\vect{A}^{-1}\vect{x}\vect{y}^T\vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}} \\
+\left(A + \vect{x}\vect{y}^T\right)\left(A + \vect{x}\vect{y}^T\right)^{-1} &= \left(A + \vect{x}\vect{y}^T\right)\vect{A}^{-1} - \left(A + \vect{x}\vect{y}^T\right)\frac{\vect{A}^{-1}\vect{x}\vect{y}^T\vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T \vect{A}^{-1} - \frac{\vect{x}\vect{y}^T \vect{A}^{-1} + \vect{x}\vect{y}^T \vect{A}^{-1} \vect{x}\vect{y}^T \vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T \vect{A}^{-1} - \frac{ \vect{x} \left( 1 + \vect{y}^T \vect{A}^{-1} \vect{x} \right) \vect{y}^T \vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}} \\
+I &= I + \vect{x} \vect{y}^T \vect{A}^{-1} - \vect{x} \vect{y}^T \vect{A}^{-1} .
 \end{align*}
 
 # Recall the recursive equation for the sample covariance matrix, where we define $a$, $b$ and $\vect{w}$ to ease notation in the following derivation.
@@ -1532,7 +1555,7 @@ and we now apply the Sherman-Morrison-Woodbury matrix identity to obtain
 	&= \frac{1}{a}\left( \vect{C}_n^{-1} - 
 	\frac{ \vect{C}_n^{-1} \vect{w} \vect{w}^T \vect{C}_n^{-1}}{\frac{a}{b} + \vect{w}^T \vect{C}_n^{-1} \vect{w}}  \right).
 \end{align*}
-Using the fact that $a^{-1} = n / (n-1)$ and $a /b = (n^2 - 1) / n$, we have shown that the inverse of $\vect{C}_{n+1}$ is indeed given by
+Substituting back the relations $a^{-1} = n / (n-1)$ and $a /b = (n^2 - 1) / n$, we have shown that the inverse of $\vect{C}_{n+1}$ is indeed given by
 \begin{equation*}
 	\vect{C}_{n+1}^{-1} =
 	\frac{n}{n-1}\left( \vect{C}_n^{-1} - 
@@ -1545,9 +1568,9 @@ Then the outer product $\vect{x}\vect{y}^T =  \left( \vect{C}_n^{-1} \vect{w} \r
 
 The denominator is also computed in $O(d^2)$ time, and so is the matrix subtraction.
 Therefore the overall computational complexity is $O(d^2)$.
-Notice that if $\vect{w} \vect{w}^T$ is computed first in the denominator, the computational complexity would be $O(d^3)$, since matrix-matrix products are $O(d^3)$.
+Notice that if $\vect{w} \vect{w}^T$ is computed first in the denominator, the computational complexity would be $O(d^3)$, since matrix-matrix products are $O(d^3)$, and must be avoided if possible.
 
-# See the answer to problem 35 d).
+# See the answer to Problem 35 d) given above.
 \end{easylist}
 
 
@@ -1581,8 +1604,8 @@ and the denominator is given by
 	\left( \vect{\Sigma}_1 + \vect{\Sigma}_2 \right)
 	\vect{w}.
 \end{equation*}
-Compare this with equation (96) in the book.
-By the same logic used there, the solution is given by equation (106) from the book, which is
+Now we compare this with Equation (96) in Chapter 3 in the book.
+By the same logic used there, the solution is given by Equation (106) from the book, which is
 \begin{equation*}
 	\vect{w} = \left(\vect{\Sigma}_1 + \vect{\Sigma}_2 \right)^{-1} \left(  \vect{\mu}_1 -  \vect{\mu}_2 \right)
 	=
@@ -1599,12 +1622,12 @@ Equation (96) in the book therefore has $n_1 \sigma_1^2 + n_2 \sigma_2^2$ in the
 	\frac{n_1}{n} \sigma_1^2 + \frac{n_2}{n} \sigma_2^2
 	= \frac{1}{n} \left( n_1 \sigma_1^2 + n_2 \sigma_2^2 \right).
 \end{equation*}
-The denominator in equation (96) in the book is proportional to $J_2 (\vect{w})$, so they are the most similar.
+The denominator in Equation (96) in the book is proportional to $J_2 (\vect{w})$, so they are the most similar.
 Their optimization results in the same value of $\vect{w}$, since constants make no difference when optimizing $J(\vect{w})$.
 \end{easylist}
 
 
-\subsubsection*{Problem 3.31}
+\subsubsection*{Problem 3.39}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # We start by expanding terms
@@ -1635,9 +1658,8 @@ then we substitute the equation above into the equation for $J_1$ to obtain
 	m_1^2 - 2 m_1 m_2 + m_2^2 = \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2} + (m_1 - m_2)^2.
 \end{align*}
 
-# Not sure about this one. TODO
-# Not sure about this one. TODO
-
+# Not sure about this one. Skipped.
+# Not sure about this one. Skipped. 
 \end{easylist}
 
 
@@ -1677,7 +1699,7 @@ then we substitute the equation above into the equation for $J_1$ to obtain
 The same exact procedure may be applied to $\tilde{\vect{S}}_B$ to show that it's a diagonal matrix with eigenvalues, $\vect{\Lambda}$. 
 We will not devote space to this computation.
 
-# Applying the result from a), we see that the value of $J$ is
+# Applying the result from subproblem a), we see that the value of $J$ is
 \begin{equation*}
 	J = \frac{\abs{\tilde{\vect{S}}_B}}{\abs{\tilde{\vect{S}}_W}}
 	= \frac{\abs{\vect{W}^T \vect{S}_B \vect{W}}}{\abs{\vect{W}^T \vect{S}_W \vect{W}}}
@@ -1706,14 +1728,14 @@ Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so i
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# We'll prove $\bar{p}_n(x) \sim \N(\mu, \sigma^2 + h_n^2)$ by direct computation. 
-	An alternative approach would be to use the Fourier convolution theorem, which states that convolution becomes pointwise-multiplication in the Fourier basis.
+	An alternative approach would be to use the Fourier convolution theorem, which states that convolution becomes pointwise multiplication in the Fourier basis.
 	
 	We start with
 	\begin{equation*}
 	\bar{p}_n(x) = 	\int \frac{1}{h_n} \phi \left( \frac{x-v}{h_n} \right) p(v) \, dv,
 	\end{equation*}
 	and if $\phi(x) \sim \N(0, 1)$ then it is easy to see that $\frac{1}{h_n} \phi \left( \frac{x-v}{h_n} \right) \sim \N(v, h_n^2)$.
-	We'll expand the exponents, write it as a quadratic function of $v$, integrate out the $v$-variable and with algebra turn the result into a well-known form.
+	We'll expand the exponents, write it as a quadratic function of $v$, integrate out the $v$-variable and using algebra transform the result into a more well-known form.
 	The integral is
 	\begin{equation}
 	\label{eqn:ch4_prob2}
@@ -1741,7 +1763,7 @@ Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so i
 		=
 		\frac{(y - \alpha)^2 - \alpha^2 + \beta}{(h_n \sigma)^2}.
 	\end{equation*}
-	We return to the integral in \eqref{eqn:ch4_prob2}, use $dv = (\sigma^2 + h_n^2)^{-1/2} dy$ and write 
+	We return to the integral in Equation \eqref{eqn:ch4_prob2}, use $dv = (\sigma^2 + h_n^2)^{-1/2} dy$ and write 
 	\begin{equation*}
 	\frac{1}{\sqrt{2 \pi} \sigma}
 	\frac{1}{\sqrt{2 \pi} h_n} \frac{1}{\sqrt{\sigma^2 + h_n^2}}
@@ -1752,14 +1774,14 @@ Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so i
 	\right)^2 \right]
 	 \, dy}_{= \sqrt{2 \pi} h_n \sigma},
 	\end{equation*}
-	where the integral is evaluated easily by virtue of being $\N(\alpha, h_n^2 \sigma^2)$. 
+	where the integral is evaluated easily since it's merely $\N(\alpha, h_n^2 \sigma^2)$. 
 	We have
 	\begin{equation*}
 	\bar{p}_n(x) = 	 \frac{1}{ \sqrt{2 \pi} \sqrt{\sigma^2 + h_n^2}}
 	\exp \left[ -\frac{1}{2} \left( \frac{ \beta - \alpha^2}{(h_n \sigma)^2}
 	\right) \right]
 	\end{equation*}
-	and all that remains is to clean up the exponent.
+	and all that remains is to now is clean up the exponent.
 	We write
 	\begin{align*}
 		\frac{-\alpha^2 + \beta}{(h_n \sigma)^2}
@@ -1776,10 +1798,12 @@ Clearly $\vect{W}^T \to \vect{Q} \vect{D} \vect{W}^T$ leaves $J$ unchanged, so i
 	Finally the integral becomes
 	\begin{equation*}
 	\bar{p}_n(x) = \frac{1}{\sqrt{2 \pi} \sqrt{\sigma^2 + h_n^2}} 
-	\exp \left[ -\frac{1}{2} \frac{\left( x - \mu \right)^2}{\sigma^2 + h_n^2} \right]
+	\exp \left[ -\frac{1}{2} \frac{\left( x - \mu \right)^2}{\sigma^2 + h_n^2} \right],
 	\end{equation*}
 	which is clearly $\N(\mu, \sigma^2 + h_n^2)$, and this is what we were asked to show.
 	
+	# Did not figure this one out. Skipped.
+	# Did not figure this one out. Skipped.
 \end{easylist}
 
 
@@ -1823,7 +1847,7 @@ We obtain
 \end{align*}
  
  
-# The plot is found in figure \ref{fig:duda_ch4_prob3_b}.
+# The plot is found in Figure \ref{fig:duda_ch4_prob3_b}.
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.5\linewidth]{figs/duda_ch4_prob3_b}
@@ -1841,11 +1865,11 @@ The bias is decreasing on $0 < x < a$, so if we want the bias to be less than 0.
 	\operatorname{bias} \left( \frac{a}{100} \right) = 0.01 
 	\quad \Leftrightarrow \quad \exp \left( - \frac{a}{100 h_n} \right) = 0.01.
 \end{equation*}
-Solving this for $h_n$ yields $h_n = a / (100 \ln 100)$.
+Solving this equation for $h_n$ reveals that $h_n = a / (100 \ln 100)$.
 
 
 # When $a=0$, $h_n$ becomes $h_n = 1 / (100 \ln 100) \approx 0.0022$.
-See figure \ref{fig:duda_ch4_prob3_d} for a plot.
+See Figure \ref{fig:duda_ch4_prob3_d} for a plot.
 Although it is hard to tell exactly from the plot, observe that when $x = 0.01$, the relative bias is indeed close to $0.01$ so that $\bar{p}(0.01) = 0.99$.
 
 
@@ -1877,12 +1901,13 @@ Although it is hard to tell exactly from the plot, observe that when $x = 0.01$,
 	\end{dcases}.
 \end{equation*}
 It helps to visualize this function.
-The first line in the function definition above is for a common, overlapping area of the probability space.
-The second line defines an area of the space where each category $\omega_i$ has a non-overlapping area of the probability density function.
+The first line in the function definition above is for a common, overlapping region of the probability space.
+The second line defines a region of the space where each category $\omega_i$ has a non-overlapping positive area of the probability density function.
+
 In other words: the value of a random $x$ is in an overlapping part of the probability space with probability $\frac{cr}{c-1}$, and in a non-overlapping part of the space with probability $1 - \frac{cr}{c-1}$.
 The value of $r$ is between $0$ and $\frac{c-1}{c}$.
 
-Every point $x$ has $p(x \mid \omega_i)$ equal to 0 or 1.
+Every point $x$ has a conditional probability $p(x \mid \omega_i)$ equal to 0 or 1.
 To find the probability of error, we consider regions of the space with overlapping distributions, denoted $o$, and non-overlapping regions, in turn.
 The Bayes error is 
 \begin{align*}
@@ -1893,7 +1918,7 @@ The Bayes error is
 	 0  \left(1 - \frac{cr}{c-1} \right) = r
 \end{align*}
 
-# The nearest neighbor error rate is given by equation (45) in Chapter 4, which is 
+# The nearest neighbor error rate is given by Equation (45) in Chapter 4, which is 
 \begin{equation*}
 	P = \int \left[1 - \sum_{i=1}^{c} P^2\left( \omega_i \mid x \right) \right]
 	p(x) \, dx.
@@ -1940,7 +1965,7 @@ We observe that
 \end{align*}
 
 In other words, $P^*$ and $P$ are equal. 
-When we substitute $P^*$ and $P$ into equation \eqref{eqn:ch4_problem17}, we see that the bound is achieved since 
+When we substitute $P^*$ and $P$ into Equation \eqref{eqn:ch4_problem17}, we see that the bound is achieved since 
 \begin{equation*}
 	P \leq P^* \left( 2 - \frac{c}{c - 1}P^* \right) 
 	\quad  \Rightarrow \quad
@@ -1953,7 +1978,8 @@ which completes the proof.
 \subsubsection*{Problem 4.27}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# TODO
+# Every property of a metric is easy to prove, except the triangle inequality.
+I was unable to prove this.
 
 \begin{table}[ht!]
 	\centering
@@ -1980,7 +2006,10 @@ which completes the proof.
 \end{table}
 
 
-# TODO
+# There is a typo in the book, since $\binom{6}{2} = 15$.
+The pairings are listed in Table \ref{table:problem_4_17} on page \pageref{table:problem_4_17}.
+
+# Skipped this one.
 \end{easylist}
 
 \clearpage
@@ -2007,7 +2036,7 @@ which completes the proof.
 	We wish to solve these equations for $\vect{x}$.
 	
 	Solving the first equation for $\vect{x}$ yields $\vect{x} = \lambda \vect{\omega} / 2 + \vect{x}_a$.
-	This is all well and good, but we need $\lambda$ too.
+	It remains to solve for $\lambda$.
 	If we left-multiply by $\vect{\omega}^T$ and compare with the second equation, we observe that
 	\begin{equation*}
 		\vect{\omega}^T \vect{x} 
@@ -2033,7 +2062,7 @@ which completes the proof.
 		= \frac{\abs{g(\vect{x}_a)}}{\norm{\vect{\omega}}}.
 	\end{equation*}
 	
-	# The projection onto the plane is the minimizer $\vect{x}^*$ from equation \eqref{eqn:ch5_prob4} in the previous problem, so we immediately see that 
+	# The projection onto the plane is the minimizer $\vect{x}^*$ from Equation \eqref{eqn:ch5_prob4} in the previous sub-problem, so we immediately see that 
 	\begin{equation*}
 	\vect{x}^* = -\frac{\vect{\omega}}{\norm{\vect{\omega}}^2} \left( \vect{\omega}^T \vect{x}_a + \omega_0 \right) + \vect{x}_a = - \frac{\vect{\omega}}{\norm{\vect{\omega}}^2} g(\vect{x}_a) + \vect{x}_a
 	=  
@@ -2053,7 +2082,7 @@ We wish to choose $\eta(k)$ to minimize the quadratic function
 	+
 	\frac{1}{2} \eta^2(k) \nabla \vect{J}^T \vect{H} \nabla \vect{J}.
 \end{equation*}
-Differentiating and setting equal to zero yields
+Differentiating and setting the result equal to zero yields
 \begin{equation*}
 	\frac{\partial J \left( \vect{a}(k+1)  \right)}{\partial \eta(k)}
 	=
@@ -2062,12 +2091,15 @@ Differentiating and setting equal to zero yields
 	+
 	\eta(k) \nabla \vect{J}^T \vect{H} \nabla \vect{J} = 0,
 \end{equation*}
-and solving this for $\eta(k)$ yields the desired answer
+and solving this equation for $\eta(k)$ yields the desired answer, which is
 \begin{equation*}
 	\eta(k) = \frac{\norm{\nabla \vect{J}}^2}{\nabla \vect{J}^T \vect{H} \nabla \vect{J}}.
 \end{equation*}
 
 \subsubsection*{Problem 5.15}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	#
 If $\alpha > \beta^2 / 2 \gamma$, then $-2 \alpha \gamma +\beta^2 < 0$ and 
 \begin{equation*}
 	\norm{\vect{a}(k+1) - \alpha \hat{\vect{a}}}^2 
@@ -2087,19 +2119,22 @@ and the error is zero when $\norm{\vect{a}(1) - \alpha \hat{\vect{a}}}^2 + k_0(-
 \end{equation*}
 This is what we were asked to show.
 
+# Skipped. Somehow I did not see this problem when originally solving.
+\end{easylist}
+
 \subsubsection*{Problem 5.21}
 To ease the notation, let us write $\vect{m} := \vect{m}_1 - \vect{m}_2$\footnote{This definition of $\vect{m}$ is not the same as the one used in the book, where $\vect{m}$ is the grand mean.}.
-Staring with equation (53) from the book, we left-multiply by the bracketed term to isolate $\vect{w}$ as 
+Staring with Equation (53) from Chapter 5 in \cite{duda_pattern_2000}, we left-multiply by the bracketed term to isolate $\vect{w}$ as 
 \begin{equation}
 \label{eqn:ch5_prob21}
 	\vect{w} = \left[ \frac{1}{n} \vect{S}_W + \frac{n_1 n_2}{n^2} \vect{m} \vect{m}^T \right]^{-1} \vect{m}.
 \end{equation}
-Recall from problem 3.36 that the Sherman-Morrison-Woodbury matrix identity is 
+Recall from Problem 3.36 that the Sherman-Morrison-Woodbury matrix identity is 
 \begin{equation*}
 	\left(\vect{A} + \vect{x}\vect{y}^T\right)^{-1} =
 	\vect{A}^{-1} - \frac{\vect{A}^{-1} \vect{x} \vect{y}^t \vect{A}^{-1}}{1 + \vect{y}^T \vect{A}^{-1} \vect{x}}.
 \end{equation*}
-We now apply the identity to the bracketed term in equation \eqref{eqn:ch5_prob21}.
+We now apply the identity to the bracketed term in Equation \eqref{eqn:ch5_prob21}.
 In doing so, we identify 
 \begin{equation*}
 	\vect{A} \cong \frac{1}{n} \vect{S}_W 
@@ -2122,7 +2157,7 @@ Applying the matrix identity, we obtain
 		1 +  \left( \frac{n_1 n_2}{n} \right) \vect{m}^T \vect{S}_W^{-1} \vect{m} 
 	}.
 \end{align*}
-To simplify the notation and remind ourselves that some of these quantities are mere scalars, let us denote $a:= n_1 n_2 / n$ and $b := \vect{m}^T \vect{S}_W^{-1} \vect{m} $.
+To simplify the notation and remind ourselves that some of these quantities are simply scalars, let us denote $a:= n_1 n_2 / n$ and $b := \vect{m}^T \vect{S}_W^{-1} \vect{m} $.
 We simplify and factor our $n \vect{S}_W^{-1} \vect{m}$ to obtain
 \begin{equation*}
 	\vect{w} = n \vect{S}_W^{-1}\vect{m} - \frac{
@@ -2197,7 +2232,7 @@ Now the integral converges, since for any value of $a$ the integral
 = 
 \lim_{\alpha \to \infty} \left. \frac{\eta(1)}{bu} \right|_{u=1 + \eta(1) (\alpha - 1)a}^{u=1} \leq \frac{\eta(1)}{b}
 \end{equation*}
-diverges, and $a$ represents the maximal bound on $\eta(k)$. 
+converges, and $a$ represents the maximal bound on $\eta(k)$. 
 The sum $\sum \eta(k)$ diverges to infinity, for any $0 < a \leq y_i^2 \leq b < \infty$.
 \end{easylist}
 
@@ -2207,7 +2242,7 @@ The sum $\sum \eta(k)$ diverges to infinity, for any $0 < a \leq y_i^2 \leq b < 
 \subsubsection*{Problem 5.27}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The data points are plotted in figure \ref{fig:duda_ch5_prob27} on page \pageref{fig:duda_ch5_prob27}, and as seen they are not linearly separable.
+# The data points are plotted in Figure \ref{fig:duda_ch5_prob27} on page \pageref{fig:duda_ch5_prob27}, and as seen in the plot they are not linearly separable.
 
 
 \begin{figure}[ht!]
@@ -2218,7 +2253,7 @@ The sum $\sum \eta(k)$ diverges to infinity, for any $0 < a \leq y_i^2 \leq b < 
 \end{figure}
 
 
-# From equation (95) we observe that the optimal choice of $\eta$ is given by
+# From Equation (95) we observe that the optimal choice of $\eta$ is given by
 
 \begin{equation*}
 	\eta(k) = \frac{\norm{\vect{Y}^T \abs{\vect{e}(k)}}^2}
@@ -2256,7 +2291,7 @@ To show that there always exists a mapping to a higher dimensional space which l
 The mapping would be very inefficient in practice, but provides a constructive proof.
 
 Observe first that to apply a linear classifier to points where data from one class is close to the origin, a function such as $y = \phi (\vect{x}) = \exp(- \vect{x}^T \vect{x})$ may be used.
-This leave the data linearly separable in the new space, as illustrated in figure \ref{fig:1024px_Kernel_trick_idea_svg_wikipedia}.
+This leaves the data linearly separable in the new space, as illustrated in Figure \ref{fig:1024px_Kernel_trick_idea_svg_wikipedia}.
 Below we will extend this idea by introducing many distinct mappings $\phi (\vect{x})$.
 \begin{figure}
 	\centering
@@ -2275,7 +2310,7 @@ with a sufficiently small value of the bandwidth $h$ will raise these points in 
 When $h \ll 1$, neighboring points not belonging to $\omega_1$ will be unaffected.
 A plane such as $y = 0.1$ will then perfectly separate the points.
 
-Since we do not know the true subset $S \subseteq \D$, we can apply this transformation on \emph{every} subset of $\D$ (the \emph{power set} of $\D$).
+Since we do not know the true subset $S \subseteq \D$, we can apply this transformation on \emph{every} possible subset of $\D$ (the \emph{power set} of $\D$).
 There are $2^{\abs{S}}$ such subsets.
 We use
 \begin{equation*}
@@ -2295,7 +2330,7 @@ In other words: if $\left\{ \vect{x_1} \right\}$ is ``raised'' in one new featur
 \subsubsection*{Problem 5.32}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The plot is show in figure \ref{fig:duda_ch5_prob32}.
+# The plot is show in Figure \ref{fig:duda_ch5_prob32}.
 By inspection the weight vector is 
 \begin{equation*}
 	\vect{a} = (a_0, a_1, a_2)= (-1.5, 1, 1).
@@ -2310,7 +2345,7 @@ The optimal margin is the distance from the line $y = 1.5 - x$ to a point, say $
 	\label{fig:duda_ch5_prob32}
 \end{figure}
 
-# From inspection there are four support vectors, they are
+# From inspection there are four support vectors, and they are
 \begin{align*}
 	(0, 1)^T \quad & \quad (1, 0)^T \\
 	(1, 1)^T \quad & \quad (2, 0)^T.
@@ -2333,7 +2368,7 @@ The optimal margin is the distance from the line $y = 1.5 - x$ to a point, say $
 	L(\vect{a}, \vect{\alpha}) = \frac{1}{2} \norm{\vect{a}}^2 -
 	\sum_{k=1}^{n} \alpha_k \left[ z_k \vect{a}^T \vect{y}_k - 1 \right]
 \end{equation}
-has a solution which is a saddle point since we wish to maximize with respect to $\vect{\alpha}$ and minimize with respect to $\vect{a}$.
+has a solution which is a saddle point, since we wish to maximize with respect to $\vect{\alpha}$ and minimize with respect to $\vect{a}$.
 
 # Here I believe there to be a slight error in the text, which might lead to confusion.
 In the initial pages of the chapter, the distance from a point to a hyperplane is given by $r = (\vect{\omega}^T \vect{x} + \omega_0) / \norm{\vect{\omega}}$, and this is indeed correct.
@@ -2349,7 +2384,7 @@ In the context of SVMs, however, the distance is said to be
 	\frac{\vect{a}'\,^T\vect{y} + \omega_0}{\norm{\vect{a}}},
 \end{equation*}
 which is different because $\vect{a}$ is in the denominator, not $\vect{a}'$.
-Amending equation \eqref{eqn:ch5_problem_33_1} with this information, the $\frac{1}{2} \norm{\vect{a}}^2$ should be replaced by $\frac{1}{2} \norm{\vect{a}'}^2$, i.e. dropping $\vect{a}_0 = \omega_0$.
+Amending Equation \eqref{eqn:ch5_problem_33_1} with this information, the $\frac{1}{2} \norm{\vect{a}}^2$ should be replaced by $\frac{1}{2} \norm{\vect{a}'}^2$, i.e. dropping $\vect{a}_0 = \omega_0$.
 If we do this and differentiate with respect to the first component of $\vect{a}$, we obtain
 \begin{equation*}
 	\frac{\partial L(\vect{a}, \vect{\alpha})}{\partial \vect{a}_0}
@@ -2367,9 +2402,9 @@ which gives the desired result since $\vect{y}_0 = 1$ due to the augmentation of
 
 # If the Lagrange multiplier (or \emph{undetermined multiplier}) $\alpha_k^*$ is zero, then it's said to be \emph{inactive}.
 At the optimum, the constraint is not used.
-The optimum of $L(\vect{a}, \vect{\alpha})$ is the same with or without this constraint.
+The optimum of $L(\vect{a}, \vect{\alpha})$ is then the same with or without this constraint.
 
-If the Lagrange  multiplier $\alpha_k^*$ is non-zero, then it's said to be \emph{active}.
+If the Lagrange  multiplier $\alpha_k^*$ is non-zero, then the constraint is said to be \emph{active}.
 The constrained solution is different from the unconstrained solution, and the optimum lies on the boundary of the constraint.
 Since $\alpha_k^* z_k \vect{y}_k \geq 1$ in the feasible region, the optimal solution is on the boundary if $\alpha_k^* z_k \vect{y}_k = 1$, but then  $\alpha_k^*$ is non-zero since the constraint is active.
 
@@ -2379,7 +2414,7 @@ This is one of the Karush–Kuhn–Tucker (KKT) conditions, and it may be expres
 	\alpha_k^* \left[ \alpha_k^* z_k \vect{y}_k - 1 \right] = 0 \qquad k = 1 , \dots, n.
 \end{equation*}
 
-# Simply multiply the brackets in equation \eqref{eqn:ch5_problem_33_1} from subproblem a).
+# We simply multiply the brackets in Equation \eqref{eqn:ch5_problem_33_1} from subproblem a).
 \begin{equation*}
 L(\vect{a}, \vect{\alpha}) = \frac{1}{2} \norm{\vect{a}}^2 -
 \sum_{k=1}^{n} \alpha_k \left[ z_k \vect{a}^T \vect{y}_k - 1 \right]
@@ -2431,34 +2466,11 @@ We have formulated the problem as a maximization over $L(\vect{\alpha})$.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \clearpage
 \subsection{Multilayer Neural Networks}
 
 \subsubsection*{Problem 6.5}
-The backpropagation rule for input-to-hidden weights is given by equation (21), which is
+The backpropagation rule for input-to-hidden weights is given by Equation (21), which is
 \begin{equation*}
 	\Delta w_{ji} =
 	\eta \delta_j x_i = 
@@ -2474,13 +2486,13 @@ The higher this weight is, the more an error contributes and the further it is a
 \subsubsection*{Problem 6.8}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# In this problem it helps to make a drawing, or study Figure 6.4 or Figure 6.2.
+# In this problem it helps to make a drawing, or study Figures 6.4 and 6.2 in the book.
 
 \begin{easylist}
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers2=r, FinalMark1={)})
 ## The bias is connected to $n_H + c$ weights.
 ## Every one of the $d$ inputs is connected to every one of the $n_H$ hidden units, for a total of $d n_H$ weights.
-## Every hidden unit $n_H$ is connected to every one of the $c$ ouputs, for $n_H c$ weights. 
+## Every hidden unit $n_H$ is connected to every one of the $c$ outputs, for $n_H c$ weights. 
 \end{easylist}
 
 
@@ -2503,12 +2515,12 @@ In other words, if the $w_{ji} \mapsto -w_{ji}$ and $w_{j0} \mapsto - w_{j0}$ in
 	f \left( \sum_{i=1}^{d} -w_{ji} x_i - w_{j0} \right) = -f \left( \sum_{i=1}^{d} w_{ji} x_i + w_{j0} \right)
 \end{equation*}
 and a mapping $w_{kj} \mapsto -w_{kj}$ in the outer sum will cancel the sign flip.
-This only applies to odd functions where $f(-x) = -f(x)$.
+Note that this result only applies to odd functions where $f(-x) = -f(x)$.
 
 # If there are $n_H$ hidden units, there are $n_H!$ ways to permute them.
 For each of these permutations, every associated weight might have it's sign flipped or not, for a total of $2^{n_H}$ possibilities with respect to sign flipping.
 The total count is therefore $n_H! 2^{n_H}$ exchange symmetries (not $n_H 2^{n_H}$ as \cite{duda_pattern_2000} claims).
-This result is verified in \cite{bishop_pattern_2011} on page 232, so we assume that \cite{duda_pattern_2000} contains a typo here.
+This result is verified in \cite{bishop_pattern_2011} on page 232, so we assume that \cite{duda_pattern_2000} contains a typo here and the ``!'' sign was forgotten.
 
 \end{easylist}
 
@@ -2553,10 +2565,10 @@ To study convergence, we examine the learning rule, which may be written as
 and observe that $\vect{w}_{n} = \left( \vect{I} - \eta  \vect{H} \right)^n \vect{w}_{0}$.
 Convergence is ensured if $\left( \vect{I} - \eta  \vect{H} \right)^n$ goes to zero as $n \to \infty$.
 Informally, repeated application of the matrix should bring the vector to zero.
-Problems relate to ``repeated application of a matrix to a vector'' is controlled by eigenvectors and eigenvalues.
+The convergence of repeated application of a matrix to a vector is controlled by eigenvectors and eigenvalues.
 
 We write $\left( \vect{I} - \eta  \vect{H} \right) = \vect{Q} \vect{\Lambda} \vect{Q}^T$ to express the symmetric, positive definite matrix in it's eigenvalue decomposition.
-Then we define $\vect{w}_{k}' = \vect{Q} \vect{w}_{k} = \sum_{i=1}^{d} \alpha_i \vect{v}_i$ to express $\vect{w}_{k}$ in the \emph{eigenvalue basis} of $\vect{H}$, where the $\vect{v}_i$ are the orthonormal eigenvectors. 
+Then we define $\vect{w}_{k}' = \vect{Q} \vect{w}_{k} = \sum_{i=1}^{d} \alpha_i \vect{v}_i$ to express $\vect{w}_{k}$ in the \emph{eigenvalue basis} of $\vect{H}$, where the $\vect{v}_i$s are the orthonormal eigenvectors. 
 This transformation is a rotation of the space, since $\vect{Q}$ is orthonormal.
 
 The expression on the left below is for the vector, and the expression on the right captures the behavior of a single eigenvector component $\vect{v}_i$.
@@ -2580,7 +2592,7 @@ The effect of subtraction by the identity matrix is not as obvious, but if we wr
 	\text{eig. vals of } \eta  \vect{H} \, &\Leftrightarrow \, \text{ zeros of } \det \left(  \vect{I} \lambda'  - \eta   \vect{H} \right),
 \end{align*}
 and comparing we observe that $\lambda' = \lambda - 1$.
-We're really after the eigenvalues of  of $\vect{H}$, which we'll now denote by $\lambda_{\vect{H}} = \lambda' / \eta$.
+We're really after the eigenvalues of $\vect{H}$, which we'll now denote by $\lambda_{\vect{H}} = \lambda' / \eta$.
 From this, we have convergence if
 \begin{align*}
 	-1 < &\lambda_{\text{max}} < 1 \\
@@ -2601,7 +2613,7 @@ Convergence is fastest when these arguments are equal in absolute value, so we r
 	(1 - \eta \lambda_1) = - (1 - \eta \lambda_d)
 \end{equation*}
 and solve for $\eta$ to obtain $\eta^*= 2 / (\lambda_1 + \lambda_d)$.
-The optimal learning rate is obtained by substituting this $\eta^*$ into $\text{rate}(\cdot)$.
+The optimal learning rate is obtained by substituting this $\eta^*$ into the function $\text{rate}(\cdot)$.
 We consider the positive value $(1 - \eta^* \lambda_1)$, which becomes
 \begin{equation*}
 	\text{rate}(\eta^*) = (1 - \eta^* \lambda_1) = \frac{\lambda_d - \lambda_1}{\lambda_d + \lambda_1} = \frac{ \lambda_d / \lambda_1 - 1}{\lambda_d / \lambda_1 + 1},
@@ -2613,7 +2625,7 @@ Assume that this data is used to train a neural network, and that the weights ar
 Changing one weight value $w_1$ might then potentially change the error drastically compared to changing another weight $w_2$, and $J(\vect{w}) \approx \frac{1}{2}\vect{w}^T \vect{H} \vect{w}$ will have diagonals on vastly different scales.
 The eigenvalues are $\lambda_1 \approx \min \operatorname{diag} \vect{H}$ and $\lambda_d \approx \max \operatorname{diag} \vect{H}$, so learning will be slow since $\text{rate}(\eta^*)$ will be close to 1.
 
-Standardizing reduces these problems.
+Standardizing alleviates these problems.
 The data is on the same scale, so the diagonals entries of $\vect{H}$ will likely be on the same scale and learning will be faster.
 
 # Standardizing the data by subtracting means and diving by standard deviations in every dimension individually transforms the data to the same scale.
@@ -2631,11 +2643,11 @@ The rotation diagonalizes the covariance matrix, and the scaling makes the spect
 \subsubsection*{Problem 6.21}
 \begin{easylist}[enumerate]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# The softmax function is given by equation (30) in the book, which is
+# The softmax function is given by Equation (30) in Chapter 6 in the book, which is
 \begin{equation*}
 	z_k = f(\text{net}_k) = \frac{e^{\text{net}_k}}{\sum_{m=1}^{c} e^{\text{net}_m}} \propto e^{\text{net}_k}.
 \end{equation*}
-The learning rule when the sum squared error function is used becomes dependent on $\frac{\partial J}{\partial \text{net}_k}$ and $\frac{\partial \text{net}_k}{\partial w_{kj}}$, see equation (13) in the book.
+The learning rule when the sum squared error function is used becomes dependent on $\frac{\partial J}{\partial \text{net}_k}$ and $\frac{\partial \text{net}_k}{\partial w_{kj}}$, see Equation (13) in the book.
 The only change is that now $f(\text{net}_k)$ is not a sigmoid, but the softmax function.
 To ease notation, we define $k := \text{net}_k$, and differentiate.
 \begin{equation*}
@@ -2647,7 +2659,7 @@ To ease notation, we define $k := \text{net}_k$, and differentiate.
 	=
 	\frac{e^{k} \left[ \sum_{\substack{m=1 \\ m \neq k}}^{c} e^{m} \right]}{\left[ \sum_{m=1}^{c} e^{m} \right]^2}
 \end{equation*}
-The update rules becomes a simple modification of equation (17) from the book:
+The update rules becomes a simple modification of Equation (17) from the book:
 \begin{equation*}
 	\Delta w_{kj} = \eta \delta_k y_j = \eta (t_k - z_k) 
 	\frac{e^{\text{net}_k} \left[ \sum_{\substack{m=1 \\ m \neq k}}^{c} e^{\text{net}_m} \right]}{\left[ \sum_{m=1}^{c} e^{\text{net}_m} \right]^2}
@@ -2666,14 +2678,14 @@ t_k \frac{z_k}{t_k} \frac{\partial }{\partial z_k}  \left( t_k z_k^{-1} \right)
 =
 - \frac{t_k}{z_k}.
 \end{equation*}
-Everything else is exactly equal to the solution to a) above.
+Everything else is exactly equal to the solution to sub-problem a) above.
 \end{easylist}
 
 
 
 \subsubsection*{Problem 6.24}
 
-We compare equation (7) for the 3-layer neural network with equation (32) for general additive models (GAM).
+We compare Equation (7) for the 3-layer neural network with Equation (32) for general additive models (GAM).
 The equations are, respectively, given by
 \begin{align*}
 	z_k &= f\left[
@@ -2724,7 +2736,7 @@ The \emph{Kolmogorov-Arnold representation theorem} guarantees that both of thes
 		\sum_j K_{kj} x_j  +
 		x_k \left( K_{kk} \right).
 	\end{equation*}
-	Applying these results to the non-$k$'th terms and the $k$'th term respectively, equation \eqref{eqn:ch6_problem39a} may be written in a more readable form as
+	Applying these results to the non-$k$'th terms and the $k$'th term respectively, Equation \eqref{eqn:ch6_problem39a} may be written in a more readable form as
 	\begin{align*}
 	\frac{d}{d x_k} \left( \vect{x}^T \vect{K} \vect{x} \right)  &=  x_1 K_{1k} + x_2 K_{2k} + x_3 K_{3k} + \dots + 
 		\left(  \sum_j K_{kj} x_j  +
@@ -2746,7 +2758,7 @@ The \emph{Kolmogorov-Arnold representation theorem} guarantees that both of thes
 	Let $f(\vect{x}) = \vect{x}^T \vect{H} \vect{x}$, where $\vect{H}$ is symmetric.
 	We have
 	\begin{equation*}
-		f(vect{x} + \delta \vect{x}) - f( \vect{x}) = 
+		f( \vect{x} + \delta \vect{x}) - f( \vect{x}) = 
 		\left( \delta \vect{x} \right)^T \vect{H} \vect{x} + 
 		\vect{x}^T \vect{H} \left( \delta \vect{x} \right)
 		+ O \left( \norm{ \delta \vect{x} }^2 \right),
@@ -2762,8 +2774,8 @@ The \emph{Kolmogorov-Arnold representation theorem} guarantees that both of thes
 \end{easylist}
 
 \subsubsection*{Problem 6.42}
-The weight decay rule of equation (38) in the book does not exactly lead to equation (39).
-The rule multiplies the weight found by gradient descent by the factor $(1 - \epsilon)$, such that 
+The weight decay rule of Equation (38) in the book does not exactly lead to Equation (39).
+The rule multiplies the weight found by gradient descent by the factor $1 - \epsilon$, such that 
 \begin{equation*}
 	\vect{w}_{n+1} = \left( \vect{w}_{n} - \eta \nabla J(\vect{w}_n ) \right) (1 - \epsilon).
 \end{equation*}
@@ -2784,7 +2796,7 @@ We can easily verify that
 	# When $\epsilon = 0$, everything reduces to gradient descent with no weight decay.
 	# When $\epsilon = 1$, the weight vector $\vect{w}_{n+1}$ is forever stuck at $\vect{0}$.
 \end{easylist}
-This also shows that equation (39) in the book is wrong with respect to equation (38), since if $\epsilon=1$ in the book, equation (38) would always set $\vect{w}_{n+1} = \vect{0}$, while optimizing equation (39) would not---it would amount to optimizing $J(\vect{w} )$ with a regularization term.
+This also shows that Equation (39) in the book is wrong with respect to Equation (38), since if $\epsilon=1$ in the book, Equation (38) would always set $\vect{w}_{n+1} = \vect{0}$, while optimizing Equation (39) would not---it would amount to optimizing $J(\vect{w} )$ with a regularization term.
 
 
 
@@ -2848,21 +2860,21 @@ The answers are:
 
 \subsubsection*{Problem 7.6}
 We wish to show that at high temperature, every configuration is equally likely.
-The probability that a system is in a configuration of energy $E_\gamma$ is given by equation (3) in chapter 7 the book, i.e. $P(\gamma) \propto \exp(-E_\gamma / T)$.
+The probability that a system is in a configuration of energy $E_\gamma$ is given by Equation (3) in chapter 7 the book, i.e. $P(\gamma) \propto \exp(-E_\gamma / T)$.
 As $T$ goes to infinity, we have
 \begin{equation*}
 	\lim_{T \to \infty} P(\gamma) = 
 	\lim_{T \to \infty} \left( e^{-1 / T} \right)^{E_\gamma} = 1^{E_\gamma} = 1,
 \end{equation*}
-and so the probability of every state $\gamma$ is equally likely. The normalization constant $Z(T)$ makes it a true probability summing to unity.
+and so the probability of every state $\gamma$ is equally likely. The normalization constant $Z(T)$ makes it a true probability function, i.e. ensures that it sums to unity.
 
 
 
 
 \subsubsection*{Computer exercise 7.2}
-A simple implementation of Algorithm 1 in from chapter 7 is found in the Python file \verb|simulated_annealing.py|.
+A simple implementation of Algorithm 1 in from Chapter 7 is found in the Python file \verb|simulated_annealing.py|.
 The answers to sub-problem a) and b) are shown in Figures \ref{fig:ch7_computer_ex2_a} and \ref{fig:ch7_computer_ex2_b} respectively.
-A plot showing the average reduction in energy over 500 runs in show in \ref{fig:ch7_computer_ex2_extra}, and it's interesting to see that the average reduction appears to be exponential.
+A plot showing the average reduction in energy over 500 runs in show in Figure  \ref{fig:ch7_computer_ex2_extra}, and it's interesting to see that the average reduction appears to be exponential.
 
 
 \begin{figure}[ht!]
@@ -2925,9 +2937,9 @@ We generalize the problem of a single missing attribute in a single training poi
 
 In this problem, a pattern $\vect{x} = (x_1, x_2, \dots ,x_d)$ with $d$ attributes can have between $0$ and $d-1$ missing attributes.
 Furthermore, the data set $\D = \{\vect{x}_1, \vect{x}_2, \dots, \vect{x}_n \}$ may have many training points with missing attributes.
-The data might look something like what is presented in Table \ref{table:problem8_14}.
+The data might look something like what is presented in Table \ref{table:problem8_14} on page \pageref{table:problem8_14}.
 
-\begin{table}[ht!]
+\begin{table}[hb!]
 	\centering
 	\caption{Example of what data for problem 8.14 might look like.}
 	\begin{tabular}{@{}llll@{}} \toprule
@@ -2942,8 +2954,8 @@ The data might look something like what is presented in Table \ref{table:problem
 \end{table}
 
 High level Python-like pseudocode is given below. 
-The principal difference between the code below and the code for the same problem without missing attributes, is that there might now be $(n - 1 - m_i)$ possible splits, where $m_i$ are the number of data points missing from attribute $i$.
-This is in contrast to the original algorithm, where there are in general $(n-1)$ possible splits for every attribute $i$.
+The principal difference between the code below and the code for the same problem without missing attributes, is that there might now be $n - m_i - 1$ possible splits, where $m_i$ are the number of data points missing from attribute $i$.
+This is in contrast to the original algorithm, where there are in general $n-1$ possible splits for every attribute $i$.
 \begin{Verbatim}
 for attribute=1 to d do:
   attribute_data = data[attribute, :]
@@ -2985,15 +2997,15 @@ for attribute=1 to d do:
 
 \subsubsection*{Problem 8.18}
 We will consider every alignment of $\vect{x}$ and \emph{text}.
-For each of these alignments, there will between $1$ and $m$ comparisons before termination, depending on whether matches are found.
+For each of these alignments, there will between $1$ and $m$ comparisons before termination, depending on whether matches are found or not.
 There is a probability $d^{-1}$ of a match for each comparison.
 We will see that expected number of comparisons may be expressed as a \emph{arithmetico-geometric} sum, i.e. a sum of terms which are the product of an arithmetic and geometric sum.
 
-We start out by observing that there are $(n - m + 1)$ alignments of $\vect{x}$ and \emph{text}.
-For every alignment, $m$ characters must be compared at most.
+We start out by observing that there are $n - m + 1$ alignments of $\vect{x}$ and \emph{text}.
+For every alignment, at most $m$ characters must be compared.
 Let $1 \leq  \ell \leq m$ be the number of comparisons made before the loop terminates.
 The loop terminates when a comparison yields no match.
-Fixating $\vect{x}$ and considering every character of \emph{text} to be randomly drawn from an alphabet $\mathcal{A}$ of $d$ characters, there is a probability of $d^{-1}$ of a match in each comparison.
+Fixing $\vect{x}$ and considering every character of \emph{text} to be randomly drawn from an alphabet $\mathcal{A}$ of $d$ characters, there is a probability of $d^{-1}$ of a match in each comparison.
 
 Let us now study $P(\ell)$, the probability of $\ell$ comparisons before termination of the loop. 
 For instance $P(\ell) = 1 - 1/d$, since it represents the probability of one comparison before exiting the loop, and this happens if there is no match on the first comparison.
@@ -3005,7 +3017,7 @@ More generally, we observe that
 	\vdots \quad &= \quad \vdots &  \\
 	P(\ell = m) &= \left(1 - \frac{1}{d}\right) \frac{1}{d^{m-1}} + \frac{1}{d^m} &\qquad (\text{no match on final, or match on final}) \\
 \end{alignat*}
-We now take the expected value of $\ell$ to obtain the expected number of comparisons, and introduce a variable $r = 1/d$ for notational convenience.
+We now take the expected value of $\ell$ to obtain the expected number of comparisons, and introduce a variable $r := 1/d$ for notational convenience.
 \begin{align*}
 	\E \left[ \ell \right] = \sum_{k=1}^{m} P(\ell = k) \, k
 	& = \left(1 - \frac{1}{d}\right) \left( 1 + \frac{2}{d} + \frac{3}{d^2} + \dots + \frac{m}{d^{m-1}} \right) + \frac{m}{d^m} \\
@@ -3044,7 +3056,7 @@ This proves the inequality when $d \geq 2$, which is a reasonable assumption con
 
 \subsubsection*{Problem 8.22}
 \textbf{A naive algorithm} which loops through the alphabet (of size $d$) for every letter in $\vect{x}$ (of size $m$) would give an $O(dm)$ algorithm.
-This is not very efficient, and faster algorithms may be constructed easily.
+This is not very efficient, and faster algorithms may easily be constructed.
 
 We can construct a \textbf{better algorithm} with runtime $O(d + m)$ as follows.
 \begin{verbatim}
@@ -3066,6 +3078,8 @@ def last_occurence(alphabet, word):
 \end{Verbatim}
 It's possible to make the algorithm closer to $O(\min(m, d))$, if we know the values of $m$ and $d$ before the algorithm starts.
 If $d\gg m$ or $m \gg d$, such an algorithm can avoid looping over the longest string, but we will not pursue this any further in this problem.
+
+We are now in a position to answer the questions posed in the problem.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# The time complexity of the algorithm is $O(m + d)$.
@@ -3090,7 +3104,7 @@ The \texttt{collections.defaultdict} data structure is a dictionary (hash-table)
 (i) Non-negativity; 
 (ii) Reflexivity; 
 (iii) Symmetry; and 
-(iv) Triangle inequality. These properties are listed on page 187 in \cite{duda_pattern_2000}, which corresponds to section 4.6.1.
+(iv) Triangle inequality. These properties are listed on page 187 in \cite{duda_pattern_2000}, which corresponds to Section 4.6.1.
 In order, we see that
 \begin{easylist}
 	## Non-negativity is always obeyed, since every cost is positive.
@@ -3099,7 +3113,7 @@ In order, we see that
 	## The triangle inequality is not always obeyed. A counterexample follows.
 \end{easylist}
 
-# We prove counterexamples for symmetry and the triangle inequality.
+# We provide counterexamples for symmetry and the triangle inequality.
 
 \textbf{Counterexample for symmetry} 
 Let $\vect{a} = \mathtt{dog}$ and $\vect{b} = \mathtt{dogs}$.
@@ -3203,7 +3217,7 @@ To solve the problem of the \emph{inductive step}, we will need to use following
 	\qquad 
 	\binom{n}{0} = 1
 \end{equation*}
-The first one might be familiar from the construction of Pascals triangle, and the second two are easily derived when driving out $\binom{n}{r} = n! / (n-r)! r!$.
+The first one might be familiar from the construction of Pascals triangle, and the final two are easily derived when writing out $\binom{n}{r} := n! / (n-r)! r!$.
 
 The strategy is to write out $K(n+1)$, strip off the first and last term in the sum, apply the first identity above, and then collect terms to obtain $K(n)$ twice.
 We proceed:
@@ -3215,7 +3229,7 @@ We proceed:
 	&= \sum_{r=0}^{n} \binom{n}{r} + \sum_{r=0}^{n} \binom{n}{r} =
 	K(n) + K(n) = 2K(n)
 \end{align*}
-If $K(n+1) = 2K(n)$ and $K(1) = 2$, then $K(n) = 2^n$ for all $n$, which is what we wanted to prove in this problem.
+If $K(n+1) = 2K(n)$ and $K(1) = 2$, then $K(n) = 2^n$ for all $n$, which is what we wanted to prove.
 \end{easylist}
 
 
@@ -3233,18 +3247,18 @@ More generally, to generate $n$ the counter $c$ must go to approximately
 	1 + 2 + 3 + \dots + c = n = \frac{c(c-1)}{2}.
 \end{equation*}
 Therefore, we need a counter going to $\sim \sqrt{n}$ to generate a $n$ bit string.
-Storing $c$ requires $\log_2 c$ bits, so the complexity is $O \left( \log_2 \sqrt{n} \right)$.
+Storing the number $c$ requires $\log_2 c$ bits, so the complexity is $O \left( \log_2 \sqrt{n} \right)$.
 
 # We must iterate over $\sim n/2$ zeros, then output a \texttt{1}, then iterate over $\sim n/2$ zeros again.
-To do this, we need a counter going to $n$, storing this requires $\log_2 n$ bits, so the Kolmogorov complexity is $O \left( \log_2 n \right)$.
+To do this, we need a counter going to $n/2$, storing this requires $\log_2 (n/2)$ bits, so the Kolmogorov complexity is $O \left( \log_2 n \right)$.
 
 # The complexity is $O(1)$, since there exists programs of finite size which will yield any arbitrarily large number of consecutive digits of $e$.
-This is the same reason as why $\pi$ is $O(1)$, as explained in section 9.2.3 in \cite{duda_pattern_2000}.
+This is the same reason as why $\pi$ is $O(1)$, as explained in Section 9.2.3 in \cite{duda_pattern_2000}.
 
-# Also constant, for the same reason as the previous question.
+# Also constant, for the same reason as the previous sub-problem.
 
 # Assuming a finite size program which generates the digits of $\pi$ one-by-one exists, we use a counter to substitute every 100th digit of $\pi$ in the base-2 number system to a \texttt{1}.
-The counter resets after hitting 100, so it's storage is constant.
+The counter resets after hitting 100, so its storage is constant.
 The total complexity is $O(1)$, i.e. constant.
 
 # Same as in the previous question, but storing the counter requires $\log_2 n$ bits.
@@ -3253,7 +3267,7 @@ The total complexity is $O(1)$, i.e. constant.
 
 
 \subsubsection*{Problem 9.18}
-We use $\var\left[ X \right] = \E\left[ (X -  \E\left[X \right])^2 \right] = \E \left[X^2\right] + \E \left[X\right]^2$, solve for $\E \left[X^2\right]$ and substitute $X \mapsto g(\vect{x}; \D) -F (\vect{x})$.
+We use the relation $\var\left[ X \right] = \E\left[ (X -  \E\left[X \right])^2 \right] = \E \left[X^2\right] + \E \left[X\right]^2$, solve for $\E \left[X^2\right]$ and substitute $X \mapsto g(\vect{x}; \D) -F (\vect{x})$.
 Doing this, we observe that
 \begin{align*}
 	\E \left[X^2\right] 
@@ -3264,7 +3278,7 @@ Doing this, we observe that
 	\underbrace{\E \left[g(\vect{x}; \D) - F (\vect{x}) \right]^2}_{\text{bias}^2} +  
 	\underbrace{\var\left[ g(\vect{x}; \D) -F (\vect{x}) \right] }_{\text{variance}}.
 \end{align*}
-The last term for the variance is not immediately recognizable as the term given in the book, but we observe that
+The last term for the variance is not immediately recognizable as the term given in the book, but we note that
 \begin{align*}
 	\var\left[ g(\vect{x}; \D) -F (\vect{x}) \right]
 	& =
@@ -3296,7 +3310,7 @@ by definition, and the squared term is always non-negative.
 
 \subsubsection*{Problem 9.23}
 We prove that the average of the leave-one-out means $\mu_{(\cdot)}$ is equivalent to the sample mean $\hat{\mu} = \bar{x}$ by substitution.
-Staring with the definition of $\mu_{(\cdot)}$, we have
+Starting with the definition of $\mu_{(\cdot)}$, we have
 \begin{align*}
 	\mu_{(\cdot)} &= \frac{1}{n} \sum_{i=1}^{n} \mu_{(i)}
 	= \frac{1}{n} \sum_{i=1}^{n} \left[  \frac{n \bar{x} - x_i}{n-1} \right]
@@ -3307,9 +3321,9 @@ Staring with the definition of $\mu_{(\cdot)}$, we have
 \end{align*}
 
 \subsubsection*{Problem 9.26}
-There is an error in equation (23) in chapter 9 in the book.
+There is an error in Equation (23) in chapter 9 in the book.
 The equation cannot possibly measure the variance (the uncertainty) of a mean value.
-To see this, consider two data sets and the results of applying equation (23):
+To see this, consider two data sets and the results of applying Equation (23):
 \begin{align*}
 	\D_1 = \left\{0,0,1, 1\right\}  & \mapsto_{(23)} 0.75 \\ 
 	\D_2 = \left\{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1\right\}  & \mapsto_{(23)} 4.75
@@ -3328,7 +3342,7 @@ since
 \end{equation*}
 Then $\D_1  \mapsto 0.08333$ and $\D_2  \mapsto 0.0131578$, which is more in line with what we'd expect---more observations reduce the uncertainty.
 
-Onto the problem at hand: to show that equation (26) reduces to the above, we write
+Onto the problem at hand: to show that Equation (26) reduces to the above, we write
 \begin{equation*}
 	\mu_{(i)} - \mu_{(\cdot)} = \left[  \frac{n \bar{x} - x_i}{n-1} \right] - \bar{x} = \frac{\bar{x} - x_i}{n-1}.
 \end{equation*}
@@ -3345,6 +3359,7 @@ as desired.
 
 
 \subsubsection*{Problem 9.34}
+See Figure \ref{fig:duda_ch9_prob34} on page \pageref{fig:duda_ch9_prob34} for a plot accompanying this solution.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# We find the maximum likelihood estimate for $x_\ell$ and $x_u$ to be
@@ -3352,7 +3367,7 @@ as desired.
 		\hat{x}_\ell = \min \D = 0.2 \qquad 
 		\hat{x}_u = \max \D = 0.9.
 	\end{equation*}
-	Noe that these maximum likelihood estimates are \emph{biased}.
+	Noe that these maximum likelihood estimates are biased.
 	The value of $\hat{x}_\ell$ will be greater than the true value of $x_\ell$, and the value of $\hat{x}_u$ will be smaller than the true value of $x_u$.
 	The unbiased estimates are
 	\begin{align*}
@@ -3363,7 +3378,7 @@ as desired.
 	# The estimates are $\hat{\mu} = 0.514$ and $\hat{\sigma} = 0.223$, and the maximum likelihood estimate of $\sigma$ is biased.
 	
 	# The problem states that there is no prior reason to assume one model over the other, so $P(h_1) = P(h_2) = 0.5$.
-	We will not make any assumptions on the range of parameter values in $\vect{\theta}$, so the term $p(\hat{\vect{\theta}} \mid h_i) \Delta \vect{\theta}$ in equation (42) in the book is set to 1.
+	We will not make any assumptions on the range of parameter values in $\vect{\theta}$, so the term $p(\hat{\vect{\theta}} \mid h_i) \Delta \vect{\theta}$ in Equation (42) in the book is set to 1.
 	What's left is to evaluate $\ln P(\D \mid \hat{\vect{\theta}}, h_i)$, which becomes
 	\begin{align*}
 		\ln P(\D \mid \hat{\vect{\theta}}, h_1) &= 
@@ -3371,28 +3386,29 @@ as desired.
 		\ln P(\D \mid \hat{\vect{\theta}}, h_2) &= 
 		\sum_{i=1}^{n} \ln p(x_i \mid  \hat{\mu} = 0.514, \hat{\sigma} = 0.223) \approx 0.567
 	\end{align*}
+	We decide on model $h_1$, since it's associated with much greater likelihood.
 \end{easylist}
 	
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.65\linewidth]{figs/duda_ch9_prob34}
-\caption{Plot of data and models for problem 9.34.}
+\caption{Plot of data and models for Problem 9.34.}
 \label{fig:duda_ch9_prob34}
 \end{figure}
 
 
 \subsubsection*{Problem 9.37}
-The plot for this problem found in figure \ref{fig:duda_ch9_prob37_k50}.
+The plot for this problem found in Figure \ref{fig:duda_ch9_prob37_k50} on page \pageref{fig:duda_ch9_prob37_k50}.
 To create the plot, and outer loop for values of $n$ was used.
 For each value of $n$, a true value of $p$ was set.
-Then given $(n, p)$, a range of value for a 95 \% confidence interval was computed.
+Then given $(n, p)$, a range of values for a 95 \% confidence interval was computed.
 These values were stored and plotted.
 Notice that the graph is somewhat jagged when $n$ is small because of the discrete structure of the problem.
 	
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.7\linewidth]{figs/duda_ch9_prob37_k15}
-\caption{Plot associated with problem 9.37.}
+\caption{Plot associated with Problem 9.37.}
 \label{fig:duda_ch9_prob37_k50}
 \end{figure}
 
