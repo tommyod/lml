@@ -141,7 +141,7 @@ It is often analytically tractable, and closed form discriminant functions exist
 	p(\vect{x}) = \int p(\vect{x}, \vect{y}) \, d\vect{y} = \int p(\vect{x} \mid \vect{y}) p(\vect{y}) \, d\vect{y}.
 \end{equation*}
 
-# In Bayesian belief networks, influences are represented by a directed network.
+# In \emph{Bayesian belief networks}, influences are represented by a directed network.
 If $B$ is dependent on $A$, we add a directed edge $A \to B$ to the network.
 \end{easylist}
 \begin{figure}[ht!]
@@ -162,7 +162,8 @@ assuming i.i.d. data points and maximizing the log-likelihood, we have
 \begin{equation*}
 	\hat{\vect{\theta}} = \arg \max_{\vect{\theta}} \ln  p(\D \mid \vect{\theta}) = \arg \max_{\vect{\theta}}  \ln  \prod_{i=1}^{n} p(\vect{x}_i \mid \vect{\theta})  .
 \end{equation*}
-Analytical solutions exist for the Gaussian, but in general a maximum likelihood estimate may be biased, in the sense that $\E_x[ \hat{\vect{\theta}} ] = \int \hat{\vect{\theta}} p(\vect{x}) \, d\vect{x} \neq \vect{\theta}$.
+Analytical solutions exist for the Gaussian.
+In general a maximum likelihood estimate may be biased, in the sense that $\E_x[ \hat{\vect{\theta}} ] = \int \hat{\vect{\theta}} p(\vect{x}) \, d\vect{x} \neq \vect{\theta}$.
 
 # In the Bayesian framework, the parameter $\vect{\theta}$ is expressed by a probability density function $p(\vect{\theta})$.
 This is called the \emph{prior} distribution of $\vect{\theta}$, which is updated when new data is observed.
@@ -186,18 +187,18 @@ which may be interpreted as a weighted average of models $p(\vect{x} \mid \vect{
 
 # The Bayesian framework is analytically tractable when using Gaussians.
 For instance, we can compute $p(\vect{\mu} \mid \D)$ if we assume $p(\vect{\mu}) \sim \N(\vect{\mu}_0, \vect{\Sigma}_0)$.
-The distribution $p(\vect{\mu})$ is called the \emph{conjugate prior} and $p(\vect{\mu} \mid \D)$ is a \emph{reproducing density}, since the normal prior transforms to a normal posterior (with different parameters) when new data is observed.
+The distribution $p(\vect{\mu})$ is called a \emph{conjugate prior} and $p(\vect{\mu} \mid \D)$ is a \emph{reproducing density}, since a normal prior transforms to a normal posterior (with different parameters) when new data is observed.
 
 # In summary the Bayesian framework allows us to incorporate prior information, but the maximum-likelihood approach is simpler.
 Maximum likelihood gives us an estimate $\hat{\vect{\theta}}$, but the Bayesian framework gives us $p(\vect{\theta}  \mid  \D)$---the full distribution.
 
-# Principal Component Analysis (PCA) yields components useful for \emph{representation}.
+# \emph{Principal Component Analysis} (PCA) yields components useful for \emph{representation}.
 The covariance matrix is diagonalized, and low-variance directions in the hyperellipsoid are eliminated.
-The computation is performed using the SVD.
+The computation is often performed using the \emph{Singular Value Decomposition} (SVD).
 
-# Discriminant Analysis (DA) projects to a lower dimensional subspace with optimal \emph{discrimination} (and not representation).
+# \emph{Discriminant Analysis} (DA) projects to a lower dimensional subspace with optimal \emph{discrimination} (and not representation).
 
-# Expectation Maximization (EM) is an iterative algorithm for finding the maximum-likelihood when data is missing (or latent).
+# \emph{Expectation Maximization} (EM) is an iterative algorithm for finding the maximum-likelihood when data is missing (or latent).
 
 \begin{figure}[ht!]
 	\centering
@@ -233,7 +234,7 @@ It places a \emph{kernel function} $\phi: \R_+ \to \R_+$ on every data point $\v
 	p_n(\vect{x}) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{V_n} 
 	\phi \left( \frac{\norm{\vect{x} - \vect{x}_i}_p}{h_n}  \right),
 \end{equation*}
-where $\norm{\cdot}_p: \R^d \to \R_+$ is the $p$-norm (which induces the so-called \emph{Minkowski metric}) and $h_n \geq 0$ is the bandwidth.
+where $\norm{\cdot}_p: \R^d \to \R_+$ is the $p$-norm (which induces the so-called \emph{Minkowski metric}) and $h_n > 0$ is the bandwidth.
 
 # $k$-nearest neighbors is a discriminative method.
 It uses information about the $k$ nearest neighbors of a point $\vect{x}$ to compute $P(w_j \mid \vect{x})$.
@@ -256,7 +257,7 @@ For an image $\vect{x}'$, the tangent vector of a transformation $\F$ (such as r
 \end{equation*}
 If several transformations are available, their linear combination may be computed.
 For each test point $\vect{x}$, we search the tangent space for the linear  combination minimizing the metric.
-This gives a metric $D(\vect{x}, \vect{x}')$ which is more invariant to transformations such as small rotations and translations, compared to the 2-norm.
+This gives a metric $D(\vect{x}, \vect{x}')$ which is invariant to transformations such as small rotations and translations, compared to the 2-norm.
 
 # \emph{Reduced Coloumb energy networks} use ideas from both Parzen windows and $k$-nearest neighbors.
 It adjusts the size of the window so that it is less than some maximal radius, while not touching any observation of a different class.
@@ -268,7 +269,7 @@ This creates ``basins of attraction'' for classification.
 \subsection{Linear discriminant functions}
 \begin{easylist}[itemize]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-# Linear discriminant functions split the feature space in two with a hyperplane.
+# A \emph{linear discriminant function} splits the feature space in two using a hyperplane.
 The equation for a hyperplane is given by
 \begin{equation*}
 	g(\vect{x}) = \vect{\omega}^T \vect{x} + \omega_0 = \vect{a}^T \vect{y} =
@@ -281,7 +282,7 @@ The equation for a hyperplane is given by
 	\end{pmatrix},
 \end{equation*}
 where $\omega_0$ is the bias. 
-The form $\vect{a}^T \vect{y}$ is called the \emph{augmented} form.
+The expression $\vect{a}^T \vect{y}$ is called the \emph{augmented form}.
 
 \begin{figure}[ht!]
 	\centering
@@ -290,7 +291,7 @@ The form $\vect{a}^T \vect{y}$ is called the \emph{augmented} form.
 	\label{fig:separating_hyperplanes}
 \end{figure}
 
-# A linear machine assigns a point $\vect{x}$ to $\omega_i$ if
+# A \emph{linear machine} assigns a point $\vect{x}$ to state of nature $\omega_i$ if
 \begin{equation*}
 	g_i( \vect{x} ) \geq g_j( \vect{x} )
 \end{equation*}
@@ -309,12 +310,12 @@ Another example is transforming periodic data with period $P$ from $0 \leq x < P
 # Several algorithms may be used to minimize an error function $J(\vect{a})$.
 Two popular choices are \emph{gradient descent} and \emph{Newton descent}.
 ## Gradient descent moves in the direction of the negative gradient.
-It is often controlled by a step length parameter $\eta(k)$, which may decrease as the iterations $k$ increase.
+It is often controlled by a step length parameter $\eta(k)$, which may decrease as the iteration counter $k$ increases.
 The update rule is given by
 \begin{equation*}
 	\vect{a} \leftarrow \vect{a} - \eta(k) \nabla J(\vect{a}).
 \end{equation*}
-## Newton descent also moves in the direction of the negative gradient, but the optimal step length is computed by linearizing the function $\nabla J(\vect{a})$ (or, equivalently, a second order approximation of $\vect{a}$).
+## Newton descent also moves in the direction of the negative gradient, but the optimal step length is computed by linearizing the function $\nabla J(\vect{a})$ (or, equivalently, a second order approximation of $J(\vect{a})$).
 The update rule is given by
 \begin{equation*}
 \vect{a} \leftarrow \vect{a} - \vect{H}^{-1} \nabla J(\vect{a}).
@@ -322,7 +323,7 @@ The update rule is given by
 
 # Criterion functions for linearly separable data sets include:
 ## The Perceptron function $\sum_{y \in \Y} (-\vect{a}^T \vect{y})$, which is not smooth.
-## The squared error with margin, given by $\sum_{y \in \Y} (\vect{a}^T \vect{y} - b)^2 / \norm{\vect{y}}^a$.
+## The squared error with margin, given by $\sum_{y \in \Y} (\vect{a}^T \vect{y} - b)^2 / \norm{\vect{y}}^2$.
 
 # The \emph{Mean Squared Error} (MSE) approach may be used, but it is not guaranteed to yield a separating hyperplane---even if one exists.
 ## The MSE solution is found analytically by the pseudoinverse $\vect{A}^\dagger = \left( \vect{A}^T \vect{A} \right)^{-1} \vect{A}^T$. 
@@ -336,13 +337,13 @@ It represents the analytical solution to the problem
 which is solved by $\vect{x} = \vect{A}^\dagger \vect{b}$.
 ## The MSE approach is related to Fisher's linear discriminant for an appropriate choice of margin vector $\vect{b}$.
 ## LMS may be computed using matrix procedures (never use the pseudoinverse directly) or by the gradient descent algorithm.
-## Ho-Kashyap procedures yield a separating hyperplane if one exists.
+## Ho-Kashyap procedures will return a separating hyperplane if one exists.
 
-# \emph{Linear programming} (LP) may also be used to find a separating hyperplane. Several reductions are possible by introduction of \emph{artificial variables}.
-## Minimizing the Perceptron criterion function may be formulated as LP, and the result is decent even if a separating hyperplane does not exist.
+# \emph{Linear programming} (LP) may also be used to find a separating hyperplane. Several reductions are possible by introducing \emph{artificial variables}.
+## Minimizing the Perceptron criterion function may be formulated as an LP, and the result is typically decent even if a separating hyperplane does not exist.
 
 # \emph{Support Vector Machines} (SVM) find the minimum margin hyperplane.
-This is a quadratic programming (QP) problem, and the dual problem is easier to solve than the primal problem.
+This is a \emph{quadratic programming} (QP) problem, and the dual problem is easier to solve than the primal problem.
 \end{easylist}
 
 
@@ -382,7 +383,7 @@ adding weight decay (equivalent to regularization) while learning,
 training with hints (output units which are subsequently removed) and 
 experimenting with various error functions.
 
-# Seconds order methods for learning the weights inluce
+# Second order methods for learning the weights include
 ## \textbf{Newtons method} -- uses $\vect{H}$ in addition to $\nabla J(\vect{w})$.
 ## \textbf{Quickprop} -- two evaluations of $\nabla J(\vect{w})$ to approximate a quadratic.
 ## \textbf{Conjugate gradient descent} -- uses conjugate directions, which consists of a series of line searches. 
@@ -392,7 +393,7 @@ This is equivalent to a ``smart momentum.''
 # Other networks include:
 ## Convolutional Neural Networks (CNNs) -- translation invariant, has achieved great success on image data.
 ## Recurrent Neural Networks (RNNs) -- the output of the previous prediction is fed into the subsequent prediction. 
-This simulates ``memory'', and RNNs have been successful on time series data.
+This simulates memory, and RNNs have been successful on time series data.
 ## Cascade correlation -- a technique where the topology is altered by adding more units until the performance is sufficiently good.
 \end{easylist}
 
@@ -406,10 +407,11 @@ This simulates ``memory'', and RNNs have been successful on time series data.
 \begin{easylist}[itemize]
 \ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 # Stochastic methods are used to search for optimal solutions when techniques such as gradient descent are not viable.
-For instance if the model is very complex, has a discrete nature where gradients are not suitable, or if there are time constraints.
+For instance if the model is very complex, has a discrete nature where gradients are not available, or if there are time constraints.
 
 # \emph{Simulated annealing} is an optimization technique.
-To minimize the error $E(\vect{s})$, where $\vect{s} \in [-1, 1]^n$, we change a random entry of $\vect{s}$.
+As an example:
+to minimize the error $E(\vect{s})$, where $\vect{s} \in [-1, 1]^n$, we change a random entry of $\vect{s}$.
 \begin{easylist}
 ## If the change produces a better result, then keep the new $\vect{s}$.
 ## If the change does not produce a better result, we still might keep the change. 
@@ -469,7 +471,7 @@ To implement a decision tree, one must consider
 # To decide which attribute to split on, an \emph{impurity function} is defined for a node $N$ consisting of training samples from various categories $\omega_1, \dots, \omega_C$.
 The impurity function should be 0 when all samples in node $N$ are from the same category $\omega_j$, and peak when the samples are uniformly drawn from the $C$ categories.
 
-Two examples of impurity functions include the \emph{entropy impurity} and the \emph{Gini impurity}, which are respectively defined as
+Two examples of impurity functions are \emph{entropy impurity} and \emph{Gini impurity}, which are respectively defined as
 \begin{equation*}
 	i(N) = - \sum_{j=1}^{C} P(\omega_j) \ln P(\omega_j) 
 	\qquad
@@ -481,7 +483,7 @@ A split is chosen so that it maximizes the decrease in impurity, i.e.
 \begin{equation*}
 	\Delta i(N) = i(N) - \left[ P_L \, i(N_L) + (1 - P_L) \, i(N_R)\right].
 \end{equation*}
-The equation says that the change in impurity equals the original impurity at node $N$ minus the weighted average of the impurity of the left and right child node.
+The above equation says that the change in impurity equals the original impurity at node $N$ minus the weighted average of the impurity of the left and right child node.
 
 # Other considerations in decision trees include:
 ## Pruning -- simplifying the tree after training (bypassing the horizon effect).
@@ -507,25 +509,6 @@ There are several types of grammars, and they constitute a hierarchy
 The types are respectively called regular, context free, context sensitive and free.
 ## A central question is whether a string $\vect{x}$ is in the language $\mathcal{L}$ generated by the grammar $G$, i.e. whether $\vect{x} \in \mathcal{L}(G)$. This can be answered using bottom-up parsing, which employs the product rules $\mathcal{P}$ backwards.
 \end{easylist}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -563,7 +546,7 @@ High variance typically implies many parameters (over-fitting), while high bias 
 This is done for every data point, and the final result is averaged.
 From this the variance of the statistic may be assessed. 
 
-# The \emph{bootstrap} method involves re-samling $n$ data points from $\D$ with replacement $B$ times.
+# The \emph{bootstrap} method involves re-samling $n$ data points from $\D^n$ with replacement $B$ times.
 The statistic is computed $B$ times, and is then averaged.
 \begin{equation*}
 	\hat{\theta}^{*(\cdot)} = \frac{1}{B} \sum_{b=1}^{B} \hat{\theta}^{*(b)}
@@ -576,8 +559,8 @@ The statistic is computed $B$ times, and is then averaged.
 
 
 # \emph{Bagging} consists of taking an average over model predictions.
-\emph{Boosting} entails using the result of model $h^{n}$ to train model $h^{n+1}$.
-Informally, the next model specializes on the data in $\D$ which the sequence of models so far has not performed well on.
+\emph{Boosting} uses the result of model $h^{n}$ to train model $h^{n+1}$.
+Informally, the next model prioritizes data in $\D$ which the sequence of models so far has not performed well on.
 
 ## Adaptive Boosting (\emph{AdaBoost}) is a well known boosting algorithm.
 It samples data $\vect{x}_i$ using probability weights $w_i$.
@@ -585,7 +568,7 @@ If a model $h^n$ does a poor job, the associated weights $w_i^{n+1}$ are increas
 This causes exponential error decay on training data.
 
 # \emph{Learning with queries} involves the model choosing the next data point to learn from.
-It assumes the existence of an oracle which can give the correct answer to any input, but using this oracle might come with a cost.
+It assumes the existence of an oracle which can give the correct answer to any input, but using this oracle might be costly.
 Efficient learning involves choosing points where the classifier is uncertain, i.e. where $P(\omega_1 \mid \vect{x}) \approx P(\omega_2 \mid \vect{x})$.
 
 # \emph{Maximum-likelihood model comparison} picks the maximum of
@@ -598,29 +581,82 @@ Efficient learning involves choosing points where the classifier is uncertain, i
 	\frac{\Delta \vect{\theta}}{\Delta^0 \vect{\theta}},
 \end{equation*}
 where $\Delta \vect{\theta}$ is the volume of the possible parameter space given the data $\D$, and $\Delta^0 \vect{\theta}$ is the prior volume of the possible parameter before seeing data.
-After some simplifications, this becomes a two step process: (1) compute maximum likelihood estimate $\hat{\vect{\theta}}$ from the data, then (2) compute the likelihood value given $\hat{\vect{\theta}}$.
+Applying a few simplifications, this becomes a two step process: (1) compute maximum likelihood estimate $\hat{\vect{\theta}}$ from the data, then (2) compute the likelihood value given $\hat{\vect{\theta}}$.
 
 # Mixture models can be used to combine classifiers using discriminant functions.
-The final discriminant function is $g = \sum_{i=1}^{k} w_i g_i(\vect{x}, \vect{\theta}_i)$, and an underlying mixture model of the following form is assumed:
+The final discriminant function is $g = \sum_{i=1}^{k} w_i \, g_i(\vect{x}, \vect{\theta}_i)$, and an underlying mixture model of the following form is assumed:
 \begin{equation*}
 	p(\vect{y} \mid \vect{x}, \vect{\Theta}^0)
 	= \sum_{r=1}^{k}
 	\underbrace{P(r \mid \vect{x}, \vect{\theta}_0^0 )}_{\text{prob. of model }r}
 	p(\vect{y} \mid \vect{x}, \vect{\theta}_r^0 )
 \end{equation*}
-
-
-
-
-
 \end{easylist}
 
 
 
 \subsection{Unsupervised learning and clustering}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# TODO :)
+\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+# Unsupervised learning is a difficult problem.
+A mixture model may not be \emph{identifiable}, which happens when $\vect{\theta}$ cannot be determined uniquely even in the limit of infinite data.
+There exist necessary conditions for ML solutions to $\hat{P}(\omega_i)$ and $\hat{\vect{\theta}}_i$, but they are not sufficient to guarantee that a maximum is found.
+Singular solutions may occur, since the likelihood can be made arbitrarily large when $\vect{\mu}_i$ is placed on a data point and $\vect{\sigma}_i \to 0$.
+A Bayesian approach is possible, but rarely feasible.
+
+# The $k$-means algorithm is a simple procedure for finding $\vect{\mu}_1, \dots, \vect{\mu}_k$.
+A fuzzy $k$-means algorithm also exists, in which membership categorization is not binary.
+
+# It is better to find structure in data than to impose it.
+A metric $d(\cdot, \cdot)$ and a distance threshold $d_0$ may be defined, which may then be used to group points.
+This approach is sensitive to the effect of individual data points.
+Standardizing data using $\vect{y}_i = (\vect{x}_i - \vect{\mu}_k) / \vect{\sigma}_k$ may or may not be beneficial, and the same goes for PCA.
+
+# Many criterion functions are available for clustering, e.g. sum of square error
+\begin{equation*}
+	J_e = \sum_{i=1}^{c} \sum_{\vect{x} \in \D_i} \norm{\vect{x} - \vect{m}_i}^2.
+\end{equation*}
+Criterion functions based on the size of scatter matrices (LDA) are
+\begin{equation*}
+	J_e = \operatorname{tr} \left[ \vect{S}_W \right],
+	\qquad
+	J_d = \operatorname{det} \left[ \vect{S}_W \right]
+	\quad \text{and} \quad
+	J_f = \operatorname{tr} \left[ \vect{S}_T^{-1}  \vect{S}_W \right].
+\end{equation*}
+
+# \emph{Hierarchical clustering} represents hierarchical (clusters within clusters) structure in a \emph{dendrogram}, see Figure \ref{fig:dendrogram} on page \pageref{fig:dendrogram}.
+Two approaches are possible: agglomerative (merging) og divisive (splitting).
+Many distance measures are available.
+## Using $d_\text{min}(\D_i, \D_j)$ and agglomerative clustering, a \emph{minimal spanning tree} (MST) is built from the data.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figs/dendrogram}
+	\caption{A dendrogram representation of hierarchical clustering. The source is Wikipedia.}
+	\label{fig:dendrogram}
+\end{figure}
+
+# \emph{Competitive learning} is a clustering algorithm implemented by a neural network.
+The data $\vect{x} \in \R^d$ is augmented to $\vect{x} := (1, \vect{x})$ and normalized so that it lies on a $(d+1)$-dimensional sphere.
+The weight $\vect{w}^* = \arg \max_{\vect{w}} \vect{w}^T \vect{x}$ is updated to be more similar to the sample $\vect{x}$.
+The algorithm can also create new clusters $\vect{w}_j$ if certain conditions are met.
+It's suitable for on-line learning, but will not necessarily converge with constant learning rate.
+
+# PCA can be implemented as a 3-layer neural network autoencoder.
+The first $k$ eigenvalues/eigenvectors of $\vect{X}$ solves the minimization of $\norm{\vect{X} - \vect{X}_k'}$, where $\vect{X}_k'$ is a rank $k$ approximation of $\vect{X}$.
+\emph{Non-linear PCA} is an extension of the idea, using a 5-layer non-linear neural network autoencoder.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.55\linewidth]{figs/autoencoder}
+	\caption{A neural network autoencoder with 5 layers. The source is Wikipedia.}
+	\label{fig:autoencoder}
+\end{figure}
+
+# \emph{Self-organizing feature maps} transform from a high dimensional space to low dimensional one, while preserving local topological information.
+They are implemented as neural networks, and a key idea is to update neighboring areas when learning the map.
+An additional benefit is that they automatically place more points in regions of high probability.
 \end{easylist}
 
 
