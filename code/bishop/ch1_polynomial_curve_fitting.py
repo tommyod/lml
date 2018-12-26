@@ -84,12 +84,15 @@ class PolynomialCurveRidge(BaseEstimator, RegressorMixin):
 
         # The left hand side and right hand side of the equation for ridge
         # regularized least squares. Computing X.T * X is the expensive part
+        # Could have used np.linalg.solve
         lhs = np.dot(X_data.T, X_data) + np.eye(self.degree + 1) * self.alpha
         rhs = np.dot(X_data.T, y_data)
 
-        # Solve the least squares problem
-        w, residuals, rank, s = np.linalg.lstsq(lhs, rhs, rcond=None)
-        self.w_, self.residuals_ = w, residuals
+        # Solve the linear equation. np.linalg.solve is faster than 
+        # np.linalg.lstsq, but we assume that the system of equations has
+        # a unique solution here. I.e. not under- or overdetermined.
+        w = np.linalg.solve(lhs, rhs)
+        self.w_ = w
         return self
 
     def predict(self, x_data):
@@ -117,7 +120,7 @@ if __name__ == '__main__':
     poly = PolynomialCurve(degree=degree)
     poly.fit(x_data, y_data)
     x_smooth = np.linspace(0, 1, num=2**8)
-    plt.plot(x_smooth, np.sin(2 * np.pi * x_smooth), '--',
+    plt.plot(x_smooth, np.sin(2 * np.pi * x_smooth), '--',  
              label='True function')
     plt.plot(x_smooth, poly.predict(x_smooth),
              label=f'Degree {degree} polynomial')
