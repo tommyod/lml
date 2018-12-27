@@ -451,6 +451,53 @@ To prove the inequality, we apply the inequality on each term in equation (1.78)
 	&= \int \left\{ p(\vect{x}, \mathcal{C}_2) p(\vect{x}, \mathcal{C}_1) \right\}^{1/2} \, d \vect{x}
 \end{align*}
 
+\subsubsection*{Exercise 1.25}
+TODO
+
+
+\subsubsection*{Exercise 1.33}
+TODO
+
+\subsubsection*{Exercise 1.38}
+We wish to prove Equation (1.115) based on Equation (1.114).
+Clearly the case $M=1$ is true, and we assume the case $M=2$ is true, since this is given by Equation (1.114).
+For the recursive step, we assume the identity holds in the base case, and in the $M-1$ case, and then
+\begin{align*}
+	f \left( \sum_{i=1}^{M} \lambda_i x_i \right)
+	&= f \left( \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right)
+	= f \left( \frac{\sum_{k=1}^{M-1} \lambda_k}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right).
+\end{align*}
+The terms $\sum_{k=1}^{M-1} \lambda_k$ and $\lambda_M$ sum to unity, and $\sum_{i=1}^{M-1} \lambda_i x_i / \sum_{k=1}^{M-1} \lambda_k$ is a weighted average of $x$-values.
+Since it's a weighted average, it may be treated as just another $x$-value.
+
+Applying the base case for two $x$ values, we obtain
+\begin{equation*}
+	f \left( \frac{\sum_{k=1}^{M-1} \lambda_k}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right)
+	\leq
+	\sum_{k=1}^{M-1} \lambda_k f \left( 
+	\frac{1}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i
+	 \right)
+	+
+	\lambda_M f \left( x_M \right)
+\end{equation*}
+Now we can appeal to the $M-1$ case of the inequality, which we assume to be true by the induction hypothesis.
+We can appeal to it since the $\lambda_i$ are normalized and sum to unity in the equation above due to the normalizing factor in front of the sum.
+To ease notation, we define $\alpha = \sum_{k=1}^{M-1} \lambda_k$ and write
+\begin{equation*}
+\alpha f \left( 
+ \sum_{i=1}^{M-1} \frac{\lambda_i}{\alpha} x_i
+\right)
++
+\lambda_M f \left( x_M \right)
+\leq
+\alpha \left( \sum_{i=1}^{M-1} \frac{\lambda_i}{\alpha} f(x_i) \right)
++
+\lambda_M f \left( x_M \right)
+=
+\sum_{i=1}^{M} \lambda_i f(x_i).
+\end{equation*}
+
+
 % ----------------------------------------------------------------------------
 \subsection{Probability Distributions}
 \subsubsection*{Problem X.Y}
