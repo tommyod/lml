@@ -431,7 +431,89 @@ The cross term vanishes since $x$ and $y$ are independent.
 We will not show this in detail, but it can be shown by first noticing that $\E \left[xy\right] = \E \left[x\right] \E \left[y\right]$ when $x$ and $y$ are independent, and then showing that $\E\left[    \left(x - \E\left[x\right]\right) \right] = \E\left[ x \right] - \E\left[ x \right] = 0$.
 
 \subsubsection*{Exercise 1.15}
-TODO
+We split this rather large problem into parts.
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The redundancy is present due to the fact fact multiplication is commutative, so the weights may be factored out.
+	For instance, when $M=2$, we see that 
+	\begin{equation*}
+		w_{ij}x_i x_j + w_{ji} x_j x_i = (w_{ij} + w_{ji}) x_i x_j = \widetilde{w}_{ij} x_i x_j.
+	\end{equation*}
+	We reduce redundancy by ordering the products in a common term with $i_1 \geq i_2 \geq \cdots \geq i_M$.
+	This ordering corresponds to Equation (1.134) in \cite{bishop_pattern_2011}.
+	For instance, instead of summing over terms with $x_1 x_2 x_3$, $x_1 x_3 x_2$, $x_2 x_1 x_3$ and so forth, we make use of a common weight for the $x_3 x_2 x_1$-term.
+	
+	# The number of terms is the number of terms in the sum nested sum
+	\begin{equation*}
+		n(D, M) = \sum_{i_1 = 1}^{D} 
+		\sum_{i_2 = 1}^{i_1}
+		\cdots
+		\sum_{i_M = 1}^{i_{M - 1}} 1,
+	\end{equation*}
+	which contains $M$ sums.
+	To prove the recursive formula, we expand the outer sum and notice that the result is $D$ nested sums over $M-1$ sums each.
+	We have
+	\begin{align*}
+		n(D, M) &= \sum_{i_1 = 1}^{D} 
+		\sum_{i_2 = 1}^{i_1}
+		\cdots
+		\sum_{i_M = 1}^{i_{M - 1}} 1 \\
+		&= 
+		\left( 
+		\sum_{i_2 = 1}^{1}
+		\cdots
+		\sum_{i_M = 1}^{i_{M - 1}} 1
+		\right)+\left( 
+		\sum_{i_2 = 1}^{2}
+		\cdots
+		\sum_{i_M = 1}^{i_{M - 1}} 1
+		\right)+
+		\cdots
+		+\left( 
+		\sum_{i_2 = 1}^{D}
+		\cdots
+		\sum_{i_M = 1}^{i_{M - 1}} 1 \right) \\
+		&= n(D=1, M-1) + n(D=2, M-1) + \cdots + n(D=D, M-1) \\
+		&= \sum_{i=1}^{D} n(i, M-1).
+	\end{align*}
+	
+	# We skip the base case, which is easily verified.
+	Assuming the result holds for $D$, we we show that it holds for $D+1$ by writing
+	\begin{align*}
+		\sum_{i=1}^{D + 1} \frac{(i +M - 2)!}{(i-1)!\, (M-1)!} &=
+		\sum_{i=1}^{D} \frac{(i +M - 2)!}{(i-1)! \, (M-1)!}
+		+  \frac{(D+M-1)!}{D! \, (M-1)!}.
+	\end{align*}
+	The sum on the right hand side is the case for $D$, which we assume is true.
+	Using this, we write
+	\begin{align*}
+		\sum_{i=1}^{D + 1} \frac{(i +M - 2)!}{(i-1)! \, (M-1)!} &=
+		\frac{(D + M - 1)!}{(D- 1)! \, M!}
+		+  \frac{(D+M-1)!}{D! \, (M-1)!} \\
+		&=
+		\frac{(D + M - 1)! \, D}{D! \, M!}
+		+  \frac{(D+M-1)! \, M}{D! \, M!} \\
+		&=
+		\frac{(D + M - 1)! \, (D + M)}{D! \, M!} = \frac{(D + M)!}{D!\, M!} \\
+		&=\frac{((D+1) + M - 1)!}{((D+1) - 1)! \, M!},
+	\end{align*}
+	which shows that the result holds for $D+1$ when it holds for $D$.
+	
+	# We skip the base case of the inductive argument, as it should be easy to carry out.
+	
+	The inductive step is performed as follows.
+	Below, the first equality comes from Equation (1.135) in the book,
+	the second comes from assuming the result holds for $M-1$,
+	and the third comes from (1.136).
+	We have that
+	\begin{equation*}
+		n(D, M) = \sum_{i=1}^{D} n(i, D - 1)
+		= \sum_{i=1}^{D} \frac{(i +M - 2)!}{(i-1)!\, (M-1)!} 
+		= 
+		 \frac{(D + M - 1)!}{(D - 1)! \, M !}.
+	\end{equation*}
+	Comparing the first and final expression, we observe that if we assume the relation holds for $M-1$, it does indeed hold for $M$ too.
+\end{easylist}
 
 
 \subsubsection*{Exercise 1.21}
@@ -445,18 +527,67 @@ To prove the inequality, we apply the inequality on each term in equation (1.78)
 	+
 	\int_{\mathcal{R}_2} p(\vect{x}, \mathcal{C}_2) \, d \vect{x} \\
 	&\leq 
-	 \int_{\mathcal{R}_1} \left\{ p(\vect{x}, \mathcal{C}_1) p(\vect{x}, \mathcal{C}_2) \right\}^{1/2} \, d \vect{x}
+	 \int_{\mathcal{R}_1} \left\{ p(\vect{x}, \mathcal{C}_1) \, p(\vect{x}, \mathcal{C}_2) \right\}^{1/2} \, d \vect{x}
 	+
-	\int_{\mathcal{R}_2} \left\{ p(\vect{x}, \mathcal{C}_2) p(\vect{x}, \mathcal{C}_1) \right\}^{1/2} \, d \vect{x} \\
-	&= \int \left\{ p(\vect{x}, \mathcal{C}_2) p(\vect{x}, \mathcal{C}_1) \right\}^{1/2} \, d \vect{x}
+	\int_{\mathcal{R}_2} \left\{ p(\vect{x}, \mathcal{C}_2) 
+	\, p(\vect{x}, \mathcal{C}_1) \right\}^{1/2} \, d \vect{x} \\
+	&= \int \left\{ p(\vect{x}, \mathcal{C}_2) \, p(\vect{x}, \mathcal{C}_1) \right\}^{1/2} \, d \vect{x}
 \end{align*}
 
 \subsubsection*{Exercise 1.25}
-TODO
+This closely follows the derivation in Section 1.5.5.
+If $\vect{x} \in \R^n$ and $\vect{t} \in \R^m$, we view
+$\E \left[L (\vect{t}, \vect{y} (\vect{x}))\right]$ as a functional from $\{ f \mid f: \R^n \to \R^m \}$ to $\R$.
+Comparing the ordinary derivative and the functional derivative, we see that
+\begin{align*}
+	f(\vect{x} + \vect{\epsilon}) &= f(\vect{x}) 
+	+
+	\vect{\epsilon}^T \nabla f(\vect{x}), \quad \text{and}
+	\\
+	F(\vect{y}(\vect{x}) + \epsilon \vect{\eta}(\vect{x})) &=
+	F(\vect{y}(\vect{x})) + \epsilon \int \int  \vect{\eta}^T
+	\delta_{\vect{y}_j(\vect{x})} F(\vect{y}(\vect{x}))
+	  \, d \vect{t} \, d\vect{x} \\
+	&=
+	 F(\vect{y}(\vect{x}))
+	+
+	\epsilon \sum_{j=1}^{n}
+	 \int \underbrace{\left( \int \frac{\delta F(\vect{y}(\vect{x}))}{\delta \vect{y}_j(\vect{x})} \, d \vect{t} \right)}_{\text{must be } 0} \eta_j (\vect{x}) \, d \vect{x}.
+\end{align*}
+The above condition implies that
+\begin{equation*}
+	\left( \int \frac{\delta F(\vect{y}(\vect{x}))}{\delta \vect{y}_j(\vect{x})} \, d \vect{t} \right)=
+	2 \int ( \vect{y}_j(\vect{x}) - \vect{t}_j) p (\vect{x}, \vect{t}) \, d\vect{t}
+	= 0,
+\end{equation*}
+which, following the derivation leading to Equation (1.89), leads to
+\begin{equation*}
+	\vect{y}_j(\vect{x}) = \int t_j p (\vect{t} \mid \vect{x}) \, d \vect{t} = \E_{\vect{t}} \left[ t_j \mid \vect{x} \right].
+\end{equation*}
+This applies to any  component $j$ of $\vect{y}(\vect{x})$, so $\vect{y}(\vect{x}) = \E_{\vect{t}} \left[ \vect{t} \mid \vect{x} \right]$.
+To show that this reduces to Equation (1.89) in the case of a single target variable, simply define $\vect{t} := (t)$.
+
 
 
 \subsubsection*{Exercise 1.33}
-TODO
+A hint as to why this is true is given on page 54, which states that $\H\left[y \mid x\right]$ is ``the average additional information needed to specify $y$.''
+If the conditional entropy is zero, then $y$ must be completely specified by $x$, i.e. a function of $x$.
+If $\H\left[y \mid x\right] = 0$, then
+\begin{equation*}
+	\sum_i \sum_j p(x_i, y_j) \ln p (y_j \mid x_i) = 0.
+\end{equation*}
+Using $ p(x_i, y_j) = p(y_j \mid x_i) p(x_i)$ and rearranging the sums, we obtain
+\begin{equation*}
+	 \sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) \sum_i p(x_i)
+	 =
+	 \sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i)
+	  = 0.
+\end{equation*}
+For every $x_i$ with $p(x_i) > 0$, the equation above must be true.
+The functional form is $p(z) \ln p(z)$, and this function is negative expect when $z = 0$ and when $z=1$, where it is zero.
+Therefore, $p(y_j \mid x_i)  \ln p (y_j \mid x_i)$ must be 0 or 1 for each value of $y_j$. 
+However, since $\sum_j p(y_j \mid x_i) = 1$, 
+
 
 \subsubsection*{Exercise 1.38}
 We wish to prove Equation (1.115) based on Equation (1.114).
