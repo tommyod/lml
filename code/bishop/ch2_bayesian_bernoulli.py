@@ -80,8 +80,9 @@ class BayesianBernoulli(BaseEstimator):
 
 
 if __name__ == "__main__":
-    import pytest
-    pytest.main(args=['.', '--doctest-modules', '-v', '--capture=sys'])
+    import pytest    
+    pytest.main(args=[__file__, '--doctest-modules', '-v', '--capture=sys', 
+                      '--disable-warnings'])
 
 if __name__ == '__main__':
 

@@ -69,14 +69,6 @@
 \renewcommand{\H}{\operatorname{H}}
 
 
-
-% Change the section command to inluce lines, save space, etc.
-%\usepackage{titlesec}
-%\titlespacing\subsection{0pt}{6pt plus 4pt minus 2pt}{-0.8em plus 4pt minus 2pt}
-%\titlespacing\paragraph{0pt}{6pt plus 4pt minus 2pt}{8pt plus 4pt minus 2pt}
-%\titleformat{\section}
-%{\normalfont\Large\bfseries}{\thesection}{0em}{$\vartriangleright$ }[{\titlerule[1.2pt]}]
-
 % -------------------------------------------------
 % Document start
 % -------------------------------------------------
@@ -84,7 +76,7 @@
 	
 \maketitle
 \begin{abstract}
-This document contains some notes and solutions to the book TODO.fødselsnrfødselsnr
+This document contains some notes and solutions to the book TODO.
 
 \begin{figure}[ht!]
 	\centering
@@ -217,6 +209,193 @@ This document contains some notes and solutions to the book TODO.fødselsnrføds
 	# sdf
 \end{easylist}
 
+
+
+
+
+\subsubsection*{Notation}
+Scalar data is given by $x = \left(x_1, \dots, x_N\right)^T$, where $N$ is the number of samples. 
+Vector data is given by $\vect{X} =\left(\vect{x}_1, \dots, \vect{x}_N\right)^T$.
+Each vector $\vect{x}_j$ comes from an $M$ dimensional vector space of features.
+
+\subsubsection*{Mathematics}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The gamma function $\Gamma(x)$ satisfies $\Gamma(x) = (x-1)!$, and is given by
+	\begin{equation*}
+	\Gamma(x) = \int_{0}^{\infty} u^{x-1} e^{-u}  \, du.
+	\end{equation*}
+	It's a ``continuous factorial,'' which is proved by integration by parts and induction.
+	
+	# The Jensen inequality states that, for convex functions
+	\begin{equation*}
+	f\left( \sum_j \lambda_j x_j\right) \leq \sum_j \lambda_j f(x_j),
+	\end{equation*}
+	where $\sum_j \lambda_j = 1$ and $\lambda_j \geq 0$ for every $j$.
+\end{easylist}
+
+\subsubsection*{Probability}
+The joint probability is given by $p(x, y)$, which is short notation for $p(X = x_i \cap Y = y_j)$.
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The sum rule is 
+	\begin{equation*}
+	p(x) = \sum_y p(x, y).
+	\end{equation*}
+	## Applying the sum rule as above is called ``marginalizing out $y$.''
+	# The product rule is 
+	\begin{equation*}
+	p(x, y) = p(x | y) p(y).
+	\end{equation*}
+	## Calculating $p(x | y)$ is called ``conditioning on $y$.''
+	# Let $\vect{w}$ be parameters and $\D$ be data.
+	Bayes theorem is given by
+	\begin{equation*}
+	p(\vect{w} | \D) = \frac{p(\D | \vect{w}) p(\vect{w})}{p(\D)} \quad \Leftrightarrow \quad
+	\text{posterior} = \frac{\text{likelihood} \times \text{prior}}{\text{evidence}}.
+	\end{equation*}
+	
+	## Frequentist: data $\D$ generated from a fixed $\vect{w}$.
+	## Bayesian: data $\D$ fixed, find best $\vect{w}$ given this data.
+	# Frequentists generally quantify the properties of data driven
+	quantities in light of the fixed model parameters,
+	while Bayesians generally quantify the properties of unknown
+	model parameters in light of observed data.
+	See \cite{vanderplas_frequentism_2014}.
+\end{easylist}
+
+\subsubsection*{Expectation and covariance}
+Let $x$ be distributed with density $p(x)$, then
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The expectation of $f(x)$ is
+	\begin{equation*}
+	\E[f] = \sum_j f(x_j) p (x_j) = \int f(x) p(x) \, dx
+	\end{equation*}
+	# The variance of $f(x)$ is
+	\begin{equation*}
+	\var[f] = \E \left[ (f - \E[f])^2\right] = \E[f^2] - \E[f]^2
+	\end{equation*}
+	# The covariance of $x$ and $y$ given by
+	\begin{equation*}
+	\cov[x, y] = \E_{x,y} \left[ (x - \E[x]) (y - \E[y])\right]
+	\end{equation*}
+	# The covariance matrix $\mathbf{\Sigma}$ has entries $\sigma_{i,j}$ corresponding to the covariance of variables $i$ and $j$.
+	Thus $\vect{\Sigma} = \vect{I}$ means no covariance.
+	(Note that real data may have no covariance and still be dependent, i.e. have predictive power, $x_j = f(x_k)$ where $f$ is non-linear.
+	See ``Anscombe's quartet'' on Wikipedia.)
+\end{easylist}
+
+\subsubsection*{Polynomial fitting}
+Let $y(x, \vect{w}) = \sum_{j = 1}^{M} w_j x^j$ be a polynomial.
+We wish to fit this polynomial to values $\sf{x} = \left(x_1, \dots, x_N\right)$ and $\sf{t} = \left(t_1, \dots, t_N\right)$
+i.e. a degree $M$ polynomial fitting $N$ data points.
+
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The maximum likelihood solution is to minimize
+	\begin{equation*}
+	E(\vect{w}) \propto \sum_{n = 1}^{N} \left[ y (x_n, \vect{w}) - t_n\right]^2.
+	\end{equation*}
+	# Regularization adds a weight-dependent error so that $\tilde{E}(\vect{w}) = E(\vect{w}, x_n) + E(\vect{w})$.
+	For instance, Ridge minimizes the $2$-norm:
+	\begin{equation*}
+	\tilde{E}(\vect{w}) \propto \sum_{n = 1}^{N} \left[ y (x_n, \vect{w}) - t_n\right]^2 + \lambda \norm{\vect{w}}_2^2
+	\end{equation*}
+	While LASSO (Least Absolute Shrinkage and Selection Operator) minimizes and error with the $1$-norm.
+	Both are examples of Tikhonov regularization.
+\end{easylist}
+
+\subsubsection*{Gaussians}
+The multivariate Gaussian is given by
+\begin{equation*}
+\N\left(x | \vect{\mu}, \vect{\Sigma}\right) = 
+\frac{1}{(2\pi)^{D/2} \abs{\vect{\Sigma}}^{1/2}}  
+\exp\left( - \frac{1}{2} 
+(\vect{x} - \vect{\mu})^T
+\vect{\Sigma}^{-1}
+(\vect{x} - \vect{\mu})
+\right)
+\end{equation*}
+where $\vect{\mu}$ is the mean and $\vect{\Sigma}$ is the covariance.
+
+\subsubsection*{Parameter estimation}
+Let $\sf{x} = \left\{x_1, \dots, x_N\right\}$ be a data set which is identically and independently distributed (i.i.d). 
+The likelihood function for the Gaussian is
+\begin{equation*}
+p\left(\sf{x} | \mu, \sigma^2 \right) = 
+\prod_{j = 1}^{N} \N \left(x_j | \mu, \sigma^2\right).
+\end{equation*}
+Estimates for the parameters $\vect{\theta} = (\mu, \sigma^2)$ can be obtained by maximizing the likelihood, which is equivalent to maximizing the log-likelihood $\ln p\left(\sf{x} | \mu, \sigma^2 \right)$.
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Maximizing the likelihood $p(\D | \vect{w})$ is equivalent to minimizing $E = \vect{e}^T\vect{e}$ in polynomial fitting.
+	# Maximizing the posterior $p(\vect{w} | \D)$ (MAP) is equivalent to minimizing regularized sum of squares $E = \vect{e}^T\vect{e} + \lambda \vect{w}^T \vect{w}$.
+\end{easylist}
+
+
+\subsubsection*{Model selection}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Both model and model hyperparameters must be determined.
+	## Minimize the error over the test set. 
+	Balance bias vs. variance. 
+	High bias can lead to underfitting,
+	high variance can lead to overfitting.
+	# Split data into training, testing and validation.
+	# If data is scarce, use $K$-fold cross validation.
+\end{easylist}
+
+\subsubsection*{Decision theory}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Assign $\vect{x}$ to a region $\Reg_j \subseteq \R^M$ corresponding to a class $\Class_j$, which might or might not be the true class.
+	# Minimizing misclassification is done by assigning $\vect{x}$ to the $\Class_j$ which maximizes the posterior $p(\Class_j | \vect{x})$.
+	This is equivalent to maximizing chance of begin correct.
+	# Loss function $L_{k,j}$ may be used, the loss function assigns a penalty when the true class and the predicted class differ. 
+	$L_{i,j} \neq L_{j,i}$ in general.
+	Pick $\Class_j$ which minimizes expected loss, i.e. pick the class $\Class_j$ which minimizes
+	\begin{equation*}
+	\sum_k L_{k, j} p( \vect{x}, \Class_j).
+	\end{equation*}
+\end{easylist}
+Three general decision approaches in decreasing order of complexity:
+(1) interference with class conditional probabilities $p(\vect{x} | \Class_j)$,
+(2) interference with posterior class probabilities $p(\Class_j | \vect{x})$ and
+(3) discriminant function.
+\[\begin{tikzcd}[column sep=6em]
+\vect{x} \arrow[]{r}{\text{interference}} 
+\arrow[swap, bend right = 15]{rr}{\text{discriminant function}} 
+& p(\Class_k , \vect{x}) \arrow[]{r}{\text{decision}} & \Class_k
+\end{tikzcd}\]
+
+\subsubsection*{Information theory}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# $h(x) = - \ln p(x)$ measures the degree of surprise.
+	# The entropy is defined as
+	\begin{equation*}
+	\H[x] = - \int p(x) \ln p(x) \, dx = - \sum_j p(x_j) \ln p(x_j)
+	\end{equation*}
+	and measures how many nats are needed to encode the optimal transmission of values drawn from $p(x)$.
+	## Discrete entropy is maximized by the uniform distribution.
+	## Continuous (or differential) entropy is maximized by the Gaussian.
+	# Conditional entropy is given by 
+	\begin{equation*}
+		\H[x|y] = - \sum_{i,j} p(x_i, y_j) \ln p(x_i | y_j),
+	\end{equation*}
+	and we have that $\H[x, y] = \H[y | x] + \H[x]$.
+	
+	# The Kullback-Leibner divergence is given by
+	\begin{equation*}
+	\KL(p \Vert q) = - \int p(x) \ln \left( \frac{q(x)}{p(x)}\right) \, dx
+	\end{equation*}
+	and is interpreted as the additional information needed if using $q(x)$ to encode values instead of the correct $p(x)$.
+\end{easylist}
+
+
+
+
 % ----------------------------------------------------------------------------
 \subsection{Probability Distributions}
 \begin{easylist}[itemize]
@@ -331,21 +510,21 @@ This document contains some notes and solutions to the book TODO.fødselsnrføds
 % ----------------------------------------------------------------------------
 \subsection{Introduction}
 \subsubsection*{Exercise 1.2}
-We start with Equation (1.4) and differentiate it with respect to $w_i$:
+We start with Equation (1.4) from the book and differentiate it with respect to $w_i$:
 \begin{align*}
 	\partial_{w_i} \tilde{E}(\vect{w})
 	&= \sum_{n=1}^{N} \left[ y(x_n, \vect{w}) - t_n \right] \partial_{w_i} y(x_n, \vect{w}) + \lambda w_i \\
 	&= \sum_{n=1}^{N} \left[ y(x_n, \vect{w}) - t_n \right] (x_n)^i + \lambda w_i \\
 	&= \sum_{n=1}^{N} \left[ \sum_{j=0}^{M} w_j (x_n)^j - t_n \right] (x_n)^i + \lambda w_i = 0
 \end{align*}
-Multiplying through the $(x_n)^i$ and rearranging terms yields
+Multiplying through the factor $(x_n)^i$ and rearranging the terms yields
 \begin{equation*}
 	\sum_{j=0}^{M} w_j \underbrace{\sum_{n=1}^{N} (x_n)^{i+j}}_{A_{ij}}
 	+
 	\lambda w_i = \underbrace{\sum_{n=1}^{N}  (x_n)^i t_n}_{T_{ij}},
 \end{equation*}
 where the definitions of $A_{ij}$ and $T_{ij}$ are identical to those given in Exercise 1.1.
-Finally we employ the kronecker delta symbol $\delta_{ij}$ to pull the $w_i$ into the sum, since $\lambda w_j = \sum_{j=0}^{N} \lambda \delta_{ij} w_i$ we have
+Finally we employ the Kronecker delta symbol $\delta_{ij}$ to pull the $w_i$ into the sum, since $\lambda w_i = \sum_{j=0}^{M} \lambda \delta_{ij} w_j$ we have
 \begin{equation*}
 	\sum_{j=0}^{M}  \left( A_{ij} + \delta_{ij} \lambda \right) w_j
 	 = T_{ij}.
@@ -360,7 +539,7 @@ Solving the system solves the regularized polynomial fitting problem.
 
 
 \subsubsection*{Exercise 1.8}
-We first show that the expected value is $\mu$.
+We first show that $\E \left[x\right] = \mu$.
 We define $K(\sigma) = 1 / \sqrt{2 \pi} \sigma$ and evaluate the integral
 \begin{align*}
 	\E \left[x\right] &= \int K(\sigma) \exp \left( - \frac{1}{2 \sigma^2} \left(x - \mu \right)^2 \right) x \, dx \\
@@ -380,7 +559,8 @@ We factor the normal distribution as $\N\left( x \mid \mu, \sigma^2\right) = K(\
 	& E(\sigma^2) = \exp \left( - \frac{1}{2 \sigma^2} \left( x - \mu \right)^2 \right)
 	&& \qquad \frac{\partial E}{\partial \sigma^2} = \frac{1}{2\sigma^4} \left( x - \mu\right)^2 E(\sigma^2).
 \end{alignat*}
-This allows us to use the product rule of calculus, we have
+We expedite notation by writing these functions as $K$ and $E$, and their derivatives with respect to $\sigma^2$ as $K'$ and $E'$.
+Using the product rule of calculus, we have
 \begin{gather*}
 	\frac{\partial}{\partial \sigma^2} \left( \int K(\sigma^2) E(\sigma^2) \, dx = 1 \right) \\
 	\int K' E + K E' \, dx = 0 \\
@@ -390,14 +570,15 @@ Substituting $- \pi K^2 = - 1 / (2 \sigma^2)$, expanding the square term, multip
 \begin{equation*}
 	-\frac{1}{2\sigma^2} + \frac{1}{2 \sigma^4} \int KE x^2 \, dx + 0 - \frac{\mu^2}{2 \sigma^4} = 0,
 \end{equation*}
-and solving this for the unknown integral yields $\operatorname{E}\left[x^2\right] = \int KE x^2 \, dx = \mu^2 + \sigma^2$.
+and solving this for the unknown integral yields $\operatorname{E}\left[x^2\right] = \int KE x^2 \, dx = \mu^2 + \sigma^2$
+as required.
 
-To show that equation (1.51) holds, notice that
+To show that Equation (1.51) from the book holds, notice that
 \begin{align*}
-	\var \left[ x \right] &= \E\left[ (x - \E\left[x\right])^2\right] \\
-	&= \E\left[ x^2 - 2 x \mu + \mu ^2\right] \\
-	&= \E\left[ x^2\right] - 2 \mu^2 + \mu^2 \\
-	&= \E\left[ x^2\right] - \E\left[ x\right],
+	\var \left[ x \right] &= \E\left[ (x - \E\left[x\right])^2\right] 
+	= \E\left[ x^2 - 2 x \mu + \mu ^2\right] \\
+	&= \E\left[ x^2\right] - 2 \mu^2 + \mu^2 
+	= \E\left[ x^2\right] - \E\left[ x\right],
 \end{align*}
 where we have used $\mu$ interchangeably with $\E\left[ x\right]$. 
 
@@ -405,17 +586,18 @@ where we have used $\mu$ interchangeably with $\E\left[ x\right]$.
 
 \subsubsection*{Exercise 1.10}
 Recall that the definition of the expected value is
-$\E\left[x\right] = \int p(x) x \, dx$, and that $\int p(x) \, dx = 1$. 
+$\E\left[x\right] = \int p(x) x \, dx$, and that $\int p(x) \, dx = 1$
 Statistical independence means that $p(x, y)$ factors as $p(x)p(y)$, so we have
 \begin{align*}
-	\E\left[x + y\right] &= \iint p(x, y) (x+y) \, dx \, dy \\
-	&= \iint p(x) p(y) (x+y) \, dx \, dy \tag{independence} \\
+	\E\left[x + y\right] &= \iint p(x, y) (x+y) \, dx \, dy 
+	= \iint p(x) p(y) (x+y) \, dx \, dy \tag{independence} \\
 	&= \iint p(x) p(y) x \, dx \, dy + \iint p(x) p(y) y \, dx \, dy \\
 	&= \int p(y) \left( \int  p(x)  x \, dx \right) \, dy + \int p(y) y \left( \int p(x)  \, dx \right) \, dy \\
-	&= \int p(y) \left( \E \left[ x \right] \right) \, dy + \int p(y) y \left( 1 \right) \, dy \tag{by definition} \\
-	&= \E\left[x\right] + \E\left[y\right]
+	&= \int p(y) \left( \E \left[ x \right] \right) \, dy + \int p(y) y \left( 1 \right) \, dy \tag{by definition} 
+	= \E\left[x\right] + \E\left[y\right]
 \end{align*}
-To show that $\var\left[x + y\right] = \var\left[x\right] + \var\left[y\right]$, we use the preceding result along with the definition from equation (1.38) in \cite{bishop_pattern_2011}  $\var\left[x\right] = \E\left[ (x - \E\left[x\right])^2\right]$ to write
+
+To show that $\var\left[x + y\right] = \var\left[x\right] + \var\left[y\right]$, we use the preceding result along with the definition from Equation (1.38) in \cite{bishop_pattern_2011}  $\var\left[x\right] = \E\left[ (x - \E\left[x\right])^2\right]$ to write
 \begin{align*}
 	\var\left[x + y\right] &= \E\left[ \left( (x + y) - \E \left[ x + y \right] \right)^2\right] \\
 	&= \E\left[ \left( \left(x - \E\left[x\right]\right) + \left(y - \E\left[y\right]\right) \right)^2\right] \tag{rearranging} \\
@@ -431,7 +613,7 @@ The cross term vanishes since $x$ and $y$ are independent.
 We will not show this in detail, but it can be shown by first noticing that $\E \left[xy\right] = \E \left[x\right] \E \left[y\right]$ when $x$ and $y$ are independent, and then showing that $\E\left[    \left(x - \E\left[x\right]\right) \right] = \E\left[ x \right] - \E\left[ x \right] = 0$.
 
 \subsubsection*{Exercise 1.15}
-We split this rather large problem into parts.
+Due to the size of this problem, we split the solution into parts.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# The redundancy is present due to the fact fact multiplication is commutative, so the weights may be factored out.
@@ -439,11 +621,12 @@ We split this rather large problem into parts.
 	\begin{equation*}
 		w_{ij}x_i x_j + w_{ji} x_j x_i = (w_{ij} + w_{ji}) x_i x_j = \widetilde{w}_{ij} x_i x_j.
 	\end{equation*}
-	We reduce redundancy by ordering the products in a common term with $i_1 \geq i_2 \geq \cdots \geq i_M$.
-	This ordering corresponds to Equation (1.134) in \cite{bishop_pattern_2011}.
+	We remove redundancy by ordering the products in a common term with $i_1 \geq i_2 \geq \cdots \geq i_M$.
+	This ordering corresponds to Equation (1.134).
+	
 	For instance, instead of summing over terms with $x_1 x_2 x_3$, $x_1 x_3 x_2$, $x_2 x_1 x_3$ and so forth, we make use of a common weight for the $x_3 x_2 x_1$-term.
 	
-	# The number of terms is the number of terms in the sum nested sum
+	# The total number of terms equals the number of terms in the nested sum
 	\begin{equation*}
 		n(D, M) = \sum_{i_1 = 1}^{D} 
 		\sum_{i_2 = 1}^{i_1}
@@ -484,8 +667,8 @@ We split this rather large problem into parts.
 		\sum_{i=1}^{D} \frac{(i +M - 2)!}{(i-1)! \, (M-1)!}
 		+  \frac{(D+M-1)!}{D! \, (M-1)!}.
 	\end{align*}
-	The sum on the right hand side is the case for $D$, which we assume is true.
-	Using this, we write
+	The sum on the right hand side is the given result for $D$, which we assume is true.
+	Substituting this fact, we write
 	\begin{align*}
 		\sum_{i=1}^{D + 1} \frac{(i +M - 2)!}{(i-1)! \, (M-1)!} &=
 		\frac{(D + M - 1)!}{(D- 1)! \, M!}
@@ -504,10 +687,9 @@ We split this rather large problem into parts.
 	The inductive step is performed as follows.
 	Below, the first equality comes from Equation (1.135) in the book,
 	the second comes from assuming the result holds for $M-1$,
-	and the third comes from (1.136).
-	We have that
+	and the third comes from Equation (1.136).
 	\begin{equation*}
-		n(D, M) = \sum_{i=1}^{D} n(i, D - 1)
+		n(D, M) = \sum_{i=1}^{D} n(i, M - 1)
 		= \sum_{i=1}^{D} \frac{(i +M - 2)!}{(i-1)!\, (M-1)!} 
 		= 
 		 \frac{(D + M - 1)!}{(D - 1)! \, M !}.
@@ -517,11 +699,11 @@ We split this rather large problem into parts.
 
 
 \subsubsection*{Exercise 1.21}
-Starting with $a \leq b$, we multiply both sides by $a > 0$ to obtain $a^2 \leq ab$.
+Starting with the inequality $a \leq b$, we multiply both sides by $a > 0$ to obtain $a^2 \leq ab$.
 We can take the square root of both sides and preserve the inequality, since the square root is monotonically increasing.
 Doing so, we obtain the desired inequality.
 
-To prove the inequality, we apply the inequality on each term in equation (1.78), then replace the integral over $\mathcal{R}_1 \cup \mathcal{R}_2$ with the real line.
+To prove the integral inequality, we apply the inequality on each term in Equation (1.78), then replace the integral over $\mathcal{R}_1 \cup \mathcal{R}_2$ with the real line:
 \begin{align*}
 	p(\text{mistake}) &= \int_{\mathcal{R}_1} p(\vect{x}, \mathcal{C}_1) \, d \vect{x}
 	+
@@ -537,7 +719,7 @@ To prove the inequality, we apply the inequality on each term in equation (1.78)
 \subsubsection*{Exercise 1.25}
 This closely follows the derivation in Section 1.5.5.
 If $\vect{x} \in \R^n$ and $\vect{t} \in \R^m$, we view
-$\E \left[L (\vect{t}, \vect{y} (\vect{x}))\right]$ as a functional from $\{ f \mid f: \R^n \to \R^m \}$ to $\R$.
+$\E \left[L (\vect{t}, \vect{y} (\vect{x}))\right]$ as a functional from the set of functions $\{ f \mid f: \R^n \to \R^m \}$ to $\R$.
 Comparing the ordinary derivative and the functional derivative, we see that
 \begin{align*}
 	f(\vect{x} + \vect{\epsilon}) &= f(\vect{x}) 
@@ -565,12 +747,13 @@ which, following the derivation leading to Equation (1.89), leads to
 	\vect{y}_j(\vect{x}) = \int t_j p (\vect{t} \mid \vect{x}) \, d \vect{t} = \E_{\vect{t}} \left[ t_j \mid \vect{x} \right].
 \end{equation*}
 This applies to any  component $j$ of $\vect{y}(\vect{x})$, so $\vect{y}(\vect{x}) = \E_{\vect{t}} \left[ \vect{t} \mid \vect{x} \right]$.
-To show that this reduces to Equation (1.89) in the case of a single target variable, simply define $\vect{t} := (t)$.
+To show that this reduces to Equation (1.89) in the case of a single target variable, simply define $\vect{t} := (t)$, i.e. a vector with one component.
+
 
 
 
 \subsubsection*{Exercise 1.33}
-A hint as to why this is true is given on page 54, which states that $\H\left[y \mid x\right]$ is ``the average additional information needed to specify $y$.''
+A hint as to why this is true is given on page 54, which states that $\H\left[y \mid x\right]$ is ``the average additional information needed to specify $y$, given $x$''
 If the conditional entropy is zero, then $y$ must be completely specified by $x$, i.e. a function of $x$.
 If $\H\left[y \mid x\right] = 0$, then
 \begin{equation*}
@@ -578,15 +761,18 @@ If $\H\left[y \mid x\right] = 0$, then
 \end{equation*}
 Using $ p(x_i, y_j) = p(y_j \mid x_i) p(x_i)$ and rearranging the sums, we obtain
 \begin{equation*}
-	 \sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) \sum_i p(x_i)
-	 =
-	 \sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i)
-	  = 0.
+	\sum_i p(x_i) \left[ \sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) \right] = 0.
 \end{equation*}
-For every $x_i$ with $p(x_i) > 0$, the equation above must be true.
-The functional form is $p(z) \ln p(z)$, and this function is negative expect when $z = 0$ and when $z=1$, where it is zero.
-Therefore, $p(y_j \mid x_i)  \ln p (y_j \mid x_i)$ must be 0 or 1 for each value of $y_j$. 
-However, since $\sum_j p(y_j \mid x_i) = 1$, 
+We know that $0 \leq p (x_i) \leq 1$ for every $x_i$.
+Assuming now that $p (x_i) > 0$, the bracketed term must be zero for every $i$, i.e.
+\begin{equation*}
+	\sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) = 0 \quad \text{for every } x_i.
+\end{equation*}
+Consider how the term $p(y_j \mid x_i)  \ln p (y_j \mid x_i)$.
+The functional form of this term is $z \ln z$, and this function is negative except when $z = 0$ and when $z=1$, where it is zero.
+Therefore, $p(y_j \mid x_i)$ must be 0 or 1 for each value of $y_j$. 
+However, since $\sum_j p(y_j \mid x_i) = 1$, every value of $p(y_j \mid x_i)$ must be zero except one.
+In other words, $x_i$ completely determines $y_j$.
 
 
 \subsubsection*{Exercise 1.38}
@@ -598,21 +784,21 @@ For the recursive step, we assume the identity holds in the base case, and in th
 	&= f \left( \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right)
 	= f \left( \frac{\sum_{k=1}^{M-1} \lambda_k}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right).
 \end{align*}
-The terms $\sum_{k=1}^{M-1} \lambda_k$ and $\lambda_M$ sum to unity, and $\sum_{i=1}^{M-1} \lambda_i x_i / \sum_{k=1}^{M-1} \lambda_k$ is a weighted average of $x$-values.
+The sum of $\sum_{k=1}^{M-1} \lambda_k$ and $\lambda_M$ is unity, and $\sum_{i=1}^{M-1} \lambda_i x_i / \sum_{k=1}^{M-1} \lambda_k$ is a weighted average of $x$-values.
 Since it's a weighted average, it may be treated as just another $x$-value.
 
 Applying the base case for two $x$ values, we obtain
 \begin{equation*}
 	f \left( \frac{\sum_{k=1}^{M-1} \lambda_k}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right)
 	\leq
-	\sum_{k=1}^{M-1} \lambda_k f \left( 
+	\left( \sum_{k=1}^{M-1} \lambda_k \right) f \left( 
 	\frac{1}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i
 	 \right)
 	+
 	\lambda_M f \left( x_M \right)
 \end{equation*}
 Now we can appeal to the $M-1$ case of the inequality, which we assume to be true by the induction hypothesis.
-We can appeal to it since the $\lambda_i$ are normalized and sum to unity in the equation above due to the normalizing factor in front of the sum.
+We can appeal to it since the $\lambda_i / \sum_{k=1}^{M-1} \lambda_k$ are normalized and sum to unity in the equation above due to the normalizing factor in front of the sum.
 To ease notation, we define $\alpha = \sum_{k=1}^{M-1} \lambda_k$ and write
 \begin{equation*}
 \alpha f \left( 
@@ -627,6 +813,7 @@ To ease notation, we define $\alpha = \sum_{k=1}^{M-1} \lambda_k$ and write
 =
 \sum_{i=1}^{M} \lambda_i f(x_i).
 \end{equation*}
+This proves the Jensen inequality.
 
 
 % ----------------------------------------------------------------------------
