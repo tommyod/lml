@@ -32,8 +32,6 @@ class BayesianGaussian1DKnownVar(BaseEstimator):
     def __init__(self, mean_0, sigma_sq_0):
         """
         Initilize a Gaussian model, with known variance and p(mu) ~ Normal.
-
-
         """
         self.mean_0 = mean_0
         self.sigma_sq_0 = sigma_sq_0

@@ -1,6 +1,6 @@
 # [Learning Machine Learning](https://tommyod.github.io/lml/)
 
-![Duda book cover](img/duda_small.jpg)
+![Book covers](img/duda_bishop_hastie_small.png)
 
 ## What is this repository?
 
