@@ -936,9 +936,10 @@ Doing so, we obtain the desired inequality.
 
 To prove the integral inequality, we apply the inequality on each term in Equation (1.78), then replace the integral over $\mathcal{R}_1 \cup \mathcal{R}_2$ with the real line:
 \begin{align*}
-	p(\text{mistake}) &= \int_{\mathcal{R}_1} p(\vect{x}, \mathcal{C}_1) \, d \vect{x}
+	p(\text{mistake}) &= \int_{\mathcal{R}_1} p(\vect{x}, \mathcal{C}_2) \, d 
+	\vect{x}
 	+
-	\int_{\mathcal{R}_2} p(\vect{x}, \mathcal{C}_2) \, d \vect{x} \\
+	\int_{\mathcal{R}_2} p(\vect{x}, \mathcal{C}_1) \, d \vect{x} \\
 	&\leq 
 	 \int_{\mathcal{R}_1} \left\{ p(\vect{x}, \mathcal{C}_1) \, p(\vect{x}, \mathcal{C}_2) \right\}^{1/2} \, d \vect{x}
 	+
@@ -984,7 +985,9 @@ To show that this reduces to Equation (1.89) in the case of a single target vari
 
 
 \subsubsection*{Exercise 1.33}
-A hint as to why this is true is given on page 54, which states that $\H\left[y \mid x\right]$ is ``the average additional information needed to specify $y$, given $x$''
+A hint as to why this is true is given on page 54, which states that $\H\left[y 
+\mid x\right]$ is ``the average additional information needed to specify $y$, 
+given $x$.''
 If the conditional entropy is zero, then $y$ must be completely specified by $x$, i.e. a function of $x$.
 If $\H\left[y \mid x\right] = 0$, then
 \begin{equation*}
@@ -997,19 +1000,24 @@ Using $ p(x_i, y_j) = p(y_j \mid x_i) p(x_i)$ and rearranging the sums, we obtai
 We know that $0 \leq p (x_i) \leq 1$ for every $x_i$.
 Assuming now that $p (x_i) > 0$, the bracketed term must be zero for every $i$, i.e.
 \begin{equation*}
-	\sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) = 0 \quad \text{for every } x_i.
+	\sum_j p(y_j \mid x_i)  \ln p (y_j \mid x_i) = 0 \quad \text{for every } i.
 \end{equation*}
-Consider how the term $p(y_j \mid x_i)  \ln p (y_j \mid x_i)$.
-The functional form of this term is $z \ln z$, and this function is negative except when $z = 0$ and when $z=1$, where it is zero.
-Therefore, $p(y_j \mid x_i)$ must be 0 or 1 for each value of $y_j$. 
-However, since $\sum_j p(y_j \mid x_i) = 1$, every value of $p(y_j \mid x_i)$ must be zero except one.
+Consider now the term $p(y_j \mid x_i)  \ln p (y_j \mid x_i)$.
+The functional form of this term is $z \ln z$, and this function is negative 
+except when $z = 0$ and when $z=1$, where it is zero.
+Since we are adding terms that are either negative or zero, and the sum must 
+evaluate to zero, every term in the sum must be zero.
+Therefore, $p(y_j \mid x_i)$ must be 0 or 1 for each value of $y_j$.
+However, since $\sum_j p(y_j \mid x_i) = 1$, every value of $p(y_j \mid x_i)$ 
+must be zero except for one.
 In other words, $x_i$ completely determines $y_j$.
 
 
 \subsubsection*{Exercise 1.38}
 We wish to prove Equation (1.115) based on Equation (1.114).
 Clearly the case $M=1$ is true, and we assume the case $M=2$ is true, since this is given by Equation (1.114).
-For the recursive step, we assume the identity holds in the base case, and in the $M-1$ case, and then
+For the inductive step, we assume the identity holds in the base case, and in 
+the $M-1$ case, and then
 \begin{align*}
 	f \left( \sum_{i=1}^{M} \lambda_i x_i \right)
 	&= f \left( \sum_{i=1}^{M-1} \lambda_i x_i + \lambda_M x_M \right)
@@ -1026,7 +1034,7 @@ Applying the base case for two $x$ values, we obtain
 	\frac{1}{\sum_{k=1}^{M-1} \lambda_k} \sum_{i=1}^{M-1} \lambda_i x_i
 	 \right)
 	+
-	\lambda_M f \left( x_M \right)
+	\lambda_M f \left( x_M \right).
 \end{equation*}
 Now we can appeal to the $M-1$ case of the inequality, which we assume to be true by the induction hypothesis.
 We can appeal to it since the $\lambda_i / \sum_{k=1}^{M-1} \lambda_k$ are normalized and sum to unity in the equation above due to the normalizing factor in front of the sum.
