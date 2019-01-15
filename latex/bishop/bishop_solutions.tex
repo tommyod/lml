@@ -1058,10 +1058,10 @@ This proves the Jensen inequality.
 % ----------------------------------------------------------------------------
 \subsection{Probability Distributions}
 \subsubsection*{Exercise 2.6}
-We split this problem into three parts: the expected value, variance and mode.
+We split this problem into three parts: the (a) expected value, (b) variance and (c) mode.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The expected value is computed from the definition as
+	# The \textbf{expected value} is computed from the definition as
 	\begin{align*}
 		\E[\mu] &= \int \mu p(\mu) \, d\mu =  \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a \mu \, \mu^{a-1} (1- \mu)^{b-1} \, d\mu \\
 		&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a  \mu^{(a+1)-1} (1- \mu)^{b-1} \, d\mu \tag{re-cast as Beta} \\ 
@@ -1069,22 +1069,23 @@ We split this problem into three parts: the expected value, variance and mode.
 	\end{align*}
 	where we used Equation (2.265) from \cite{bishop_pattern_2011}, along with $\Gamma(x+1) = x\Gamma(x)$.
 	
-	# We will employ $\var[\mu] = \E[\mu^2] - \E[\mu]^2$.
-	Similarly to the previous sub-problem above, we observe that
+	# To compute the \textbf{variance}, we will employ $\var[\mu] = \E[\mu^2] - \E[\mu]^2$.
+	Similarly to the sub-problem above, we observe that
 	\begin{align*}
 	\E[\mu^2] &= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a  \mu^{(a+2)-1} (1- \mu)^{b-1} \, d\mu \\
 	&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \frac{\Gamma(a +2 ) \Gamma( b)}{\Gamma(a + b + 2)}
 	= \frac{(a+1) a}{(a + b +1) (a+b)},
 	\end{align*}
-	where in the last equality we have used $\Gamma(x+2) = (x+1)x \Gamma(x)$, which is merely repeated application of $\Gamma(x+1) = x\Gamma(x)$ twice.
+	where in the last equality we have used $\Gamma(x+2) = (x+1)x \Gamma(x)$, which is simply repeated application of $\Gamma(x+1) = x\Gamma(x)$ twice.
 	
 	At this point, we're left with
 	\begin{equation*}
 		\var[\mu] = \E[\mu^2] - \E[\mu]^2 = \frac{(a+1) a}{(a + b +1) (a+b)} - \left( \frac{a}{a + b} \right),
 	\end{equation*}
-	which after some algebra equals the desired result.
+	which after some manipulation equals the desired result.
+	We omit the details.
 	
-	# The mode is the maximum of the distribution.
+	# The \textbf{mode} is the maximum of the distribution.
 	We differentiate the p.d.f. using the product rule of calculus to obtain
 	\begin{equation*}
 		p'(\mu) = (a-1) \mu{a-2} (1-\mu)^{b-1}
@@ -1099,7 +1100,9 @@ We split this problem into three parts: the expected value, variance and mode.
 \end{easylist}
 
 \subsubsection*{Exercise 2.8}
-To show Equation (2.270), we apply the definition of $E_x \left[ x \mid y \right]$ and $E_y [f(y)]$ to get
+The \textbf{first part} is to show Equation (2.270). 
+We apply the definitions of $E_x \left[ x \mid y \right]$ and $E_y [f(y)]$ in turn, and then the product rule of probability.
+Doing so, we have
 \begin{align*}
 	E_y \left[ E_x \left[ x \mid y \right]  \right] &= 
 	E_y \left[ \int x p (x \mid y) \, dx  \right] 
@@ -1107,9 +1110,9 @@ To show Equation (2.270), we apply the definition of $E_x \left[ x \mid y \right
 	&=  \iint x p(x, y) \, dx \, dy = \E[x].
 \end{align*}
 
-The second part, which consists of proving Equation (2.271), is slightly more involved.
-It helps to keep track of what the quantities are, i.e. constants, functions of $x$ or functions of $y$.
-It helps to know beforehand, from the definition of conditional variance, that
+The \textbf{second part}, which consists of proving Equation (2.271), is slightly more involved.
+It helps to keep track of whether the quantities are constants, functions of $x$ or functions of $y$.
+It's also useful to know, from the definition of conditional variance, that
 \begin{equation}
 \label{eqn:conditional_variance}
 	\var_x[ x \mid y ] 
@@ -1118,9 +1121,9 @@ It helps to know beforehand, from the definition of conditional variance, that
 	=
 	 \E_x [x^2 \mid y] - \E_x [x \mid y]^2.
 \end{equation}
-This does not come as a surprise, since it's merely the equation $\var_x[ x ] = \E_x [x^2] - \E_x [x ]^2$ conditioned on $y$.
+The result above does not come as a surprise, since it's merely the familiar result for variance, i.e. $\var_x[ x ] = \E_x [x^2] - \E_x [x ]^2$, conditioned on $y$ in every term.
 
-Let's examine the first term in the right hand side of (2.270) first, i.e. $\E_y \left[ \var_x[ x \mid y ]  \right]$.
+Let's examine the \textbf{first term} in the right hand side of (2.270) first, i.e. $\E_y \left[ \var_x[ x \mid y ]  \right]$.
 Using equation \eqref{eqn:conditional_variance} above, we see that
 \begin{align}
 	\nonumber \E_y \left[ \var_x[ x \mid y ]  \right] &=  \E_y \left[ \E_x [x^2 \mid y] - \E_x [x \mid y]^2  \right]
@@ -1130,7 +1133,7 @@ Using equation \eqref{eqn:conditional_variance} above, we see that
 \end{align}
 where we used Equation (2.270) from the book in the last equality.
 
-We now investigate the second term in (2.270), i.e. 
+We now investigate the \textbf{second term} in Eqn (2.270), i.e. 
 $\var_y \left[ \E_x \left[ x \mid y \right] \right]$.
 Using the definition of variance (Equation (1.38) in \cite{bishop_pattern_2011}), followed by Equation (2.270) from the book, and the linearity of the expected value, we obtain
 \begin{align}
@@ -1138,26 +1141,26 @@ Using the definition of variance (Equation (1.38) in \cite{bishop_pattern_2011})
 &= \E_y \left[ 
 \left( \underbrace{\E_x \left[ x \mid y \right]}_{f(y)} - 
 \underbrace{\E_y \left[ \E_x \left[ x \mid y \right] \right]}_{\text{scalar}} 
-\right)^2 \right]  \\
+\right)^2 \right]   \\
 \nonumber &= \E_y \left[ 
 \left( \E_x \left[ x \mid y \right] - 
 \E[x]
-\right)^2 \right] \\
+\right)^2 \right] \tag{previous result} \\
 \nonumber &= \E_y \left[ 
 \E_x \left[ x \mid y \right]^2
 -2 \E_x \left[ x \mid y \right] \E[x]
 +\E[x]^2
-\right] \\
+\right] \tag{multiply} \\
 \nonumber &= \E_y \left[ 
 \E_x \left[ x \mid y \right]^2 \right]
 -\E_y \left[ 2 \E_x \left[ x \mid y \right] \E[x] \right]
 +\E_y \left[ \E[x]^2
-\right] \\
+\right] \tag{linearity} \\
  \nonumber &= \E_y \left[ 
 \E_x \left[ x \mid y \right]^2 \right]
 - 2 \E_y \left[ \E_x \left[ x \mid y \right] \right] \E[x] 
 + \E[x]^2
- \\
+ \tag{constants}\\
 \label{eqn:ch2_prob8b} &= \E_y \left[ 
  \E_x \left[ x \mid y \right]^2 \right]
  - \E[x]^2
@@ -1691,11 +1694,272 @@ We verify we steps that are non-trivial.
 
 % ----------------------------------------------------------------------------
 \subsection{Linear Models for Classification}
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+
+\subsubsection*{Exercise 4.6}
+This exercise is mostly algebra.
+Our strategy will be to show the right-hand side first, and then the left-hand side.
+The right hand side requires less algebra.
+
+To show the \textbf{right-hand side}, we split the sum, which yields
+\begin{equation*}
+	\sum_{n=1}^{N} \left( \vect{w}^T \vect{x}_n + w_0 - t_n \right) \vect{x}_n
+	=
+	\sum_{n \in \mathcal{C}_1} \left( \vect{w}^T \vect{x}_n + w_0 - t_n \right) \vect{x}_n
+	+
+	\sum_{n \in \mathcal{C}_2} \left( \vect{w}^T \vect{x}_n + w_0 - t_n \right) \vect{x}_n
+	 = \vect{0}.
+\end{equation*}
+We now move the $t_n\vect{x}_n$-terms to the right hand-side, and use the fact that $t_n = N / N_1$ when $n \in \mathcal{C}_1$ and $t_n = -N / N_2$ when $n \in \mathcal{C}_1$.
+Doing so, we obtain the correct expression
+\begin{equation}
+\label{eqn:ch4_prob6}
+\sum_{n \in \mathcal{C}_1} \left( \vect{w}^T \vect{x}_n + w_0 \right) \vect{x}_n
++
+\sum_{n \in \mathcal{C}_2} \left( \vect{w}^T \vect{x}_n + w_0  \right) \vect{x}_n
+=
+N (\vect{m}_1 - \vect{m}_2),
+\end{equation}
+since $
+\sum_{n \in \mathcal{C}_1}  t_n \vect{x}_n
++
+\sum_{n \in \mathcal{C}_2}  t_n \vect{x}_n
+= 
+N (\vect{m}_1 - \vect{m}_2)
+$ on the right-hand side.
+
+Let us now focus on the \textbf{left-hand side} of Eqn \eqref{eqn:ch4_prob6}.
+Notice first that $\vect{w}$ may be pulled outside of the sums, by the following algebra (here showed over a single sum, not both)
+\begin{equation*}
+	\sum_{n} \left( \vect{w}^T \vect{x}_n + w_0 \right) \vect{x}_n
+	=
+	\sum_{n} \left( \vect{w}^T \vect{x}_n  - \vect{w}^T \vect{m} \right) \vect{x}_n
+	=
+	\sum_{n} \left( \vect{x}_n \vect{x}_n^T - \vect{x}_n \vect{m}^T \right) \vect{w}.
+\end{equation*}
+Using this result on both sums in Eqn \eqref{eqn:ch4_prob6} leaves us with the expression
+\begin{equation*}
+\left( \sum_{n \in \mathcal{C}_1} \left(\vect{x}_n \vect{x}_n^T - \vect{x}_n \vect{m}^T \right) 
++
+\sum_{n \in \mathcal{C}_2} \left( \vect{x}_n \vect{x}_n^T - \vect{x}_n \vect{m}^T  \right) \right) \vect{w}
+= 
+N (\vect{m}_1 - \vect{m}_2).
+\end{equation*}
+
+At this point we're pretty close, but we have to reduce the term in the left parenthesis.
+Observe that the first term becomes
+\begin{align}
+	\nonumber \sum_{n \in \mathcal{C}_1} \vect{x}_n \vect{x}_n^T - \vect{x}_n \vect{m}^T  &= 
+	\sum_{n \in \mathcal{C}_1} \vect{x}_n \vect{x}_n^T - \vect{x}_n \left( \frac{N_1}{N} \vect{m}_1 + \frac{N_2}{N} \vect{m}_2 \right)^T \\
+	\label{eqn:ch4_problem6a}
+	&= 
+	\sum_{n \in \mathcal{C}_1} \vect{x}_n \vect{x}_n^T - 
+	 \frac{N_1 N_1}{N} \vect{m}_1 \vect{m}_1^T - \frac{N_2 N_1}{N} \vect{m}_1 \vect{m}_2^T,
+\end{align}
+and the second term will be very similar due to symmetry.
+We complete the square above:
+\begin{align*}
+	\sum_{n \in \mathcal{C}_1} 
+	\left( \vect{x}_n \vect{x}_n^T 
+	-
+	\underbrace{2 \vect{m}_1 \vect{x}_n^T 
+		+ \vect{m}_1 \vect{m}_1^T}_{\text{added this}} \right)
+	+
+	\underbrace{2 N_1 \vect{m}_1 \vect{m}_1^T
+		-
+		N_1 \vect{m}_1 \vect{m}_1^T}_{\text{and subtracted it}}
+	-
+	\frac{N_1 N_1}{N} \vect{m}_1 \vect{m}_1^T
+	 - \frac{N_2 N_1}{N} \vect{m}_1 \vect{m}_2^T ,
+\end{align*}
+Now we make use of $N_1 - N_1^2 /N = N_1 N_2 /N$ to obtain
+\begin{align*}
+\underbrace{\sum_{n \in \mathcal{C}_1} 
+	\left( \vect{x}_n \vect{x}_n^T -2 \vect{m}_1 \vect{x}_n^T + \vect{m}_1 \vect{m}_1^T \right)}_{\text{half of } \vect{S}_W}
++
+\frac{N_2 N_1}{N}
+\underbrace{\left( \vect{m}_1 \vect{m}_1^T
+	- \vect{m}_1 \vect{m}_2^T \right)}_{\text{half of } \vect{S}_B},
+\end{align*}
+and we're finished. 
+If we apply the same algebra as performed from Equation \eqref{eqn:ch4_problem6a} and onwards to $\mathcal{C}_2$ too, and add the results, it will yield $\vect{S}_W + N_1 N_2 \vect{S}_B / N$.
+
+
+
+\subsubsection*{Exercise 4.9}
+The probability of class $\mathcal{C}_j$ is given by $p(\mathcal{C}_j) = \pi_j$, and $p(\vect{\phi}_n, \mathcal{C}_j) = p(\vect{\phi}_n \mid  \mathcal{C}_j) p( \mathcal{C}_j)$ by the product rule of probability.
+The probability of a single data point becomes
+\begin{equation*}
+	p(\vect{t}_n, \vect{\phi}_n \mid \vect{\pi}) = 
+	\prod_{j = 1}^{K} \left( \pi_j \, p(\vect{\phi}_n \mid  \mathcal{C}_j)  \right)^{t_{nj}}.
+\end{equation*}
+The notation above is somewhat heavy, so it helps to consider a specific example.
+Consider the case when the number of classes $K = 3$, and the observation $\vect{t}_n = (0, 1, 0)^T$. 
+The probability of observing this value, for an arbitrary $\vect{\phi}_n$,  is
+\begin{equation*}
+p(\vect{t}_n = (0, 1, 0), \vect{\phi}_n \mid \vect{\pi}) =  \pi_2 \, p(\vect{\phi}_n \mid  \mathcal{C}_2).
+\end{equation*}
+
+Assuming i.i.d. data, the log-likelihood function becomes
+\begin{equation*}
+	\ln 
+	p( \D \mid \vect{\pi})
+	=
+	\ln 
+	p( \mathsf{t}, \vect{\Phi} \mid \vect{\pi})
+	=
+	\sum_{n=1}^{N}
+	\sum_{j=1}^{K}
+	t_{nj} \left( 
+	\ln \left( \pi_j \right)
+	+
+	\ln \left( p(\vect{\phi}_n \mid  \mathcal{C}_j) \right) \right).
+\end{equation*}
+We wish to maximize the log-likelihood with respect to the vector $\vect{\pi}$, given the condition that the prior class probabilities sum to unity, i.e. $\sum_{j=1}^{K} \pi_j = 1$.
+Setting up the Lagrange function and differentiating with respect to $\pi_k$ yields
+\begin{equation}
+\label{eqn:ch4_prob9}
+	\sum_{n=1}^{N} \frac{t_{nk}}{\pi_k} + \lambda =
+	\frac{N_k}{\pi_k} + \lambda =
+	 0,
+\end{equation}
+where $\lambda$ is a Lagrange multiplier.
+Solving the above for $\pi_k$ yields $- N_k / \lambda$, and
+\begin{equation*}
+	\sum_{j=1}^{K} \pi_j = - \frac{1}{\lambda}  \sum_{j=1}^{K} N_j = 1
+	\implies \lambda = -N.
+\end{equation*}
+Substituting the above value for the Lagrange multiplier $\lambda$ into Equation \eqref{eqn:ch4_prob9} gives the corrcect answer, which is $\pi_k = N_k /N$.
+
+
+\subsubsection*{Exercise 4.10}
+This problem is similar to the previous one, but now $ p(\vect{\phi}_n \mid  \mathcal{C}_j) = \N \left( \vect{\phi}_n \mid \vect{\mu}_j, \vect{\Sigma} \right)$.
+The likelihood is given by
+\begin{equation*}
+	p( \mathsf{t}, \vect{\Phi} \mid \vect{\pi}, \vect{\mu}, \vect{\Sigma})
+	=
+	\prod_{n=1}^{N}
+	\prod_{j=1}^{K}
+	\left[ \pi_j \N \left( \vect{\phi}_n \mid \vect{\mu}_j, \vect{\Sigma} \right) \right]^{t_{nj}}.
+\end{equation*}
+Taking logarithms gives the expression
+\begin{equation}
+\label{eqn:ch4_prob10}
+	- \frac{1}{2}\sum_{n=1}^{N}
+	\sum_{j=1}^{K}
+	t_{nj} 
+	\left[  
+	K + 
+	\ln \abs{\vect{\Sigma}}
+	+
+	(\vect{\phi}_n - \vect{\mu}_j)^T 
+	\vect{\Sigma}^{-1} 
+	(\vect{\phi}_n - \vect{\mu}_j)
+	\right],
+\end{equation}
+where $K$ is a constant which is not a function of $\vect{\mu}_j$ or $\vect{\Sigma}$.
+
+Differentiating Equation \eqref{eqn:ch4_prob10} with respect to $\vect{\mu}_k$
+and equating it to $\vect{0}$ gives
+\begin{equation*}
+\sum_{n=1}^{N}
+t_{nk} 
+\vect{\Sigma}^{-1} 
+(\vect{\phi}_n - \vect{\mu}_k)
+=
+\vect{0}.
+\end{equation*}
+Solving this for $\vect{\mu}_k$ reveals the desired answer, where we must use $\sum_{n=1}^{N}
+t_{nk} = N_k$.
+
+Studying the terms dependent on $\vect{\Sigma}$, we obtain
+\begin{equation*}
+	- \frac{N}{2} \ln \abs{\vect{\Sigma}}
+	-
+	\frac{1}{2}
+	\sum_{j=1}^{K} \sum_{n \in \mathcal{C}_j} 
+	(\vect{\phi}_n - \vect{\mu}_j)^T 
+	\vect{\Sigma}^{-1} 
+	(\vect{\phi}_n - \vect{\mu}_j).
+\end{equation*}
+Now the apply the \emph{trace trick}.
+The trace trick uses the fact that the trace of a scalar is equal to itself, and $\operatorname{tr}(\vect{a}^T \vect{b}) = \operatorname{tr}(\vect{b} \vect{a}^T)$, to write a quadratic form as
+\begin{equation*}
+	\vect{a}^T \vect{\Sigma}^{-1} \vect{a}
+	=
+	\operatorname{tr}
+	\left( \vect{a}^T \vect{\Sigma}^{-1} \vect{a} \right)
+	= 
+	\operatorname{tr}
+	\left( \vect{\Sigma}^{-1} \vect{a}\vect{a}^T \right).
+\end{equation*}
+From this, we can derive the following
+\begin{gather*}
+	- \frac{N}{2} \ln \abs{\vect{\Sigma}}
+	-
+	\frac{1}{2}
+	\sum_{j=1}^{K} \sum_{n \in \mathcal{C}_j} 
+	(\vect{\phi}_n - \vect{\mu}_j)^T 
+	\vect{\Sigma}^{-1} 
+	(\vect{\phi}_n - \vect{\mu}_j) 
+	\\
+	= - \frac{N}{2} \ln \abs{\vect{\Sigma}}
+	-
+	\frac{1}{2}
+	\sum_{j=1}^{K} \sum_{n \in \mathcal{C}_j} 
+	\operatorname{tr}
+	\left( 
+	\vect{\Sigma}^{-1} 
+	(\vect{\phi}_n - \vect{\mu}_j)
+	(\vect{\phi}_n - \vect{\mu}_j)^T
+	 \right) 
+	 \tag{trace trick}
+	 \\
+ 	= - \frac{N}{2} \ln \abs{\vect{\Sigma}}
+ 	-
+ 	\frac{1}{2}
+ 	\operatorname{tr}
+ 	\left( 
+ 	\sum_{j=1}^{K} \sum_{n \in \mathcal{C}_j} 
+ 	\vect{\Sigma}^{-1} 
+ 	(\vect{\phi}_n - \vect{\mu}_j)
+ 	(\vect{\phi}_n - \vect{\mu}_j)^T
+ 	\right) 
+ 	 \tag{linearity of trace} \\
+ 	= 
+ 	- \frac{N}{2} \ln \abs{\vect{\Sigma}}
+ 	-
+ 	\frac{N}{2}
+ 	\operatorname{tr}
+ 	\left( 
+ 	\vect{\Sigma}^{-1} 
+ 	\underbrace{
+ 		\frac{1}{N}
+ 		\sum_{j=1}^{K} \sum_{n \in \mathcal{C}_j} 
+ 		(\vect{\phi}_n - \vect{\mu}_j)
+ 		(\vect{\phi}_n - \vect{\mu}_j)^T}_{\vect{S}}
+ 	\right) .
+ 	\tag{definition of $\vect{S}$}
+\end{gather*}
+We have shown that Equation (4.77) holds for $K$ classes.
+Differentiating 
+\begin{equation*}
+	- \frac{N}{2} \ln \abs{\vect{\Sigma}}
+	- \frac{N}{2} \operatorname{tr} \left( \vect{\Sigma}^{-1} \vect{S} \right)
+\end{equation*}
+with respect to $\vect{\Sigma}$ shows that $\vect{\Sigma}^{-1} = \vect{S}$.
+We will trust that the result in 4.2.2 is true, and not show this.
+To show it, one must first study the derivative of $\ln \abs{\vect{\Sigma}}$ and $\operatorname{tr} \left( \vect{\Sigma}^{-1} \vect{S} \right)$, and we will do not that here.
+
+
+\subsubsection*{Exercise 4.22}
+We can approximate the integral as
+\begin{equation*}
+	p(\D) = \int p( \D \mid \vect{\theta}) p(\vect{\theta}) \, d\vect{\theta}
+	= \int p( \D , \vect{\theta}) \, d\vect{\theta}
+	\simeq p( \D , \vect{\theta}_{\text{MAP}})  \frac{(2 \pi)^{M/2}}{\abs{\vect{A}}^{1/2}}
+\end{equation*}
+using Equation (4.135) to approximate the integral in the vicinity of the mode $p( \D , \vect{\theta}_{\text{MAP}})$.
+Taking logarithms and using the product rule of probability gives Equation (4.137), revealing the Occam factor.
 
 % ----------------------------------------------------------------------------
 \subsection{Neural networks}
