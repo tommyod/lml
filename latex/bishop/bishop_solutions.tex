@@ -1951,6 +1951,126 @@ We will trust that the result in 4.2.2 is true, and not show this.
 To show it, one must first study the derivative of $\ln \abs{\vect{\Sigma}}$ and $\operatorname{tr} \left( \vect{\Sigma}^{-1} \vect{S} \right)$, and we will do not that here.
 
 
+\subsubsection*{Exercise 4.13}
+Differentiating $E(\vect{w})$ with respect to $\vect{w}$, we must keep in mind that $y_n = \sigma(\vect{w}^T \vect{\phi}_n)$ is a function of $\vect{w}$.
+We obtain
+\begin{equation*}
+	\nabla_{\vect{w}} E (\vect{w})
+	=
+	- \sum_{n=1}^{N} \frac{t_n}{y_n} \vect{y}_n' + \frac{1 - t_n}{1 - y_n} (-\vect{y}_n')
+\end{equation*}
+where $\vect{y}_n' = y_n (1 - y_n) \vect{\phi}_n$, substituting this into the equation above and simplifying gives
+\begin{equation*}
+	- \sum_{n=1}^{N} \frac{t_n}{y_n} y_n (1 - y_n) \vect{\phi}_n - \frac{1 - t_n}{1 - y_n} y_n (1 - y_n) \vect{\phi}_n
+	=
+	\sum_{n=1}^{N} (y_n - t_n)  \vect{\phi}_n .
+\end{equation*}
+
+
+
+\subsubsection*{Exercise 4.15}
+We will show that $\vect{H}$ is positive definite, and that the solution is a minimum.
+
+As a step toward showing that $\vect{H}$ is positive definite, we first show that $\vect{R}$ is positive definite.
+This is easy to show from the definition of positive definiteness:
+\begin{equation*}
+	\vect{a}^T \vect{R} \vect{a} = 
+	\sum_i a_i y_i (1 - y_i) a_i = \sum_i a_i^2 y_i (1 - y_i).
+\end{equation*}
+This expression is positive for every non-zero $\vect{a}$, since $y_i (1 - y_i) > 0$ because the sigmoid function has $0 < y_i  <1$.
+The Hessian $\vect{H}$ is positive definite by the same token, since
+\begin{equation*}
+\vect{u}^T \vect{H} \vect{u} = 
+\vect{u}^T \vect{\Phi}^T \vect{R} \vect{\Phi} \vect{u} 
+=
+\underbrace{\vect{b}^T}_{ \vect{u}^T \vect{\Phi}^T } \vect{H} \vect{b}
+=
+\sum_i b_i^2 y_i (1 - y_i) > 0.
+\end{equation*}
+
+We now argue that the solution is the unique minimum.
+Notice that the solution might be a subspace, for instance when the data is linearly separable.
+Expanding a taylor series around the minimum $\vect{w}^*$ yields the following 
+\begin{equation*}
+	E(\vect{w}^* + \Delta \vect{w}) \simeq 
+	E(\vect{w}^*)+
+	\underbrace{\Delta_{\vect{w}} E(\vect{w}^*) \left( \Delta \vect{w} \right)}_{0}
+	+
+	\left( \Delta \vect{w} \right)^T \vect{H}(\vect{w}^*)
+	\left( \Delta \vect{w} \right)
+	+ \mathcal{O}\left( \norm{ \Delta \vect{w} }^3 \right)
+\end{equation*}
+Notice that since the $y_i$s are all functions of the weights $\vect{w}$, so the Hessian matrix is also a function of $\vect{w}$.
+At the minimum, $\Delta_{\vect{w}} E(\vect{w}^*) \left( \Delta \vect{w} \right) = 0$, so the middle term vanishes.
+Clearly the function is minimized when $\Delta \vect{w} = \vect{0}$, since this minimizes the remaining quadratic $\left( \Delta \vect{w} \right)^T \vect{H}
+\left( \Delta \vect{w} \right)$.
+
+\subsubsection*{Exercise 4.20}
+Let block $(k, j)$ be given by the block-matrix $\vect{B}_{kj} = \sum_{n=1}^{N} y_{nk} \left( I_{kj} - y_{nj}\right) \vect{\phi}_n \vect{\phi}_n^T$.
+We want to show that $\sum_{k=1}^{K} \sum_{j=1}^{K} \vect{u}_k^T \vect{B}_{kj} \vect{u}_j \geq 0$ for every $\vect{u} = (\vect{u}_1^T, \vect{u}_2^T, \ldots, \vect{u}_K^T)^T$.
+
+Our strategy will be to first write out the sum over $k$, $j$ and $n$.
+Then we will rearrange the sum over $n$ to the outer level, and show that the summand in the sum over $n$ is always nonnegative.
+Thus the total sum is nonnegative.
+
+We substitute the definition of $\vect{B}_{kj}$ and move the sum over $n$ to the outer level.
+\begin{align}
+	\nonumber \sum_k \sum_j \vect{u}_k^T \vect{B}_{kj} \vect{u}_j
+	&= \sum_k \sum_j \vect{u}_k^T \left[ 
+	\sum_n y_{nk} \left(I_{kj} - y_{nj}\right) \vect{\phi}_n \vect{\phi}_n^T
+	\right] \vect{u}_j \\
+	&= \sum_n
+	\left[ 
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T
+	\sum_j \left(I_{kj} - y_{nj}\right) \vect{u}_j
+	 \right] \label{eqn:ch4_ex22}
+\end{align}
+
+If every term in the sum over $n$ is nonnegative, then the entire expression will be nonnegative.
+For every term $n$, the following manipulation holds.
+\begin{align*}
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T
+	\left[ \sum_j \left(I_{kj} - y_{nj}\right) \vect{u}_j \right]
+	&=  
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T
+	\left[ \vect{u}_k -  \sum_j   y_{nj} \vect{u}_j \right] \\
+	&=  
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T \vect{u}_k
+	-
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T
+	\sum_j   y_{nj} \vect{u}_j
+\end{align*}
+In the first equality, we used the relationship $\sum_j I_{kj} \vect{u}_j = \vect{u}_k$, since the identity matrix (alternatively the Kronecker delta $\delta_{kj}$) ``picks out'' the $k$th term in the sum.
+
+In the last equality, we must show that the second term is smaller than, or equal to, the first term.
+To show this, we define the function $f(\vect{u}) = \vect{u}^T \vect{\phi}_n \vect{\phi}_n^T  \vect{u}$.
+This function is positive semi-definite, and therefore convex, since
+\begin{equation*}
+	f(\vect{u}) = \left( \vect{u}^T \vect{\phi}_n \right) 
+	\left( \vect{\phi}_n^T  \vect{u} \right)
+	= \left( \vect{u}^T \vect{\phi}_n \right) 
+	\left(   \vect{u}^T \vect{\phi}_n \right) = \alpha^2 \geq 0.
+\end{equation*}
+Using this function, we write
+\begin{equation*}
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T \vect{u}_k
+	-
+	\sum_k y_{nk} \vect{u}_k^T \vect{\phi}_n \vect{\phi}_n^T
+	\sum_j   y_{nj} \vect{u}_j
+	= \sum_k y_{nk} f(\vect{u}_k)
+	-
+	f\left(\sum_k y_{nk} \vect{u}_k  \right).
+\end{equation*}
+Since $\sum_k p \left( \mathcal{C}_k \mid \vect{\phi}_n \right) = 
+\sum_k y_{nk} = 1$ and $f(\vect{u})$ is convex, from Jensen's Inequality we have
+\begin{equation*}
+	f\left(\sum_k y_{nk} \vect{u}_k  \right) \leq \sum_k y_{nk} f(\vect{u}_k).
+\end{equation*}
+
+We have showed that the term in the square brackets in Equation \eqref{eqn:ch4_ex22} nonnegative.
+Therefore, the total sum over $n$ must be nonnegative, and $\sum_{k=1}^{K} \sum_{j=1}^{K} \vect{u}_k^T \vect{B}_{kj} \vect{u}_j \geq 0$ as claimed.
+
+
 \subsubsection*{Exercise 4.22}
 We can approximate the integral as
 \begin{equation*}
