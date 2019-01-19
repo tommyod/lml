@@ -643,9 +643,86 @@ Three general decision approaches in decreasing order of complexity:
 
 % ----------------------------------------------------------------------------
 \subsection{Linear Models for Classification}
+
+\subsection*{Least squares and Fisher's linear discriminant}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The following are non-probabilistic models, where the output is not a probability.
+	# \emph{Least squares classification} minimizes a quadratic error function, and is analytically tractable.
+	The results are not probabilities, the method is very sensitive to outliers, and does not necessarily give good results even when the data is linearly separable.
+	# \emph{Fisher's linear discriminant} seeks to find $\vect{w}$ to minimize
+	\begin{equation*}
+		J(\vect{w}) = 
+		\frac{\vect{w}^T \vect{S}_{B} \vect{w}}{\vect{w}^T \vect{S}_{W} \vect{w}}
+		= 
+		\frac{\text{between class variance}}{\text{within class variance}}.
+	\end{equation*}
+	The method projects data to a (hopefully) desirable subspace, where generative or discriminative methods may be used.
+	Solved by $\vect{w} \propto \vect{S}_{W}^{-1} \left( \vect{m}_2 - \vect{m}_1 \right)$.
+	# The \emph{perceptron algorithm} find a separating plane if the data is linearly separable, but does terminate otherwise.
+	Historically important.
+\end{easylist}
+
+\subsection*{Generalized linear models and probabilistic generative models}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	
+	# A \emph{generalized linear model} (GLM) is of the form $y(\vect{x}) = f\left( \vect{w}^T \vect{x} + w_0 \right)$, where the \emph{activation function} $f(\cdot)$ may be non-linear.
+		
+	# A probabilistic model first models $p(\vect{x} \mid \mathcal{C}_k )$ and $p(\mathcal{C}_k)$, and then uses Bayes theorem to model $p(\mathcal{C}_k \mid \vect{x})$.
+	From Bayes theorem, we have
+	\begin{equation*}
+		p(\mathcal{C}_1 \mid \vect{x})
+		=
+		\frac{p( \vect{x} \mid \mathcal{C}_1) p(\mathcal{C}_1)}{p( \vect{x} \mid \mathcal{C}_1) p(\mathcal{C}_1) + p( \vect{x} \mid \mathcal{C}_2) p(\mathcal{C}_2)}
+		=
+		\underbrace{\frac{1}{1 + \exp(-a)}}_{\text{the sigmoid } \sigma(a)},
+	\end{equation*}
+	where $a = 
+	\ln \left( p( \vect{x} \mid \mathcal{C}_1) p(\mathcal{C}_1) \right)
+	-
+	\ln \left( p( \vect{x} \mid \mathcal{C}_2) p(\mathcal{C}_2) \right)$.
+	If we assume normal distributions with shared covariance matrices, then $a(\vect{x})$ is linear in $\vect{x}$.
+\end{easylist}
+
+\subsection*{Probabilistic discriminative models}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# A probabilistic model finds $p(\mathcal{C}_k \mid \vect{x})$ directly, without modeling the class-conditional distribution of $p(\vect{x} \mid \mathcal{C}_k)$.
+	In other words, we can determine $\vect{w}$ in the GLM $y(\vect{x}) = f\left( \vect{w}^T \vect{x} + w_0 \right)$ directly.
+	This entails fitting $\mathcal{O}(M)$ coefficients instead of $\mathcal{O}(M^2)$.
+	
+	# To find $\vect{w}$ in $y(\vect{x}) = \sigma \left( \vect{w}^T \vect{x} + w_0 \right)$, we minimize the \emph{cross entropy}, given by the negative log-likelihood
+	\begin{equation*}
+		E(\vect{w}) = 
+		- \ln \underbrace{p(\mathsf{t} \mid \vect{w})}_{\text{likelihood}} =
+		- \sum_{n=1}^{M} \underbrace{t_n \ln (y_n) + (1 - t_n) \ln (1 - y_n)}_{\text{cross entropy}}.
+	\end{equation*}
+	# Using the \emph{Newton-Raphson} method
+	\begin{equation*}
+		\vect{w}^{n+1}
+		=
+		\vect{w}^{n} - \vect{H}^{-1}(\vect{w}^{n}) \nabla E (\vect{w}^{n})
+	\end{equation*}
+	on the error function $E(\vect{w})$ is an instance of the \emph{iterative reweighed least squares} (IRLS) method.
+	Every step involves a weighted least squares problem, and $E(\vect{w})$ has a unique global minimum.
+\end{easylist}
+
+\subsection*{The Laplace approximation}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The idea behind the \emph{Laplace approximation} is to place a normal distribution on a mode $\vect{z}_0$ of the function $f(\vect{z})$
+	\begin{equation*}
+		f(\vect{z}) \simeq f(\vect{z}_0) \exp \left[ 
+		- \frac{1}{2}
+		(\vect{z} - \vect{z}_0)^T \vect{A}
+		(\vect{z} - \vect{z}_0)
+		 \right]
+		 \qquad
+		 \vect{A} = \left. - \nabla \nabla \ln f(\vect{z}) \right|_{\vect{z} = \vect{z}_0}
+	\end{equation*}
+	# One application of Laplace approximation is Bayesian logistic regression, which is generally intractable.
+	Using the Laplace approximation, an approximation to exact Bayesian interference is possible.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -1058,7 +1135,7 @@ This proves the Jensen inequality.
 % ----------------------------------------------------------------------------
 \subsection{Probability Distributions}
 \subsubsection*{Exercise 2.6}
-We split this problem into three parts: the (a) expected value, (b) variance and (c) mode.
+We split this problem into three parts: (a) expected value, (b) variance and (c) mode.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# The \textbf{expected value} is computed from the definition as
@@ -1078,7 +1155,7 @@ We split this problem into three parts: the (a) expected value, (b) variance and
 	\end{align*}
 	where in the last equality we have used $\Gamma(x+2) = (x+1)x \Gamma(x)$, which is simply repeated application of $\Gamma(x+1) = x\Gamma(x)$ twice.
 	
-	At this point, we're left with
+	The remaining computation is
 	\begin{equation*}
 		\var[\mu] = \E[\mu^2] - \E[\mu]^2 = \frac{(a+1) a}{(a + b +1) (a+b)} - \left( \frac{a}{a + b} \right),
 	\end{equation*}
@@ -1100,9 +1177,9 @@ We split this problem into three parts: the (a) expected value, (b) variance and
 \end{easylist}
 
 \subsubsection*{Exercise 2.8}
-The \textbf{first part} is to show Equation (2.270). 
+The \textbf{first part} is to prove Equation (2.270). 
 We apply the definitions of $E_x \left[ x \mid y \right]$ and $E_y [f(y)]$ in turn, and then the product rule of probability.
-Doing so, we have
+Doing so, we observe that
 \begin{align*}
 	E_y \left[ E_x \left[ x \mid y \right]  \right] &= 
 	E_y \left[ \int x p (x \mid y) \, dx  \right] 
@@ -1124,7 +1201,7 @@ It's also useful to know, from the definition of conditional variance, that
 The result above does not come as a surprise, since it's merely the familiar result for variance, i.e. $\var_x[ x ] = \E_x [x^2] - \E_x [x ]^2$, conditioned on $y$ in every term.
 
 Let's examine the \textbf{first term} in the right hand side of (2.270) first, i.e. $\E_y \left[ \var_x[ x \mid y ]  \right]$.
-Using equation \eqref{eqn:conditional_variance} above, we see that
+Using Equation \eqref{eqn:conditional_variance} above, we see that
 \begin{align}
 	\nonumber \E_y \left[ \var_x[ x \mid y ]  \right] &=  \E_y \left[ \E_x [x^2 \mid y] - \E_x [x \mid y]^2  \right]
 	=
@@ -1165,11 +1242,11 @@ Using the definition of variance (Equation (1.38) in \cite{bishop_pattern_2011})
  \E_x \left[ x \mid y \right]^2 \right]
  - \E[x]^2
 \end{align}
-Finally, adding Equations \eqref{eqn:ch2_prob8a} and \eqref{eqn:ch2_prob8b} gives the result we're after.
+Finally, adding Equations \eqref{eqn:ch2_prob8a} and \eqref{eqn:ch2_prob8b} produces the result we're after.
 
 
 \subsubsection*{Exercise 2.15}
-The entropy is given by $\H[p(\vect{x})] = - \int p(\vect{x}) \ln p(\vect{x}) \, d\vect{x}$, and we start by computing the logarithm of $p(\vect{x})$, which is
+The entropy is given by $\H[p(\vect{x})] = - \int p(\vect{x}) \ln p(\vect{x}) \, d\vect{x}$ from it's definition, and we start by computing the logarithm of $p(\vect{x})$, which is
 \begin{equation*}
 	\ln p(\vect{x}) = -\frac{D}{2} \ln (2 \pi ) - \frac{1}{2} \ln \abs{\vect{\Sigma}} - \frac{1}{2} (\vect{x} - \vect{\mu})^T \vect{\Sigma}^{-1}(\vect{x} - \vect{\mu}).
 \end{equation*}
@@ -1185,14 +1262,12 @@ If we can show this, then we've proven the equation given in the problem stateme
 
 We will now show that $\int p(\vect{x}) \Delta^2 \, d\vect{x} = D$.
 First, however, we'll present a result for the univariate Gaussian, which we will need later on. 
-Here's the univariate result, easily proved using partial integration.
+Here's the univariate result, easily verified by means of partial integration.
 \begin{equation}
 \label{eqn:ch2_problem15_a}
 	\frac{1}{\sqrt{2 \pi} \sigma} \int \exp \left( - \frac{x^2}{2 \sigma^2}\right) \, dx = 
 	\frac{1}{\sqrt{2 \pi} \sigma} \int \frac{x^2}{\sigma^2} \exp \left( - \frac{x^2}{2 \sigma^2}\right) \, dx = 1
 \end{equation}
-
-%then we'll rotate into eigenvector space by a change of variables $\vect{y} = \vect{U}(\vect{x} - \vect{\mu})$ and evaluate the integral.
 
 We now rotate into $\vect{y}$-space by $\vect{y} = \vect{U}(\vect{x} - \vect{\mu})$, which diagonalizes $\vect{\Sigma}^{-1}$.
 From Equations (2.50) and (2.56) in \cite{bishop_pattern_2011}, we see that the integral $\int \Delta^2  p(\vect{x}) \, d\vect{x}$ now becomes
@@ -1208,7 +1283,7 @@ Multiplying the product into the sum, and integrating each term, we have
 \exp \left( - \frac{y_j^2}{2 \lambda_j} \right)  \, d \vect{y},
 \end{align*}
 where $d \vect{y} := d y_1 \, d y_2 \, \cdots \, d y_D$.
-To clarify the meaning of the above equation, let's focus on term $i$ in the outer sum and write out the products more explicitly, the above integral is
+To clarify the meaning of the equation above, let's focus on term $i$ in the outer sum and write out the products more explicitly, the above integral is
 \begin{equation}
 \label{eqn:ch2_problem15_b}
 	\left( \int \frac{1}{(2 \pi \lambda_1)^{1/2}} \exp \left( - \frac{y_1^2}{2 \lambda_1} \right) \, d y_1 \right)
@@ -1222,7 +1297,7 @@ but the $i$th factor is special, since it has the additional $y_i^2 / \lambda_i$
 	\left( \int \frac{1}{(2 \pi \lambda_i)^{1/2}} \frac{y_i^2}{\lambda_i}   \exp \left( - \frac{y_i^2}{2 \lambda_i} \right) \, d y_i \right).
 \end{equation}
 Now comes the crucial observation; every factor in \eqref{eqn:ch2_problem15_b} except the $i$th is a univariate Gaussian, so these integrals evaluate to 1.
-The special $i$th term \eqref{eqn:ch2_problem15_c} is in same functional form as \eqref{eqn:ch2_problem15_a} (with $\lambda_i = \sigma^2$), so it also evaluates to 1.
+The special $i$th term \eqref{eqn:ch2_problem15_c} is in same functional form as Equation \eqref{eqn:ch2_problem15_a} (with $\lambda_i = \sigma^2$), so it also evaluates to 1.
 Therefore the product of integrals for every term $i$ evaluates to a product of ones, and the sum is simply
 \begin{align*}
 \sum_{i=1}^{D} \int_{\R^D}  \frac{y_i^2}{\lambda_i} 
@@ -1290,9 +1365,9 @@ We split this exercise into two parts.
 \end{easylist}
 
 \subsubsection*{Exercise 2.31}
-If $y = x + z$, then $p_y(y) = p_x(x) * p_z(z)$, where $*$ denotes the \emph{convolution}.
+If $y = x + z$, then $p_y(y) = p_x(x) * p_z(z)$, where $*$ denotes the \emph{convolution} operator.
 To see why this is true, draw an $x$-$z$ coordinate system and sketch a line $x + z = a$.
-The probability that $y = x + z = a$ is $p_y(y=a) = \int p_x(a - t) p_z(a) \, dt$, since this sums over all possible ways to obtain the sum $a$.
+The probability that $y = x + z = a$ is $p_y(y=a) = \int p_x(a - t) p_z(a) \, dt$, since this integrates over all possible ways to obtain the sum $a$.
 
 In this case, when have $\vect{y} = \vect{x} + \vect{z}$, so we evaluate
 \begin{align*}
