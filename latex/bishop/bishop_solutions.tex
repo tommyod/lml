@@ -1140,8 +1140,8 @@ We split this problem into three parts: (a) expected value, (b) variance and (c)
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# The \textbf{expected value} is computed from the definition as
 	\begin{align*}
-		\E[\mu] &= \int \mu p(\mu) \, d\mu =  \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a \mu \, \mu^{a-1} (1- \mu)^{b-1} \, d\mu \\
-		&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a  \mu^{(a+1)-1} (1- \mu)^{b-1} \, d\mu \tag{re-cast as Beta} \\ 
+		\E[\mu] &= \int \mu p(\mu) \, d\mu =  \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^1 \mu \, \mu^{a-1} (1- \mu)^{b-1} \, d\mu \\
+		&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^1  \mu^{(a+1)-1} (1- \mu)^{b-1} \, d\mu \tag{re-cast as Beta} \\ 
 		&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \frac{\Gamma(a +1 ) \Gamma( b)}{\Gamma(a + b + 1)} = \frac{a}{a + b},
 	\end{align*}
 	where we used Equation (2.265) from \cite{bishop_pattern_2011}, along with $\Gamma(x+1) = x\Gamma(x)$.
@@ -1149,7 +1149,7 @@ We split this problem into three parts: (a) expected value, (b) variance and (c)
 	# To compute the \textbf{variance}, we will employ $\var[\mu] = \E[\mu^2] - \E[\mu]^2$.
 	Similarly to the sub-problem above, we observe that
 	\begin{align*}
-	\E[\mu^2] &= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^a  \mu^{(a+2)-1} (1- \mu)^{b-1} \, d\mu \\
+	\E[\mu^2] &= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \int_0^1  \mu^{(a+2)-1} (1- \mu)^{b-1} \, d\mu \\
 	&= \frac{\Gamma(a + b)}{\Gamma(a ) \Gamma( b)} \frac{\Gamma(a +2 ) \Gamma( b)}{\Gamma(a + b + 2)}
 	= \frac{(a+1) a}{(a + b +1) (a+b)},
 	\end{align*}
@@ -1388,14 +1388,15 @@ Matching terms with Equations (2.109) and (2.110) we see that
 
 
 \subsubsection*{Exercise 2.40}
-The posterior is proportional to the prior times the likelihood, i.e.
+The posterior is proportional to the prior times the likelihood.
+When the prior is Gaussian, we have
 \begin{align*}
 	p( \vect{\mu} \mid \vect{X} ) &\propto p(\vect{\mu}) p (\vect{X} \mid \vect{\mu}) 
 	= \N \left( \vect{\mu} \mid \vect{\mu}_0, \vect{\Sigma}_0 \right)
 	\prod_{n=1}^{N}
 	\N \left( \vect{x} \mid \vect{\mu}, \vect{\Sigma} \right).
 \end{align*}
-We ignore normalization constants and only consider the product of the exponential functions, this approach yields
+Let us ignore normalization constants and only consider the product of the exponential functions, this approach yields the following exponential function (which is not a p.d.f.)
 \begin{align}
 	\nonumber p( \vect{\mu} \mid \vect{X} ) & \propto \N \left( \vect{\mu} \mid \vect{\mu}_N, \vect{\Sigma}_N \right) \\
 	\label{eqn:ch2_prob40_a} &= \exp\left( - \frac{1}{2} \left( 
@@ -1404,18 +1405,18 @@ We ignore normalization constants and only consider the product of the exponenti
 	\sum_{n=1}^{N} (\vect{x}_n - \vect{\mu})^T \vect{\Sigma}^{-1} (x_n - \vect{\mu})
 	 \right) \right).
 \end{align}
-We will multiply out the quadratic forms, and compare it to
+We will multiply out the quadratic forms in Equation \eqref{eqn:ch2_prob40_a} above, and compare it to
 \begin{equation}
 \label{eqn:ch2_prob40_b}
 	(\vect{\mu} - \vect{\mu}_N)^T \vect{\Sigma}_N^{-1} (\vect{\mu} - \vect{\mu}_N)
 	= \vect{\mu}^T \vect{\Sigma}_N^{-1} \vect{\mu} - 2 \vect{\mu}_N^T \vect{\Sigma}_N^{-1} \vect{\mu} + \text{const}.
 \end{equation}
-Multiplying out the terms in the inner parenthesis of Equation \eqref{eqn:ch2_prob40_a} and rearranging, we obtain the expression
+Multiplying out the terms in the inner parenthesis of Equation \eqref{eqn:ch2_prob40_a} and rearranging, we obtain the following quadratic dependence on $\vect{\mu}$:
 \begin{align*}
 	\vect{\mu}^T \left( \vect{\Sigma}_0^{-1} + N \vect{\Sigma}^{-1} \right) \vect{\mu} - 2 
 	\left( \vect{\mu}_0^T \vect{\Sigma}_0^{-1} + N \vect{\mu}_{\text{ML}}^T  \vect{\Sigma}^{-1} \right) \vect{\mu} + \text{const}.
 \end{align*}
-Comparing the above with \eqref{eqn:ch2_prob40_b}, we immediately see that
+Comparing the above with Equation \eqref{eqn:ch2_prob40_b}, we immediately see that
 \begin{align}
 \label{eqn:ch2_prob40_c}
 	\vect{\Sigma}_N^{-1} &= \vect{\Sigma}_0^{-1} + N \vect{\Sigma}^{-1} 
@@ -1423,24 +1424,26 @@ Comparing the above with \eqref{eqn:ch2_prob40_b}, we immediately see that
 	\label{eqn:ch2_prob40_d}
 	 \vect{\mu}_N^T \vect{\Sigma}_N^{-1} &=  \vect{\mu}_0^T \vect{\Sigma}_0^{-1} + N \vect{\mu}_{\text{ML}}^T  \vect{\Sigma}^{-1}.
 \end{align}
-Equation \eqref{eqn:ch2_prob40_c} corresponds with (2.141) from the book, and answers the first part of the exercise.
-Equation \eqref{eqn:ch2_prob40_d} needs a little more refinement, using the matrix identity 
+Equation \eqref{eqn:ch2_prob40_c} corresponds with (2.141) from \cite{bishop_pattern_2011}, and answers the first part of the exercise.
+Equation \eqref{eqn:ch2_prob40_d} needs a little more refinement, and we will make use of the following matrix identity, which is (C.5) in the appendix.
 \begin{equation*}
 	(\vect{A}^{-1} + \vect{B}^{-1})^{-1} = \vect{B}( \vect{A} + \vect{B})^{-1} \vect{A} = \vect{A}( \vect{B} + \vect{A})^{-1} \vect{B}
 \end{equation*}
-we see that 
-\begin{equation*}
-	\vect{\Sigma}_N = \left( \vect{\Sigma}_N^{-1} \right)^{-1}
-	= \left( \vect{\Sigma}_0^{-1} + N \vect{\Sigma}^{-1} \right)^{-1}
-	= \frac{1}{N} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{N} \vect{\Sigma} \right)^{-1} \vect{\Sigma}_0
+Using the above on Equation \eqref{eqn:ch2_prob40_d}, we see that
+\begin{align*}
+	\vect{\Sigma}_N &= \left( \vect{\Sigma}_N^{-1} \right)^{-1}
+	= \left( \vect{\Sigma}_0^{-1} + N \vect{\Sigma}^{-1} \right)^{-1} \\
+	&= \frac{1}{N} \vect{\Sigma} \left( \vect{\Sigma}_0 + \frac{1}{N} \vect{\Sigma} \right)^{-1} \vect{\Sigma}_0
 	= \vect{\Sigma}_0 \left( \frac{1}{N} \vect{\Sigma} + \vect{\Sigma}_0 \right)^{-1} \frac{1}{N} \vect{\Sigma}.
-\end{equation*}
+\end{align*}
 Right multiplying Equation \eqref{eqn:ch2_prob40_d} with $\vect{\Sigma}_N$ and using the equation above, we obtain
 \begin{equation*}
 	\vect{\mu}_N^T = \vect{\mu}_0^T \left( \vect{\Sigma} +N \vect{\Sigma}_0 \right)^{-1} \vect{\Sigma}
 	+ \vect{\mu}_{\text{ML}}^T  \left( \vect{\Sigma} +N \vect{\Sigma}_0 \right)^{-1} N \vect{\Sigma}_0.
 \end{equation*}
-Observe how this corresponds with (2.142), which represents the univariate case.
+We have solved the second part of the problem.
+Observe also how this corresponds with (2.142), which represents the univariate case.
+It's reassuring that the multivariate solution corresponds elegantly with the univariate case.
 
 
 \subsubsection*{Exercise 2.43}
@@ -1510,11 +1513,12 @@ where we have used the fact that  $\exp(x) = \lim_{n\to\infty}\left(1 + x / n\ri
 	\label{eqn:ch2_problem49}
 		\int_{0}^{\infty} \operatorname{Gam}(\lambda \mid a, b) \frac{1}{\lambda} \, d \lambda = \frac{b}{a - 1} \int_{0}^{\infty} \operatorname{Gam}(\lambda \mid a, b) \frac{1}{\lambda} \, d \lambda = \frac{b}{a - 1}.
 	\end{equation}
-	We now use the shortcut formula $\cov\left[\vect{x}\right] = \E \left[ \vect{x} \vect{x}^T \right]
+	To solve the problem we will make use of the result given in Equation \eqref{eqn:ch2_problem49} above, as well as the shortcut formula $\cov\left[\vect{x}\right] = \E \left[ \vect{x} \vect{x}^T \right]
 	-
 	\E \left[ \vect{x}  \right] \E \left[ \vect{x}  \right]^T$.
-	The term  $\E \left[ \vect{x}  \right] \E \left[ \vect{x}  \right]^T$ is already known, it's $\vect{\mu} \vect{\mu}^T$ as a result of the the previous sub-problem.
-	The term $\E \left[ \vect{x} \vect{x}^T \right]$ is computed similarly to the previous sub problem, and we make use of \eqref{eqn:ch2_problem49} to write:
+	
+	The term $\E \left[ \vect{x}  \right] \E \left[ \vect{x}  \right]^T$ is already known, it's $\vect{\mu} \vect{\mu}^T$ as a result of the the previous sub-problem.
+	The term second term, i.e. $\E \left[ \vect{x} \vect{x}^T \right]$, is computed similarly to the previous sub problem, and we make use of Equation \eqref{eqn:ch2_problem49} to write:
 	\begin{align*}
 	\E[ \vect{x} \vect{x}^T ] &= \int_{-\infty}^{\infty} \vect{x} \vect{x}^T  p(\vect{x} ) \, d\vect{x}  \\
 	&= \int_{-\infty}^{\infty} \vect{x} \vect{x}^T 
@@ -1555,7 +1559,7 @@ where we have used the fact that  $\exp(x) = \lim_{n\to\infty}\left(1 + x / n\ri
 \end{easylist}
 
 \subsubsection*{Exercise 2.55}
-Starting with (2.187), we have
+Starting with Equation (2.187) in \cite{bishop_pattern_2011}, we have
 \begin{align*}
 	A(m_{\text{ML}})
 	&=
@@ -1588,7 +1592,7 @@ One way to write the term $\vect{x}^T \vect{\Sigma} \vect{x}$ as a linear combin
 	\operatorname{vect}\left( \vect{\Sigma} \right)^T 
 	\operatorname{vect}\left( \vect{x} \vect{x}^T \right),
 \end{equation*}
-where $\operatorname{vect}\left( \cdot \right)$ maps the $i,j$th entry of a $D \times D$ matrix to the $D(i-1) + j$th entry of a column vector, i.e. $\operatorname{vect} \bigl(\begin{smallmatrix}
+where $\operatorname{vect}\left( \cdot \right)$ maps the $(i,j)$-th entry of a $D \times D$ matrix to the $D(i-1) + j$th entry of a column vector, i.e. $\operatorname{vect} \bigl(\begin{smallmatrix}
 a_{11} & a_{12} \\ 
 a_{21} & a_{22}
 \end{smallmatrix}\bigr)
@@ -2158,10 +2162,223 @@ Taking logarithms and using the product rule of probability gives Equation (4.13
 
 % ----------------------------------------------------------------------------
 \subsection{Neural networks}
-\subsubsection*{Exercise X.Y}
+\subsubsection*{Exercise 5.7}
+\paragraph{Differentiating the softmax function}
+First we differentiate $y_k = h(a_k) = \operatorname{softmax}(a_k)$ with respect to $a_k$ to obtain
+\begin{align*}
+\frac{\partial y_k}{\partial a_k}
+=
+\frac{\partial }{\partial a_k} \operatorname{softmax}(a_k) 
+&=
+\frac{\partial }{\partial a_k} \left( \frac{\exp a_k}{\sum_j \exp a_j} \right)
+=
+\frac{\exp a_k \sum_{j \neq k} \exp a_j}{\left( \sum_j \exp a_j \right)^2}
+\tag{product rule} \\
+&= y_k  \frac{\sum_{j \neq k} \exp a_j}{ \sum_j \exp a_j}
+= y_k \left( 1 - \frac{\exp a_k}{\sum_j \exp a_j} \right) = y_k (1 - y_k).
+\end{align*}
+In a similar fashion, we differentiate $y_k = \operatorname{softmax}(a_k)$ with respect to $a_i$ to obtain
+\begin{equation*}
+\frac{\partial y_k}{\partial a_i}
+=
+	\frac{\partial }{\partial a_i}  \operatorname{softmax}(a_k)
+	=
+	\frac{- \exp(a_k) \exp(a_i)}{\left( \sum_j \exp a_j \right)^2}
+	= - y_i y_k.
+\end{equation*}
+These two results may be summarized using the Kronecker delta $\delta_{ij}$ function as
+\begin{equation*}
+	\frac{\partial y_k}{\partial a_i}
+	=
+	\frac{\partial }{\partial a_i}  \operatorname{softmax}(a_k)
+	=  y_i \left( \delta_{ij} - y_j \right).
+\end{equation*}
+
+\paragraph{Differentiating the error function}
+With the purpose of expressing the error $E(\vect{w})$ defined by Equation (2.24) as a function of \emph{independent} parameters, we write it as
+\begin{align*}
+	E(\vect{w})
+	&=
+	- \sum_{n=1}^{N}  \sum_{k=1}^{K} t_{nk} \ln y_k (\vect{x}_n, \vect{w}) \\
+	&= 
+	- \sum_{n=1}^{N}  t_{n1} \ln y_{n1} + t_{n2} \ln y_{n2} + \cdots + t_{nK} \ln y_{nK}\\
+	&= 
+	- \sum_{n=1}^{N}  \left( \sum_{k=1}^{K-1} t_{nk} \ln y_{nk} 
+	+ t_{K}
+	\ln \left( 1 - \sum_{k=1}^{K-1} y_{nk} \right)
+	\right),
+\end{align*}
+since $\sum_{k=1}^{K} y_{nk} = 1$ for every $n$, and so the first $K-1$ parameters uniquely determine the last one.
+Recall also the constraint, $\sum_{k=1}^{K} t_{nk} = 1$ which we will use later.
+
+Ignoring the summation over $n$ and differentiating with respect to $a_j$, we obtain
+\begin{align*}
+\partial_{a_j} E(\vect{w})
+&=
+- \left[ 
+\sum_{k \neq j}^{K-1} t_k \frac{1}{y_k} \partial_{a_j} y_k
++
+t_j \frac{1}{y_j} \partial_{a_j} y_j
+-
+t_{K}
+\frac{1}{\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)}
+\partial_{a_j} 
+\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)
+\right].
+\end{align*}
+Now we apply the formulas for the derivatives of the softmax function, and simplify  the first two terms.
+The notation $\sum_{k \neq j}^{K-1}$ means ``sum over $k=1, \ldots, K-1$, but skip $k=j$.''
+\begin{align*}
+\partial_{a_j} E(\vect{w})
+	&=
+	- \left[ 
+	\sum_{k \neq j}^{K-1} t_k \frac{1}{y_k} (- y_k y_j)
+	+
+	t_j \frac{1}{y_j} y_j (1 - y_j)
+	-
+	t_{K}
+	\frac{1}{\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)}
+	\partial_{a_j} 
+	\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)
+	\right]
+	\\
+	&=
+	- \left[ 
+	\sum_{k \neq j}^{K-1} t_k  (- y_j)
+	+
+	t_j  (1 - y_j)
+	-
+	t_{K}
+	\frac{1}{\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)}
+	\left( - y_j \sum_{k \neq j }^{K-1} y_{k} + y_j (1 - y_j) \right)
+	\right]
+\end{align*}
+We simplify further by introducing the $j$th term back into the sums and canceling in the fractions.
+These simplifications yield
+\begin{align*}
+\partial_{a_j} E(\vect{w})
+&=
+- \left[ 
+\sum_{k \neq j}^{K-1} t_k  (- y_j)
++
+t_j  (1 - y_j)
+-
+t_{K}
+\frac{1}{\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)}
+\left( - y_j \sum_{k \neq j }^{K-1} y_{k} + y_j (1 - y_j) \right)
+\right]
+\\
+&=
+- \left[ 
+-y_j \sum_{k = 1}^{K-1} t_k  + t_j
+-
+t_{K}
+\frac{1}{\left( 1 - \sum_{k=1}^{K-1} y_{k} \right)}
+y_j \left( 1 - \sum_{k =1 }^{K-1} y_{k} \right)
+\right] \\
+&=
+- \left[ 
+-y_j \sum_{k = 1}^{K-1} t_k  + t_j
+-
+t_{K}
+y_j
+\right]
+= - \left[ 
+-y_j \sum_{k = 1}^{K} t_k  + t_j
+\right]
+= y_j - t_j.
+\end{align*}
+In the last equality, we used the fact that $\sum_{k=1}^{K} t_{k} = 1$.
+
+
+
+\subsubsection*{Exercise 5.13}
+The Hessian $\vect{H}$ is of dimension  $W \times W$.
+Since it's symmetric, i.e. has $\vect{H} = \vect{H}^T$, the number of independent parameters is
+\begin{equation*}
+	W + (W - 1) + (W - 2) + \cdots + 2 + 1 = \frac{W (W+1)}{2}.
+\end{equation*}
+The gradient $\vect{b} = \nabla_{\vect{w}} E(\vect{w})$ has $W$ free parameters, thus the total number of free parameters in the second-order Taylor expansion is
+\begin{equation*}
+	\frac{W(W + 1)}{2} + W = \frac{W (W + 3)}{2}.
+\end{equation*}
+
+
+\subsubsection*{Exercise 5.18}
+We introduce skip-layer connections from the $D$-dimensional input layer to the $K$-dimensional output layer.
+The notation for the $D$-$M$-$K$ network is summarized in the diagram below.
+\begin{equation*}
+\begin{tikzcd}
+x_i, \, i=1,\ldots, D \arrow{r}{w_{ji}^{\text{(1)}}}
+\arrow[bend left = 20]{rr}{w_{ki}^{\text{(3)}}}
+ &  
+z_j , \, j=1,\ldots, M \arrow{r}{w_{kj}^{\text{(2)}}} & 
+y_k , \, k=1,\ldots, K
+\end{tikzcd}
+\end{equation*}
+The equations outlined in Section 5.3.2 in \cite{bishop_pattern_2011} mostly remain identical when a skip-layer is added.
+The exception is Equation (5.64) for the outputs, which becomes
+\begin{equation*}
+	y_k = \sum_{j=0}^{M} w_{kj}^{\text{(2)}} z_j
+	+ \underbrace{\sum_{i=0}^{D} w_{ki}^{\text{(3)}} x_i}_{\text{skip-layer}}.
+\end{equation*}
+The derivatives of $E(\vect{w})$ with respect to $w_{ji}^{\text{(1)}}$ and $w_{kj}^{\text{(2)}}$ remain the same, since these weights are not dependent on the $w_{ki}^{\text{(3)}}$.
+Differentating with respect to $w_{ki}^{\text{(3)}}$ yields
+\begin{equation*}
+	\frac{\partial E_n }{w_{ki}^{\text{(3)}}}
+	 = (y_n - t_n) \partial_{w_{ki}^{\text{(3)}}} y_k
+	 = (y_n - t_n) x_i \equiv \delta_k x_i.
+\end{equation*}
+
+
+\subsubsection*{Exercise 5.20}
+The Hessian $\vect{H}$ is $\nabla \nabla E$, where the gradients are taken with respect to the weights.
+Using the result from Exercise 5.7 for the derivative of an error function with multiclass outputs and softmax activation functions, we obtain
+\begin{align*}
+	\nabla E(\vect{w}) = 
+	\sum_{n=1}^{N} \nabla E_n(\vect{w})
+	=
+	\sum_{n=1}^{N} \frac{\partial E_n }{\partial a_n} \nabla a_n
+	=
+	\sum_{n=1}^{N} (y_n - t_n) \nabla a_n.
+\end{align*}
+The term $\nabla a_n$ represents the gradient of the scalar function $a_n(\vect{w})$ with respect to the weights.
+We do not propagate the derivative further back into the network.
+Differentiating again, we obtain
+\begin{align*}
+\nabla \nabla E(\vect{w}) 
+& = \sum_{n=1}^{N} \left( \nabla a_n \right) \left( \nabla y_n \right)^T
++ (y_n - t_n) \nabla \nabla y_n \\
+& = \sum_{n=1}^{N} y_n (1 - y_n) \left( \nabla a_n \right) \left( \nabla a_n \right)^T
++ \underbrace{(y_n - t_n)}_{\text{close to zero}} \nabla \nabla y_n \\
+&\simeq \sum_{n=1}^{N} y_n (1 - y_n) \left( \nabla a_n \right) \left( \nabla a_n \right)^T = \sum_{n=1}^{N} y_n (1 - y_n) \vect{b}_n \vect{b}_n^T
+.
+\end{align*}
+The term $(y_n - t_n)$ is assumed to be close to zero, for the reasons stated in Section 5.4.2.
+
+
+\subsubsection*{Exercise 5.25}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# TODO
+\end{easylist}
+
+\subsubsection*{Exercise 5.27}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# TODO
+\end{easylist}
+
+\subsubsection*{Exercise 5.31}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# TODO
+\end{easylist}
+
+\subsubsection*{Exercise 5.27}
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# TODO
 \end{easylist}
 
 % ----------------------------------------------------------------------------
