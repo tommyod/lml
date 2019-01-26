@@ -727,10 +727,75 @@ Three general decision approaches in decreasing order of complexity:
 
 % ----------------------------------------------------------------------------
 \subsection{Neural networks}
+\subsection*{The basic idea of neural networks}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# A neural network has a fixed number of adaptable basis functions.
+	Unlike the algorithms considered so far, neural networks let the \emph{activation functions} themselves be learned, not just the weights of their linear combinations. The notation is:
+	\begin{equation*}
+	\begin{tikzcd}
+	x_i, \, i=1,\ldots, D \arrow{r}{w_{ji}^{\text{(1)}}}
+	\arrow[bend left = 20]{rr}{w_{ki}^{\text{(3)}}}
+	&  
+	z_j , \, j=1,\ldots, M \arrow{r}{w_{kj}^{\text{(2)}}} & 
+	y_k , \, k=1,\ldots, K
+	\end{tikzcd}
+	\end{equation*}
+	
+	# In a two-layer network, the equation for the output is
+	\begin{equation*}
+		y_k = \sigma \bigg( 
+		\sum_{j=0}^{M} w_{kj}^{(2)}
+		h 
+		\bigg( 
+		\underbrace{\sum_{i=0}^{M} w_{ji}^{(1)} x_i}_{z_j}
+		 \bigg)
+		 \bigg),
+	\end{equation*}
+	where $\sigma(\cdot)$ and $h(\cdot)$ are the activation functions in the final (3rd) and hidden (2nd) layer, respectively.
+	They may differ in general.
+	## In regression problems, the final activation function $\sigma(\cdot)$ is often the identity, and the error $E(\vect{w})$ is the sum-of-squares error.
+	## In regression problems, the final activation function $\sigma(\cdot)$ is often the softmax, and the error $E(\vect{w})$ is the cross entropy.
+	# To see how the first layer learns activation functions, consider a $D$-$D$-$2$ network with softmax activation functions trained using cross entropy error.
+	The first part of the network learns non-linear functions $\phi_j(\vect{x})$, which are used for logistic regression in the second part.
+	This is perhaps best seen if we write
+	\begin{equation*}
+		y_k = \sigma \bigg( 
+		\sum_{j=0}^{D} w_{kj}^{(2)}
+		\phi_j(\vect{x})
+		\bigg),
+		\quad 
+		 \quad
+		\phi_j(\vect{x})
+		=
+		h 
+		\bigg( 
+		\sum_{i=0}^{D} w_{ji}^{(1)} x_i
+		\bigg).
+	\end{equation*}
+	
+	
 \end{easylist}
+
+\subsection*{Network training}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Network training involves finding weights $\vect{w}$ to minimize $E(\vect{w})$, this is a non-convex optimization problem, typically solved iteratively, i.e.
+	\begin{equation*}
+		\vect{w}^{k+1} = \vect{w}^{k} + \Delta  \vect{w}^{k}
+	\end{equation*}
+	where $\Delta  \vect{w}^{k}$ is some update rule. 
+	For instance $\Delta  \vect{w}^{k} = - \eta \nabla E \left( \vect{w}^{k} \right)$ for gradient descent, which requires gradient information.
+	
+	# Computing the gradient $\nabla_{\vect{w}} E \left( \vect{w}^{k} \right)$ is done using back-propagation, which is application of the chain rule of calculus to the network.
+	First information is propagated forward in the network, then an error is computed and the $\partial_{w_{jk}} E$ are found by propagating information backward in the network.
+	
+	# Second order derivatives, i.e. the Hessian $\vect{H} = \nabla \nabla E$, may be approximated or computed.
+	Approximation schemes include diagonal approximation, outer product approximation, inverse from outer product (using the Woodbury matrix identity) and finite differences.
+	Exact evaluation is also possible, and computing fast multiplication is possible by considering the operator $\mathcal{R}\{\cdot \}$ in $\vect{v}^T \vect{H} = \vect{v}^T \nabla \nabla E =\mathcal{R}\{ \nabla E \}$.
+\end{easylist}
+
+
 
 % ----------------------------------------------------------------------------
 \subsection{Kernel methods}
@@ -2192,7 +2257,7 @@ These two results may be summarized using the Kronecker delta $\delta_{ij}$ func
 	\frac{\partial y_k}{\partial a_i}
 	=
 	\frac{\partial }{\partial a_i}  \operatorname{softmax}(a_k)
-	=  y_i \left( \delta_{ij} - y_j \right).
+	=  y_k \left( \delta_{kj} - y_i \right).
 \end{equation*}
 
 \paragraph{Differentiating the error function}
