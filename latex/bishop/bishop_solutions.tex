@@ -544,25 +544,26 @@ Three general decision approaches in decreasing order of complexity:
 \subsection*{Linear basis function models}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# Estimate the data using a function
+	# We assume the dependent data $\vect{y}$ may be written as
 	\begin{equation*}
 	y(\vect{x}, \vect{w}) = \sum_{j = 0}^{M-1} \vect{w}_j \phi_j(\vect{x}) = \vect{w}^T \vect{\phi}(\vect{x}).
 	\end{equation*}
-	# The function is linear in $\vect{w}$, but not necessarily in $\vect{x}$ since $\phi_j (\cdot)$ might be non-linear.
-	# Choice for the $\phi_j (\cdot)$ include identity, powers of $\vect{x}$, Gaussians, sigmoids, Fourier basis, Wavelet basis, and arbitrary non-linear functions.
-	# Assuming a noise term $\epsilon \sim \N(0, \beta^{-1})$, the ML solution $\vect{w}_\text{ML}$ is given by
+	## The function $y(\vect{x}, \vect{w})$ is linear in $\vect{w}$, but not necessarily in $\vect{x}$ since $\phi_j (\cdot)$ might be a non-linear function.
+	It's called a \emph{linear model} because it's linear in $\vect{w}$.
+	## Choices for the functions $\{ \phi_j \}$ include identity, powers of $x$, Gaussians, sigmoids, Fourier basis, Wavelet basis, and arbitrary non-linear functions.
+	# Assuming a noise term $\epsilon \sim \N(0, \beta^{-1})$, the maximum-likelihood solution is
 	\begin{equation*}
 	\vect{w}_\text{ML} = \left(\vect{\Phi}^T \vect{\Phi} \right)^{-1} \vect{\Phi}^T \vect{t} = \vect{\Phi}^\dagger \vect{t},
 	\end{equation*}
 	where $\vect{\Phi}^\dagger$ is the \emph{Moore-Penrose pseudoinverse} and the \emph{design matrix} $\vect{\Phi}$ has entries $\vect{\Phi}_{ij} = \phi_j(\vect{x}_i)$.
 	The ML solution is equivalent to minimizing the sum of squares.
 	
-	# Sequential learning is possible if the gradient descent algorithm is used to compute $\vect{w}^{(\tau + 1)} = \vect{w}^{\tau} - \eta \nabla E_n$.
-	This facilitates on-line learning with much data.
+	# Sequential learning is possible with e.g. the gradient descent algorithm, which is used to compute $\vect{w}^{(\tau + 1)} = \vect{w}^{\tau} - \eta \nabla E_n$.
+	This facilitates on-line learning.
 	
-	# If there are multiple outputs which are linear in the same set of basis functions, the solution is $\vect{w}_k = \vect{\Phi}^\dagger \vect{t}_k$ for every output $k$, i.e. the system decouples.
+	# If there are multiple outputs which are linear in the same set of basis functions, the solution is $\vect{w}_k = \vect{\Phi}^\dagger \vect{t}_k$ for every output $k$, and the system decouples.
 	
-	# Regularizing the error with a quadratic term $\lambda \vect{w}^T \vect{w} /2$ has ML solution by 
+	# Regularizing the error $E(\vect{w})$ with a quadratic term $\alpha \vect{w}^T \vect{w} /2$ has ML solution
 	\begin{equation*}
 	\left( \alpha \vect{I} + \vect{\Phi}^T \vect{\Phi} \right)
 	\vect{w}
@@ -580,7 +581,7 @@ Three general decision approaches in decreasing order of complexity:
 	\begin{equation*}
 	\text{expected loss} = (\text{bais})^2 + \text{variance} + \text{noise}.
 	\end{equation*}
-	# Imagine drawing many data sets $\D$.
+	# Imagine drawing many data sets $\D$ from a distribution $p(t, \vect{x})$.
 	## The \textbf{bias} is the distance from the average prediction to the conditional expectation $f(\vect{x}) = \E \left[t | \vect{x} \right]$.
 	In other words:
 	\begin{equation*}
@@ -590,13 +591,13 @@ Three general decision approaches in decreasing order of complexity:
 	\begin{equation*}
 		\mathrm{Var}\big[\hat{f}(\vect{x})\big] = \E [\hat{f}(\vect{x})^2] - \mathrm{E}[{\hat{f}}(\vect{x})]^2
 	\end{equation*}
-	# Flexible models have high variance, rigid models have high bias.
+	# Flexible models have high variance, while rigid models have high bias.
 \end{easylist}
 
 \subsection*{Bayesian linear regression}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# Introduce a parameter distribution over $\vect{w}$, for instance an isotropic Gaussian distribution with $\vect{S}_0 = \alpha \vect{I}$.
+	# We introduce a parameter distribution over $\vect{w}$, for instance an isotropic Gaussian distribution with covariance matrix $\vect{S}_0 = \alpha^{-1} \vect{I}$.
 	\begin{equation*}
 	p(\vect{w}) = \N (\vect{w} | \vect{m}_0, \vect{S}_0)
 	\end{equation*}
@@ -609,7 +610,7 @@ Three general decision approaches in decreasing order of complexity:
 	
 	# Analytical calculations are possible, leading to refinement of the posterior distribution of the parameters $\vect{w}$ as more data is seen.
 	
-	# A predictive distribution $p(t | \vect{t}, \alpha, \beta)$ can be found.
+	# A predictive distribution $p(t | \mathsf{t}, \alpha, \beta)$ can be found.
 	The predictive distribution accounts for uncertainty of the parameters $\alpha$ and $\beta$.
 	
 	# The model may be expressed via an \emph{equivalent kernel} $k(x, x_n)$ as 
@@ -630,15 +631,15 @@ Three general decision approaches in decreasing order of complexity:
 \subsection*{Bayestian model selection and limitations}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# Bayestian model selection uses Bayes theorem as
+	# Bayestian model selection uses Bayes theorem with models $\left\{ \mathcal{M}_i \right\}$ and data $\D$ as
 	\begin{equation*}
 		p( \mathcal{M}_i \mid \D) = \frac{p( \D \mid \mathcal{M}_i) p( \mathcal{M}_i )}{p( \D)}
 	\end{equation*}
 	where $\mathcal{M}_i$ is a model (distribution).
 	It's possible to choose the best model given the data by evaluating the \emph{model evidence} (or \emph{marginal likelihood}) $p( \D \mid \mathcal{M}_i)$ via marginalization over $\vect{w}$.
 	
-	# Disadvantages of the model considered includes the fact that the functions $\phi_j(\vect{x})$ are fixed before data is observed, and the number of functions often grow exponentially with the number of inputs.
-	These shortcomings are often alleviated in other models by the fact that data often lies on a lower-dimensional manifold.
+	# Some disadvantages of the simple linear model includes the fact that the functions $\phi_j(\vect{x})$ are fixed before data is observed, and the number of functions often grow exponentially with the number of inputs.
+	These shortcomings are often alleviated in other models by the fact that data typically lies on a lower-dimensional manifold.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -793,6 +794,52 @@ Three general decision approaches in decreasing order of complexity:
 	# Second order derivatives, i.e. the Hessian $\vect{H} = \nabla \nabla E$, may be approximated or computed.
 	Approximation schemes include diagonal approximation, outer product approximation, inverse from outer product (using the Woodbury matrix identity) and finite differences.
 	Exact evaluation is also possible, and computing fast multiplication is possible by considering the operator $\mathcal{R}\{\cdot \}$ in $\vect{v}^T \vect{H} = \vect{v}^T \nabla \nabla E =\mathcal{R}\{ \nabla E \}$.
+\end{easylist}
+
+
+\subsection*{Neural network regularization}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Naively adding a regularization term such as $\widetilde{E}(\vect{w} = E(\vect{w}) + \alpha \vect{w}^T \vect{w}/2$ will be inconsistent with scaling properties.
+	A better regularization is to use
+	\begin{equation*}
+		\frac{\alpha_1}{2} \sum_{w \in \mathcal{W}_1} w^2
+		+
+		\frac{\alpha_2}{2} \sum_{w \in \mathcal{W}_2} w^2
+	\end{equation*}
+	where $\mathcal{W}_1$ denotes (non-bias) weights in layer 1.
+	## The regularization above is called \emph{weight-decay}, since it corresponds to decaying weights while training by multiplying with a factor between 0 and 1. 
+	It can be shown that
+	\begin{equation*}
+		\text{weight decay} \cong \text{early stopping}.
+	\end{equation*}
+	
+	# Four ways to learn invariance is
+	## \textbf{Augmenting the training data while learning}, using some function $\vect{s}(\vect{x}, \xi)$, where $\vect{s}(\vect{x}, 0) = \vect{x}$.
+	As an example, the function might rotate an image slightly.
+	## Use \textbf{tangent propagation regularization} to penalize the Jacobian of the neural network, with no penalization along the tangent of the transformation.
+	## \textbf{Pre-process} the data and extract invariant features by hand.
+	## \textbf{Build invariance into the structure} of the neural net, e.g. CNNs.
+	## It can be shown that 
+	\begin{equation*}
+	\text{augmenting data while learning} \cong \text{tangent propagation regularizer}.
+	\end{equation*}
+\end{easylist}
+
+\subsection*{Soft weight sharing and mixture density networks}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Using \emph{soft weight sharing}, we assume a Gausian mixture distribution as a prior over the weights in the network.
+	# \emph{Mixture density networks} work well for \emph{inverse problems}, where $p(t \mid \vect{x})$ might be multimodal.
+	The approach is to use a neural network to learn $\pi_k$, $\vect{\mu}_k$ and $\sigma_k^2$ in the mixture density
+	\begin{equation*}
+		p(t \mid \vect{x}) = \sum_{k=1}^{K} \pi_k 
+		\N \left( t \mid \vect{\mu}_k(\vect{x}), \vect{I} \sigma^2_k(\vect{x}) \right).
+	\end{equation*}
+	The $\{\pi_k\}$ have softmax activations in the output to enforce the summation constraint, while the $\{ \sigma^2_k(\vect{x}) \}$ have exponential activations to enforce positivity.
+	
+	# A full Bayesian treatment of neural networks is not analytically intractable.
+	However, using the Laplace approximation for the posterior parameter distribution, and alternative re-estimation of $\alpha$ and $\beta$ it is possible to use approximate evidence approximation.
 \end{easylist}
 
 
@@ -1757,7 +1804,7 @@ Showing that $\sigma^2_{N+1} (\vect{x}) \leq \sigma^2_{N} (\vect{x})$ entails sh
 	\leq 
 	\vect{\phi}( \vect{x} )^T \vect{S}_{N } \vect{\phi}( \vect{x} ).
 \end{equation*}
-We use the Woodbury matrix identity to write $\vect{S}_{N + 1}$ as
+We use the Woodbury matrix identity from Appendix C in \cite{bishop_pattern_2011} to write
 \begin{equation*}
 	\vect{S}_{N + 1}
 	=
@@ -1781,24 +1828,76 @@ Substituting this into the inequality above reveals that we only have to show th
 	}
 	 \vect{\phi}( \vect{x} ) \geq 0 .
 \end{equation*}
-This is easy to see, since $\gamma := \vect{\phi}(\vect{x})^T \vect{S}_N \vect{\phi}(\vect{x}) \geq 0$ as long as the covariance matrix $\vect{S}_N$ is positive semi-definite (which we take it to be), and then the expression above becomes
+This is easy to see, since $\gamma := \vect{\phi}(\vect{x})^T \vect{S}_N \vect{\phi}(\vect{x}) \geq 0$ as long as the covariance matrix $\vect{S}_N$ is positive semi-definite (which we assume it is), and then the expression above becomes
 \begin{equation*}
 	\frac{\gamma^2}{1 + \gamma} \geq 0.
 \end{equation*}
 
 
-\subsubsection*{Exercise 3.16}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Exercise 3.16 (Unfinished)}
+Evaluating the integral is straightforward
+
+\begin{align*}
+	p(\mathsf{t} \mid  \alpha, \beta)
+	&=
+	\int
+	p(\mathsf{t} \mid \vect{w}, \beta) p(\vect{w} \mid \alpha)
+	\, d \vect{w} \\
+	&=
+	\int
+	\N \left( \mathsf{t} \mid \vect{\Phi} \vect{w}, \vect{I}\beta^{-1} \right)
+	\N \left( \vect{w} \mid \vect{0}, \vect{I}\alpha^{-1} \right)
+	\, d \vect{w} \tag{definitions} \\
+	&= \N \left( \mathsf{t} \mid \vect{0}, \vect{I}\beta^{-1}
+	+ \vect{\Phi} \vect{\Phi}^T \alpha^{-1} \right) \tag{using Eqn (2.115)}
+\end{align*}
+The logarithm of the above expression, as a function of $\mathsf{t}$, should be proportional to the quadratic form $\mathsf{t}^T \left(\vect{I}\beta^{-1}
++ \vect{\Phi} \vect{\Phi}^T \alpha^{-1}  \right) \mathsf{t}$.
+We must show that this matches with $E(\vect{m}_M)$ in Equation (3.86).
+I failed to show this, below is my attempt.
+% TODO
+
+
+\paragraph{The below is unfinished work}
+We expand Equation (3.82) to
+\begin{equation*}
+	E(\vect{m}_N)
+	=
+	\frac{1}{2}
+	\left( \beta \mathsf{t}^T \mathsf{t}
+	- 2 \beta \mathsf{t}^T \vect{\Phi}\vect{m}_N  \right)
+	+
+	\frac{1}{2}
+	\vect{m}_N^T
+	\left( 
+	\underbrace{\beta \vect{\Phi}^T \vect{\Phi} + \vect{I} \alpha}_{A}
+	 \right)
+	\vect{m}_N
+\end{equation*}
+Substituting $\vect{m}_N = \beta \vect{A}^{-1} \vect{\Phi}^T \mathsf{t}$ into the expression above and writing it as a quadratic form, we obtain
+\begin{equation*}
+	\frac{1}{2} \mathsf{t}^T
+	\left( \beta \vect{I} - \beta^2 \vect{\Phi} \vect{A}^{-1} \vect{\Phi}^T  \right)
+	\mathsf{t}
+\end{equation*}
+
+I also know that
+\begin{equation*}
+	\vect{A}^{-1} = \left( \beta \vect{\Phi}^T \vect{\Phi} + \vect{I} \alpha \right)^{-1} = 
+	\alpha^{-1} \vect{\Phi}^T
+	\left( \alpha^{-1} \vect{\Phi} \vect{\Phi}^T +\beta{-1}\vect{I} \right)
+	\beta^{-1} \vect{\Phi}^{-T},
+\end{equation*}
+by Equation (C.5) from the Appendix, but I am unable to show that this reduces to the result above.
+
+
 
 
 \subsubsection*{Exercise 3.20}
-We verify we steps that are non-trivial.
+We verify the steps that are non-trivial in list-form below.
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# Let's consider two matrices $\vect{A}$ and $\vect{B}$, not necessarily the $A$ given in the section of the book.
+	# Let's consider two matrices $\vect{A}$ and $\vect{B}$, not necessarily the $\vect{A}$ given in the section of the book.
 	If $\vect{A} = \alpha \vect{I} + \vect{B}$ , then $\vect{B}$ has eigenvalues given by
 	$\vect{B} u_B = \lambda_B u_B$.
 	The matrix $\vect{A}$ has eigenvalues given by $\vect{A} u_A = \lambda_A u_A$.
@@ -1808,9 +1907,9 @@ We verify we steps that are non-trivial.
 		\quad \Rightarrow \quad
 		\vect{B} u_A = (\lambda_A - \alpha) \vect{u}_A.
 	\end{equation*}
-	From this we see that $\vect{A}$ and $\vect{B}$ share eigenvectors, and the eigenvalues of $\vect{B}$ are shifted by $\lambda$, i.e. $\lambda_A = \lambda_B + \alpha$.
+	From this we see that $\vect{A}$ and $\vect{B}$ share eigenvectors, and the eigenvalues of $\vect{A}$ are shifted by $\lambda$ compared to the eigenvalues of $\vect{B}$, so that $\lambda_A = \lambda_B + \alpha$.
 	
-	# The logarithm of the determinant is achieved by eigenvalue decomposition
+	# Taking the logarithm of the determinant is achieved by eigenvalue decomposition
 	\begin{equation*}
 		\ln \abs{ \vect{A} }
 		=
@@ -2229,6 +2328,8 @@ Taking logarithms and using the product rule of probability gives Equation (4.13
 % ----------------------------------------------------------------------------
 \subsection{Neural networks}
 \subsubsection*{Exercise 5.7}
+We split this exercise into two parts: (1) differentiating the softmax function and (2) differentiating the error function.
+The result of the first sub-problem will be used to solve the latter.
 \paragraph{Differentiating the softmax function}
 First we differentiate $y_k = h(a_k) = \operatorname{softmax}(a_k)$ with respect to $a_k$ to obtain
 \begin{align*}
@@ -2252,7 +2353,7 @@ In a similar fashion, we differentiate $y_k = \operatorname{softmax}(a_k)$ with 
 	\frac{- \exp(a_k) \exp(a_i)}{\left( \sum_j \exp a_j \right)^2}
 	= - y_i y_k.
 \end{equation*}
-These two results may be summarized using the Kronecker delta $\delta_{ij}$ function as
+These two results may be summarized using the Kronecker delta function $\delta_{kj}$ as
 \begin{equation*}
 	\frac{\partial y_k}{\partial a_i}
 	=
@@ -2319,7 +2420,7 @@ The notation $\sum_{k \neq j}^{K-1}$ means ``sum over $k=1, \ldots, K-1$, but sk
 	\left( - y_j \sum_{k \neq j }^{K-1} y_{k} + y_j (1 - y_j) \right)
 	\right]
 \end{align*}
-We simplify further by introducing the $j$th term back into the sums and canceling in the fractions.
+We simplify further by introducing the $j$th term back into the sums and performing cancellations in the fractions.
 These simplifications yield
 \begin{align*}
 \partial_{a_j} E(\vect{w})
@@ -2354,17 +2455,18 @@ y_j
 \right]
 = y_j - t_j.
 \end{align*}
+This solves the problem.
 In the last equality, we used the fact that $\sum_{k=1}^{K} t_{k} = 1$.
 
 
 
 \subsubsection*{Exercise 5.13}
-The Hessian $\vect{H}$ is of dimension  $W \times W$.
-Since it's symmetric, i.e. has $\vect{H} = \vect{H}^T$, the number of independent parameters is
+The Hessian matrix $\vect{H}$ is of dimension  $W \times W$.
+Since it's symmetric, i.e. has $\vect{H} = \vect{H}^T$, the number of independent parameters consist of the diagonal, plus off-diagonals, i.e.
 \begin{equation*}
 	W + (W - 1) + (W - 2) + \cdots + 2 + 1 = \frac{W (W+1)}{2}.
 \end{equation*}
-The gradient $\vect{b} = \nabla_{\vect{w}} E(\vect{w})$ has $W$ free parameters, thus the total number of free parameters in the second-order Taylor expansion is
+The gradient $\vect{b} = \nabla_{\vect{w}} E(\vect{w})$ has $W$ free parameters, and therefore the total number of free parameters in the second-order Taylor expansion is given by
 \begin{equation*}
 	\frac{W(W + 1)}{2} + W = \frac{W (W + 3)}{2}.
 \end{equation*}
@@ -2399,7 +2501,7 @@ Differentating with respect to $w_{ki}^{\text{(3)}}$ yields
 
 \subsubsection*{Exercise 5.20}
 The Hessian $\vect{H}$ is $\nabla \nabla E$, where the gradients are taken with respect to the weights.
-Using the result from Exercise 5.7 for the derivative of an error function with multiclass outputs and softmax activation functions, we obtain
+Using the result from Exercise 5.7 for the derivative of the error function with multiclass outputs and softmax activation functions, we obtain
 \begin{align*}
 	\nabla E(\vect{w}) = 
 	\sum_{n=1}^{N} \nabla E_n(\vect{w})
@@ -2424,28 +2526,301 @@ The term $(y_n - t_n)$ is assumed to be close to zero, for the reasons stated in
 
 
 \subsubsection*{Exercise 5.25}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# TODO
-\end{easylist}
+We split this problem into three parts:
+computing the gradient and the component $w^{(\tau)}_j$,
+solving the difference equation,
+and comparing with regularization.
+
+
+\paragraph{The gradient and $w^{(\tau)}_j$} The first step is to compute the gradient, which we find to be
+\begin{equation*}
+	\nabla_{\vect{w}} E(\vect{w}) = \vect{H} (\vect{w} - \vect{w}^*).
+\end{equation*}
+
+The component along $w^{(\tau)}_j$ is given by $\vect{u}_j^T \vect{w}^{(\tau)}$.
+The recursive relationship for a single component of the $\vect{w}^{(\tau)}$ vector becomes
+\begin{align*}
+	\vect{w}^{(\tau)} &= \vect{w}^{(\tau - 1)} - \rho \vect{H} (\vect{w}^{(\tau - 1)} - \vect{w}^*) \\
+	\vect{u}_j^T \vect{w}^{(\tau)} &= \vect{u}_j^T \vect{w}^{(\tau - 1)} - \rho \vect{u}_j^T \vect{H} (\vect{w}^{(\tau - 1)} - \vect{w}^*) \\
+	w^{(\tau)}_j &= w^{(\tau - 1)}_j  - \rho \eta_j ( w^{(\tau - 1)}_j - w^{*}_j)
+\end{align*}
+where we used $\vect{u}_j^T \vect{H} = \left( \vect{H} \vect{u}_j  \right)^T = \eta_j \vect{u}_j^T$.
+
+At this point, we wish to solve the following first order, linear, inhomogeneous difference equation with constant coefficients.
+To ease notation, we introduce $k := \rho \eta_j$ and $a = w^{*}_j$.
+\begin{align*}
+	w^{(\tau)}_j &= w^{(\tau - 1)}_j  - \rho \eta_j ( w^{(\tau - 1)}_j - w^{*}_j) \\
+	y_n &= y_{n-1}  - k ( y_{n-1}  - a)
+\end{align*}
+
+\paragraph{Solving the difference equation} There exists a rich theory for dealing with equations such as these.
+Since we know the answer we're after, a proof by induction is also a viable option.
+However, we will directly solve the problem.
+First we write out terms as
+\begin{align*}
+	y_n - y_{n-1}(1 - k)&= ka \\
+	y_{n-1} - y_{n-2}(1 - k)&= ka \\
+	y_{n-2} - y_{n-3}(1 - k)&= ka \\
+	\vdots &= \vdots \\
+	y_1 - y_{0}(1 - k)&= ka.
+\end{align*}
+We multiply the first equation by $(1-k)^0$, the second by $(1-k)^1$, the third by $(1-k)^2$, and so forth.
+Then we sum over the the left-hand side and right-hand side. 
+The sum \emph{telescopes}, and we appeal to the summation of a geometric series to obtain
+\begin{equation*}
+	y_n - y_{0}(1 - k)^n 
+	= ka \left( 1 + (1-k) + \cdots + (1-k)^{n-1} \right)
+	= ka \left(  \frac{1 - (1-k)^n}{1 - (1-k)} \right).
+\end{equation*}
+Substituting the definitions of $a$, $k$ and $y_0 = 0$, we see that
+\begin{equation*}
+	y_n = a \left( 1 - (1-k)^n \right) 
+	\iff 
+	w^{(\tau)}_j = w^{*}_j \left( 1 - (1- \rho \eta_j)^\tau \right) .
+\end{equation*}
+
+\paragraph{Comparing with regularization}
+Convergence is straightforward, since if $\abs{1- \rho \eta_j} < 1$, then the factor $(1- \rho \eta_j)^\tau$ will go to zero as $\tau \to \infty$, and clearly
+\begin{equation*}
+	\lim\limits_{\tau \to \infty} w^{(\tau)}_j = w^{*}_j \left( 1 - 0 \right) = w^{*}_j.
+\end{equation*}
+
+To show the results related to the size of $\eta_j$, consider first the case when $\eta_j \gg (\rho \tau)^{-1}$.
+This is the same as $\rho \eta_j \gg 1 / \tau$.
+Since $\abs{1- \rho \eta_j} < 1$, we know that $0 < \rho \eta_j < 2$.
+No matter what value $\rho \eta_j$ has, $\tau$ must be huge, so $w_j^{(\tau)} \simeq w_j^{*}$.
+
+Consider now the case when $\eta_j \ll (\rho \tau)^{-1}$.
+This is the same as $\rho \eta_j \ll 1 / \tau$.
+No matter what value $\rho \eta_j$ has, $\tau$ must be close to zero, so $\left( 1 - (1- \rho \eta_j)^\tau \right)$ is small and $\abs{w_j^{(\tau)}} \ll \abs{w_j^{*}}$.
+
+These results are analogous to those in Section 3.5.3, if we identify $(\rho \tau)^{-1}$ with the regularization parameter $\alpha$.
+Notice that eigenvalues are denoted by $\eta$ in this problem, and by $\lambda$ in Section 3.5.3.
+
+
+
+
+
+
 
 \subsubsection*{Exercise 5.27}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# TODO
-\end{easylist}
+From the problem text, we know that $\E \left[ \vect{\xi}\right] = \vect{0}$.
+By ``unit covariance'', Bishop means that $\cov \left[ \vect{\xi}\right] = \cov \left[ \xi_i, \xi_j \right] = \vect{I} =  \delta_{ij}$.
+First we see that $y( \vect{s}(\vect{x}, \vect{\xi}) )$ takes the simple form
+\begin{equation*}
+	y( \vect{s}(\vect{x}, \vect{\xi}) )
+	= y( \vect{x} + \vect{\xi} )
+	\simeq y( \vect{x}) + \nabla y (\vect{x})^T \vect{\xi}
+	+
+	\vect{\xi}^T \nabla \nabla y (\vect{x}) \vect{\xi}
+	+ \mathcal{O}(\xi_i \xi_j \xi_k)
+\end{equation*}
+Ignoring cubic terms, we can write the quadratic factor in the error function as
+\begin{align*}
+	\left( y( \vect{s}(\vect{x}, \vect{\xi}) ) - t \right)^2
+	&=
+	\left( \left[ y(\vect{x}) - t \right] + \nabla y (\vect{x})^T \vect{\xi} + \vect{\xi}^T \nabla \nabla y (\vect{x}) \vect{\xi} \right)^2 \\
+	&\simeq
+	\left[ y(\vect{x}) - t \right]^2
+	+ 2 \left[ y(\vect{x}) - t \right] \nabla y (\vect{x})^T \vect{\xi}
+	\\
+	& + \left( \nabla y (\vect{x})^T \vect{\xi} \right)^2
+	+ 2 \left[ y(\vect{x}) - t \right] \vect{\xi}^T \nabla \nabla y (\vect{x}) \vect{\xi}
+	+ \ldots
+\end{align*}
+We drop the last term, since when $y(\vect{x}) \simeq t + \xi$ the term will be of order $\mathcal{O}(\xi^3)$.
+Substituting the remaining terms into the error function, we observe that
+\begin{align*}
+	\widetilde{E} &= \frac{1}{2} 
+	\iiint  \left( y( \vect{s}(\vect{x}, \vect{\xi}) ) - t \right)^2
+	p(\vect{t} \mid \vect{x}) p (\vect{x}) p (\vect{\xi})
+	\, d \vect{x} \, d \vect{t} \, d \vect{\xi} \\
+	&= 
+	E + 
+	\frac{1}{2} 
+	\iiint  
+	\left( 
+	2 \left[ y(\vect{x}) - t \right] \nabla y (\vect{x})^T \vect{\xi}
+	+ \left( \nabla y (\vect{x})^T \vect{\xi} \right)^2 \right)
+	p(\vect{t} \mid \vect{x}) p (\vect{x}) p (\vect{\xi})
+	\, d \vect{x} \, d \vect{t} \, d \vect{\xi} \\
+	&= 
+	E + 
+	\underbrace{0}_{\text{since } \E \left[ \vect{\xi}\right] = \vect{0}}
+	+
+	\frac{1}{2} 
+	\iiint  
+	\left( \nabla y (\vect{x})^T \vect{\xi} \right)^2 
+	p(\vect{t} \mid \vect{x}) p (\vect{x}) p (\vect{\xi})
+	\, d \vect{x} \, d \vect{t} \, d \vect{\xi}.
+\end{align*}
+The final term may then be written as
+\begin{align*}
+	\Sigma &= \frac{1}{2} 
+	\iiint  
+	\nabla y (\vect{x})^T
+	\vect{\xi}
+	\vect{\xi}^T
+	\nabla  y (\vect{x})
+	p(\vect{t} \mid \vect{x}) p (\vect{x}) p (\vect{\xi})
+	\, d \vect{x} \, d \vect{t} \, d \vect{\xi} \\
+	&= \frac{1}{2} 
+	\int  
+	\nabla  y (\vect{x})^T
+	\left( 
+	\underbrace{\int 
+		\vect{\xi}
+		\vect{\xi}^T
+		p (\vect{\xi})
+		\, d \vect{\xi}}_{\cov \left[ \vect{\xi}\right] =  \vect{I}}
+	 \right)
+	\nabla  y (\vect{x})
+	 p (\vect{x})
+	\, d \vect{x}  
+	= \frac{1}{2} 
+	\int  
+	\norm{\nabla y (\vect{x})}^2
+	p (\vect{x})
+	\, d \vect{x}
+\end{align*}
+
+
 
 \subsubsection*{Exercise 5.31}
+We wish to differentiate $\widetilde{E}(\vect{w})$ with respect to $\sigma_j$.
+Since $\widetilde{E}(\vect{w}) = E(\vect{w}) + \lambda \Omega(\vect{w})$ and $E(\vect{w})$ is not a function of $\sigma_j$, we need only consider the final term.
+We observe that
+\begin{align*}
+	\partial_{\sigma_j}  \widetilde{E}(\vect{w})&= 
+	\partial_{\sigma_j}  \lambda \Omega(\vect{w})
+	=
+-	\partial_{\sigma_j} \lambda \sum_i \ln \left( \sum_{j=1}^{M} \pi_j \N \left( w_i \mid \mu_j, \sigma_j \right) \right) \\
+	&= - \lambda\sum_i \frac{1}{\sum_{j=1}^{M} \pi_j \N \left( w_i \mid \mu_j, \sigma_j \right)}
+	\partial_{\sigma_j} \left( 
+	\sum_{j=1}^{M} \pi_j \N \left( w_i \mid \mu_j, \sigma_j \right)
+	 \right) \\
+	 &= \lambda\sum_i \frac{1}{\sum_{j=1}^{M} \pi_j \N \left( w_i \mid \mu_j, \sigma_j \right)}
+	 \left( \pi_j
+	 \N \left( w_i \mid \mu_j, \sigma_j \right)
+	  \left[ \frac{1}{\sigma_j} 
+	 -
+	 \frac{(w_i - \mu_j)^2}{\sigma_j^3}
+	  \right] \right)
+	  \\
+	  &= \lambda \sum_i \gamma_j(w_i) 
+	  \left[ \frac{1}{\sigma_j} 
+	  -
+	  \frac{(w_i - \mu_j)^2}{\sigma_j^3}
+	  \right],
+\end{align*}
+where in the first equality we used $\ln (x)' = x' / x$, and in the second we used the fact that
+\begin{equation*}
+	\partial_{\sigma_j} \N \left( w_i \mid \mu_j, \sigma_j \right)
+	= \N \left( w_i \mid \mu_j, \sigma_j \right) 
+	\left[ 
+	\frac{(w_i - \mu_j)^2}{\sigma_j^3}
+	-
+	\frac{1}{\sigma_j} 
+	\right]
+\end{equation*}
+by the chain rule and product rule of differentiation.
+Finally, we used the definition of $\gamma_j(w_i) $ from Equation (5.140).
+
+\subsubsection*{Exercise 5.37}
+We split this problem into two parts, one for $\E \left[ \vect{t} \mid \vect{x} \right]$ and one for $s^2 (\vect{x})$.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# TODO
+	# Computing $\E \left[ \vect{t} \mid \vect{x} \right]$ is relatively straightforward. 
+	We use the definition of $p (\vect{t} \mid \vect{x})$:
+	\begin{align*}
+	\E \left[ \vect{t} \mid \vect{x} \right] &= 
+	\int \vect{t} p (\vect{t} \mid \vect{x}) \, d\vect{t} = 
+	\int \vect{t} \left[ 
+	\sum_{k=1}^{K} \pi_k (\vect{x}) 
+	\N \left( \vect{t} \mid \vect{\mu}_k (\vect{x}) , \vect{I} \sigma_k^2(\vect{x}) \right)
+	 \right] \, d\vect{t} \\
+	 &= \sum_{k=1}^{K} \pi_k (\vect{x})  \E \left[ \N \left( \vect{t} \mid \vect{\mu}_k (\vect{x}) , \vect{I} \sigma_k^2(\vect{x}) \right)  \right]
+	 = \sum_{k=1}^{K} \pi_k (\vect{x}) \vect{\mu}_k (\vect{x})
+	\end{align*}
+	
+	# Computing $s^2 (\vect{x})$ is a bit more involved, we first decompose the variance as
+	\begin{align*}
+	s^2 (\vect{x}) = \E \left[ \vect{t}^T \vect{t} \mid \vect{x} \right] - 
+	\E \left[ \vect{t} \mid \vect{x} \right]^T
+	\E \left[ \vect{t} \mid \vect{x} \right].
+	\end{align*}
+	We will study these two expected values in turn and order.
+	The first term is
+	\begin{align*}
+		\E \left[ \vect{t}^T \vect{t}\mid \vect{x }\right] &= 
+		\int \vect{t}^T \vect{t} p (\vect{t} \mid \vect{x}) \, d\vect{t}
+		= \int \vect{t}^T \vect{t}
+		\left[ 
+		\sum_{k=1}^{K} \pi_k (\vect{x}) 
+		\N \left( \vect{t} \mid \vect{\mu}_k (\vect{x}) , \vect{I} \sigma_k^2(\vect{x}) \right)
+		\right] 
+		\, d\vect{t}.
+	\end{align*}
+	We interchange summation and integration, and factor the multidimensional Gaussian into one-dimensional factors.
+	This is straightforward since the covariance matrix is diagonal.
+	\begin{equation*}
+		\sum_{k=1}^{K} \pi_k (\vect{x}) 
+		\int \vect{t}^T \vect{t} 
+		\underbrace{\prod_{j=1}^{D} 
+		\N \left( t_j \mid \mu_{kj} (\vect{x}),  \sigma_k^2(\vect{x}) \right)}_{\text{factored Gaussian}}
+		\, d\vect{t}
+	\end{equation*}
+	Next we write $\vect{t}^T \vect{t} $ as $\sum_{i=1}^{D} t_i^2$ and pull the factored Gaussian into the terms in each sum.
+	The final step is to integrate over each term in the sum over $i$.
+	When $j \neq i$, the integral is unity, but when $i = j$ we use Equation (1.50) from \cite{bishop_pattern_2011}, which states that $\E[x^2] = \mu^2 + \sigma^2$.
+	The result is
+	\begin{equation}
+	\label{eqn:ch5_37_a}
+		\sum_{k=1}^{K} \pi_k (\vect{x}) 
+		\sum_{i=1}^{D} \left( \mu_{ki}^2 (\vect{x}) + \sigma_k^2(\vect{x}) \right)
+		=
+		\sum_{k=1}^{K} \pi_k (\vect{x}) 
+		\left( \vect{\mu}_k(\vect{x})^T \vect{\mu}_k(\vect{x}) + D \sigma_k^2(\vect{x}) \right).
+	\end{equation}
+	
+	We are happy with the first term in the decomposed variance, and move on to the second.
+	The second term in the decomposed variance is $\E \left[ \vect{t} \mid \vect{x} \right]^T
+	\E \left[ \vect{t} \mid \vect{x} \right]$.
+	To simplify notation, we write $\sum_{k=j}^{K} \pi_j (\vect{x}) \vect{\mu}_j (\vect{x})$ as $\E \left[ \vect{t} \mid \vect{x} \right]$.
+	The second term in the decomposed variance may be written as
+	\begin{equation}
+		\label{eqn:ch5_37_b}
+		\E \left[ \vect{t} \mid \vect{x} \right]^T
+		\E \left[ \vect{t} \mid \vect{x} \right]
+		=
+		\sum_{k=1}^{K} \pi_k (\vect{x})
+		\E \left[ \vect{t} \mid \vect{x} \right]^T
+		\E \left[ \vect{t} \mid \vect{x} \right]
+	\end{equation}
+	where we are allowed to add the sum over $k$, since $\sum_{k=1}^{K} \pi_k (\vect{x}) = 1$.
+	
+	Finally we're in a position to combine the results.
+	We merge $\E \left[ \vect{t}^T \vect{t}\mid \vect{x} \right]$ from Equation \eqref{eqn:ch5_37_a} with $\E \left[ \vect{t} \mid \vect{x} \right]^T
+	\E \left[ \vect{t} \mid \vect{x} \right]$ from Equation \eqref{eqn:ch5_37_b} to obtain
+	\begin{align*}
+	& \sum_{k=1}^{K} \pi_k (\vect{x})
+	\left[
+	 D \sigma_k^2(\vect{x}) + \vect{\mu}_k(\vect{x})^T \vect{\mu}_k(\vect{x}) - 
+	\E \left[ \vect{t} \mid \vect{x} \right]^T
+	\E \left[ \vect{t} \mid \vect{x} \right]
+	 \right] = \\
+	 &
+	 \sum_{k=1}^{K} \pi_k (\vect{x})
+	 \left[ D \sigma_k^2(\vect{x}) 
+	 +
+	 \norm{\vect{\mu}_k(\vect{x}) - \E \left[ \vect{t} \mid \vect{x} \right]}^2
+	 \right].
+	\end{align*}
+	This is the result we're after.
+	Notice that $D \sigma_k^2(\vect{x})$ is correct, not $ \sigma_k^2(\vect{x})$ as Equation (5.160) states.
+	This is a typo in the book.
 \end{easylist}
 
-\subsubsection*{Exercise 5.27}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# TODO
-\end{easylist}
 
 % ----------------------------------------------------------------------------
 \subsection{Kernel methods}
