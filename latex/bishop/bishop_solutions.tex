@@ -134,7 +134,9 @@ This document contains some notes and solutions to the book TODO.
 \subsection{Kernel methods}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	# Page 306 introduces $\mathsf{t} = (t_1, \ldots, t_N)^{\operatorname{T}}$.
+	On the following page $\mathsf{t}_N$ is defined as $(t_1, \ldots, t_N)^{\operatorname{T}}$.
+	Perhaps confusingly, both $\mathsf{t}$ and $\mathsf{t}_N$ are used interchangeably after this; but they refer to the same vector.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -1770,9 +1772,9 @@ The quadratic term in $\vect{w}$ in Equation \eqref{eqn:ex_3_7_a} is
 Matching with Equation \eqref{eqn:ex_3_7_b}, we see that
 \begin{equation*}
 	\vect{S}_N^{-1} = \sum_{n=1}^{N}  \vect{\phi}(x_n) \beta \vect{\phi}(x_n)^T + \vect{S_0}^{-1}
-	= \beta \vect{\phi}^T \vect{\phi}  + \vect{S_0}^{-1},
+	= \beta \vect{\Phi}^T \vect{\Phi}  + \vect{S_0}^{-1},
 \end{equation*}
-since $\left( \vect{\phi}^T \vect{\phi} \right)_{ij} = \sum_k \vect{\phi}_{ki} \vect{\phi}_{kj} = \sum_k \vect{\phi}_i (x_k) \vect{\phi}_j (x_k)$.
+since $\left( \vect{\Phi}^T \vect{\Phi} \right)_{ij} = \sum_k \vect{\Phi}_{ki} \vect{\Phi}_{kj} = \sum_k \vect{\phi}_i (x_k) \vect{\phi}_j (x_k)$.
 This solves the first part of the problem.
 
 \paragraph{The term linear in $\vect{w}$}
@@ -1787,12 +1789,12 @@ The linear term in $\vect{w}$ in Equation \eqref{eqn:ex_3_7_a} is
 		 \right] \vect{w} \\
 		&=
 		2 \left[ 
-		\beta \vect{t}^T \vect{\phi} + \vect{m_0}^T \vect{S_0}^{-1}
+		\beta \vect{t}^T \vect{\Phi} + \vect{m_0}^T \vect{S_0}^{-1}
 		\right] \vect{w}.
 \end{align*}
 Matching with the second term in the right hand side of Equation \eqref{eqn:ex_3_7_b}, we see that
 \begin{equation*}
-	\vect{m}_N^T \vect{S}_N^{-1} = \beta \vect{t}^T \vect{\phi} + \vect{m_0}^T \vect{S_0}^{-1}.
+	\vect{m}_N^T \vect{S}_N^{-1} = \beta \vect{t}^T \vect{\Phi} + \vect{m_0}^T \vect{S_0}^{-1}.
 \end{equation*}
 Right multiplying with $\vect{S}_N$, taking the transpose and using the symmetry of $\vect{S}_N$ completes the problem.
 
@@ -1907,7 +1909,7 @@ We verify the steps that are non-trivial in list-form below.
 		\quad \Rightarrow \quad
 		\vect{B} u_A = (\lambda_A - \alpha) \vect{u}_A.
 	\end{equation*}
-	From this we see that $\vect{A}$ and $\vect{B}$ share eigenvectors, and the eigenvalues of $\vect{A}$ are shifted by $\lambda$ compared to the eigenvalues of $\vect{B}$, so that $\lambda_A = \lambda_B + \alpha$.
+	From this we see that $\vect{A}$ and $\vect{B}$ share eigenvectors, and the eigenvalues of $\vect{A}$ are shifted by $\alpha$ compared to the eigenvalues of $\vect{B}$, so that $\lambda_A = \lambda_B + \alpha$.
 	
 	# Taking the logarithm of the determinant is achieved by eigenvalue decomposition
 	\begin{equation*}
@@ -2824,11 +2826,249 @@ We split this problem into two parts, one for $\E \left[ \vect{t} \mid \vect{x} 
 
 % ----------------------------------------------------------------------------
 \subsection{Kernel methods}
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Exercise 6.3}
+First we observe that the Euclidean distance $d(\vect{x}, \vect{x}')$ may be expressed as a kernel function:
+\begin{align*}
+	d(\vect{x}, \vect{x}') &= (\vect{x} -  \vect{x}')^T (\vect{x} -  \vect{x}')
+	= \vect{x}^T \vect{x} - 2 \vect{x}^T \vect{x}' + \vect{x}'\,^T \vect{x}'
+	\\
+	&= \left( \vect{x}^T \vect{x}, i \sqrt{2}\vect{x}, 1  \right)^T
+	\left( 1, i \sqrt{2}\vect{x}', \vect{x}'\,^T \vect{x}'  \right)
+	=
+	\vect{\phi} \left( \vect{x} \right)^T \vect{\phi} \left( \vect{x}' \right)
+	=
+	k(\vect{x}, \vect{x}')
+\end{align*}
+where $i \equiv \sqrt{-1}$ denotes the imaginary unit.
+We can extend the above to an arbitrary kernel $k(\vect{x}, \vect{x}')$.
+
+The nearest neighbor rule assigns a point $\vect{x}$ to the class of nearest neighbor.
+Instead of using $d(\vect{x}, \vect{x}')$, we use a kernel $k(\vect{x}, \vect{x}')$ to measure similarity. 
+The algorithm becomes:
+
+For a new point $\vect{x}$, assign to it the class of the point $\vect{x}^*$ defined by
+\begin{equation*}
+	\vect{x}^* = \arg \min_{\vect{x}' \in \D} \, k(\vect{x}, \vect{x}').
+\end{equation*}
+
+
+
+\subsubsection*{Exercise 6.7}
+\paragraph{Verifying Equation (6.17)}
+We assume that $k_1(\vect{x}, \vect{x}')$ and $k_2(\vect{x}, \vect{x}')$ are valid kernels.
+In other words, there exist functions $\vect{\phi}_1(\cdot)$ and $\vect{\phi}_2(\cdot)$ so that
+\begin{align*}
+	k_1(\vect{x}, \vect{x}') &=
+	\vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_1 \left( \vect{x}' \right) \\
+	k_2(\vect{x}, \vect{x}') &=
+	\vect{\phi}_2 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x}' \right).
+\end{align*}
+The sum of these kernels is also a kernel, since
+\begin{align*}
+	k(\vect{x}, \vect{x}') 
+	&= k_1(\vect{x}, \vect{x}') + k_2(\vect{x}, \vect{x}') \\
+	&= \vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_1 \left( \vect{x}' \right)
+	+ \vect{\phi}_2 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x}' \right) \\
+	&= \underbrace{\left( \vect{\phi}_1 \left( \vect{x} \right) , \vect{\phi}_2 \left( \vect{x} \right) \right)^T}_{\vect{\phi}(\vect{x})^T}
+	\underbrace{\left( \vect{\phi}_1 \left( \vect{x}' \right) , \vect{\phi}_2 \left( \vect{x}' \right) \right)}_{\vect{\phi}(\vect{x}')}
+	= \vect{\phi}(\vect{x})^T \vect{\phi}(\vect{x}').
+\end{align*}
+
+
+\paragraph{Verifying Equation (6.18)}
+Again we assume that 
+\begin{align*}
+k_1(\vect{x}, \vect{x}') &=
+\vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_1 \left( \vect{x}' \right) \\
+k_2(\vect{x}, \vect{x}') &=
+\vect{\phi}_2 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x}' \right).
+\end{align*}
+The product of these kernels is also a kernel.
+We write out to obtain a quadratic form
+\begin{align*}
+k(\vect{x}, \vect{x}') 
+= k_1(\vect{x}, \vect{x}')  k_2(\vect{x}, \vect{x}') = \vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_1 \left( \vect{x}' \right)
+ \vect{\phi}_2 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x}' \right) 
+\end{align*}
+Since $\vect{a}\vect{b}^T = \vect{b}\vect{a}^T$ we can write this as
+\begin{align*}
+\vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_1 \left( \vect{x}' \right)
+\vect{\phi}_2 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x}' \right) 
+&=
+\vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x} \right)
+\vect{\phi}_1 \left( \vect{x}' \right)^T \vect{\phi}_2 \left( \vect{x}' \right) 
+\\
+&= \underbrace{\vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x} \right)}_{\phi(\vect{x})^T}
+\underbrace{\vect{\phi}_1 \left( \vect{x}' \right)^T \vect{\phi}_2 \left( \vect{x}' \right) }_{\phi(\vect{x}')}
+= \phi(\vect{x})^T \phi(\vect{x}').
+\end{align*}
+Notice that $\phi(\vect{x}) = \phi(\vect{x})^T := \vect{\phi}_1 \left( \vect{x} \right)^T \vect{\phi}_2 \left( \vect{x} \right)$ is a scalar, which is a valid kernel because it's an inner product in a one-dimensional feature space.
+
+
+
+
+\subsubsection*{Exercise 6.11}
+Consider first $\exp(x_i x_i' / \sigma^2)$.
+Using the power series $\exp(z) = \sum_{j=0} z^j / j!$, the exponential may be written as
+\begin{align*}
+	\exp(x_i x_i' / \sigma^2)
+	&=
+	1
+	+
+	\left( \frac{x_i x_i'}{\sigma^2} \right)
+	+
+	\frac{1}{2} \left( \frac{x_i x_i'}{\sigma^2} \right)^2
+	+
+	\frac{1}{6} \left( \frac{x_i x_i'}{\sigma^2} \right)^3 + \cdots \\
+	&= \left( 1, \frac{x_i}{\sigma}, 
+	\frac{1}{\sqrt{2}} \left( \frac{x_i}{\sigma} \right)^2,
+	\frac{1}{\sqrt{6}} \left( \frac{x_i}{\sigma} \right)^3 , \ldots \right)^T \\
+	& \quad  \,\left( 1, \frac{x_i'}{\sigma}, 
+	\frac{1}{\sqrt{2}} \left( \frac{x_i'}{\sigma} \right)^2,
+	\frac{1}{\sqrt{6}} \left( \frac{x_i'}{\sigma} \right)^3 , \ldots \right)
+	= \vect{\phi}(x_i)^T \vect{\phi}(x_i')
+\end{align*}
+Extending this, we find that
+\begin{align*}
+	\exp( \vect{x}^T \vect{x'} / \sigma^2)
+	&=
+	\exp( x_1 x_1' / \sigma^2)
+	\exp( x_2 x_2' / \sigma^2)
+	\cdots \exp( x_M x_M' / \sigma^2) \\
+	&=
+	\vect{\phi}(x_1)^T \vect{\phi}(x_1') 
+	\vect{\phi}(x_2)^T \vect{\phi}(x_2') \cdots
+	\vect{\phi}(x_M)^T \vect{\phi}(x_M')
+\end{align*}
+This is a valid kernel by Equation (6.18) in \cite{bishop_pattern_2011}, since each factor in the product is valid.
+Each term in the product consists of a mapping to a feature space of infinite dimensionality, given by
+\begin{equation*}
+	\vect{\phi}(x_i)  = \left( 1, \frac{x_i}{\sigma}, 
+	\frac{1}{\sqrt{2}} \left( \frac{x_i}{\sigma} \right)^2,
+	\frac{1}{\sqrt{6}} \left( \frac{x_i}{\sigma} \right)^3 , \ldots,
+	\frac{1}{\sqrt{k!}} \left( \frac{x_i}{\sigma} \right)^k \right).
+\end{equation*}
+
+
+\subsubsection*{Exercise 6.15}
+The entries of the \emph{Gram matrix} $\vect{K}_{nm}$ are given by $\vect{\phi}(\vect{x}_n)^T \vect{\phi}(\vect{x}_m) = k (\vect{x}_n, \vect{x}_m)$.
+The kernel $k (\vect{x}_n, \vect{x}_m)$ is valid if and only if $\vect{K}$ is positive semidefinite.
+Therefore we may safely assume that $\vect{K}$ is positive semidefinite, which is equivalent to its leading principal minors being non-negative.
+In particular, the $\det (\vect{K}) \geq 0$.
+
+In the $2 \times 2$ case, the Gram matrix is
+\begin{equation*}
+	\vect{K} =
+	\begin{pmatrix}
+	k (\vect{x}_1, \vect{x}_1) & k (\vect{x}_1, \vect{x}_2)\\ 
+	k (\vect{x}_2, \vect{x}_1) & k (\vect{x}_2, \vect{x}_2)
+	\end{pmatrix}.
+\end{equation*}
+The determinant becomes
+\begin{equation*}
+	\det (\vect{K}) = k (\vect{x}_1, \vect{x}_1) k (\vect{x}_2, \vect{x}_2)
+	-
+	k (\vect{x}_1, \vect{x}_2)^2 \geq 0,
+\end{equation*}
+and this is equivalent to the Cauchy-Schwartz inequality.
+We used the symmetry of the kernel function in the expression for the determinant, i.e. $k (\vect{x}_1, \vect{x}_2) = k (\vect{x}_2, \vect{x}_1)$.
+
+
+
+\subsubsection*{Exercise 6.18}
+We use a Parzen density estimator with a Gaussian component density function to model the joint distribution.
+Since the covariance matrix is diagonal, the Gaussian component density factors as
+\begin{equation*}
+	f(x - x_n, t - t_n) = 
+	\N (x \mid x_n, \sigma^2)
+	\N (t \mid t_n, \sigma^2).
+\end{equation*}
+
+We find expressions for $g(x - x_n)$ and $k(x, x_n)$ as
+\begin{align*}
+	g(x - x_n) &= \int f(x - x_n, t) \, dt = \N (x \mid x_n, \sigma^2) \\
+	k(x, x_n) &= \frac{g(x - x_n)}{\sum_m^N g(x - x_m)} = \frac{\N (x \mid x_n, \sigma^2)}{\sum_m^N \N (x \mid x_m, \sigma^2)}.
+\end{align*}
+We will solve the problem by expressing the quantities $p(t \mid x)$, $\E \left[t \mid x\right]$ and $\var \left[t \mid x\right]$ as functions of the normal distributions, which are proportional the the kernel as seen above.
+
+
+\paragraph{The conditional density $p(t \mid x)$} becomes
+\begin{align*}
+	p(t \mid x) = \frac{p(t, x)}{p(x)}
+	&=
+	\frac{\frac{1}{N} \sum_n f(x - x_n, t - t_n)}{\int \frac{1}{N} \sum_m f(x - x_m, t - t_m) \, dt} \\
+	&=
+	\frac{
+		\sum_n \N (x \mid x_n, \sigma^2)
+		\N (t \mid t_n, \sigma^2)
+		}
+	{\sum_m \N (x \mid x_m, \sigma^2)}
+	= \sum_n k(x, x_n) \N (t \mid t_n, \sigma^2).
+\end{align*}
+
+\paragraph{The conditional expectation $\E \left[t \mid x\right]$} can be read off from Equation (6.45), or we can take take expected value of the above.
+Either way, the result is
+\begin{align*}
+\E \left[t \mid x\right] 
+= 
+\sum_n k(x, x_n) t_n 
+=  
+\sum_n \left[ \frac{\N (x \mid x_n, \sigma^2)}{\sum_m^N \N (x \mid x_m, \sigma^2)} \right] t_n
+.
+\end{align*}
+
+\paragraph{The conditional variance $\var \left[t \mid x\right]$} can be calculated using $\var \left[t \mid x\right] = \E \left[t^2 \mid x\right] - \E \left[t \mid x\right]^2$.
+We know the second term already from the previous sub-problem, so let's focus on the second term.
+First we use for the conditional density above, and then we use Equation (1.50) from \cite{bishop_pattern_2011}.
+\begin{align*}
+\E \left[t^2 \mid x\right] 
+&= 
+\int p(t \mid x) t^2 \, dt
+=  
+\int \frac{p(t, x)}{p(x)} t^2 \, dt =
+\int \left[ \sum_n k(x, x_n) \N (t \mid t_n, \sigma^2) \right] t^2 \, dt 
+\\
+&=
+\sum_n k(x, x_n) \int  \N (t \mid t_n, \sigma^2)  t^2 \, dt 
+=
+\sum_n k(x, x_n) (t_n^2 + \sigma^2)
+=
+\sigma^2 + \sum_n k(x, x_n) t_n^2
+\end{align*}
+Combining these results, the conditional variance becomes
+\begin{equation*}
+	\var \left[t \mid x\right] 
+	= \E \left[t^2 \mid x\right] - \E \left[t \mid x\right]^2
+	=
+	\sigma^2 + \sum_n k(x, x_n) t_n^2 - 
+	\left( \sum_n k(x, x_n) t_n  \right)^2.
+\end{equation*}
+
+
+
+
+
+
+\subsubsection*{Exercise 6.24}
+The matrix $\vect{W}$ is positive definite since
+\begin{equation*}
+	\vect{x}^T \vect{W} \vect{x} = \sum_i x_i W_{ii} x_i = \sum_i x_i^2 W_{ii}.
+\end{equation*}
+For a vector $\vect{x} \neq \vect{0}$, the $x_i^2$ terms are positive, and the $W_{ii}$ terms are positive. 
+Therefore their product is positive, and the sum of positive terms is always positive.
+
+We can also appeal to the relationship with eigenvalues, since the eigenvalues of a diagonal matrix are the diagonal elements.
+A matrix is positive definite if and only if every eigenvalue is positive.
+
+To see that the sum of two positive definitive matrices $\vect{A}$ and $\vect{B}$ is positive definite, write
+\begin{equation*}
+	\vect{x}^T ( \vect{A} + \vect{B} ) \vect{x} = 
+	\vect{x}^T \vect{A} \vect{x} + 
+	\vect{x}^T \vect{B} \vect{x}.
+\end{equation*}
+By assumption, both terms are positive, and the sum of positive terms is positive.
+
+
 
 % ----------------------------------------------------------------------------
 \subsection{Sparse Kernel Machines}
