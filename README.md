@@ -37,5 +37,6 @@ These are books that I am currently considering purchasing.
 
 - [Machine Learning: A Probabilistic Perspective](https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020) by Murphy et al.
 - [Convex Optimization](https://www.amazon.com/Convex-Optimization-Corrections-2008-Stephen/dp/0521833787/) by Boyd et al, there are [lectures](https://web.stanford.edu/class/ee364a/) too.
+- [Numerical Optimization](https://www.amazon.com/Numerical-Optimization-Operations-Financial-Engineering/dp/0387303030) by Wright et al.
 
 Know of other good books? Let me know!
