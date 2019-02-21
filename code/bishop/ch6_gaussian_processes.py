@@ -15,10 +15,10 @@ def kernel_function(arg, gaussian_weight=1, exponential_weight=0):
     Apply a kernel function.
     """
     # Create the kernel matrix K
-    K = gaussian_weight * np.exp(-50*(arg)**2)
-    K += exponential_weight * np.exp(-0.1*np.abs(arg))
+    K = gaussian_weight * np.exp(-50 * (arg) ** 2)
+    K += exponential_weight * np.exp(-0.1 * np.abs(arg))
     return K
-    
+
 
 def kernel_matrix(arr1, arr2, beta_inv, gaussian_weight, exponential_weight):
     """
@@ -27,21 +27,23 @@ def kernel_matrix(arr1, arr2, beta_inv, gaussian_weight, exponential_weight):
     
     Shape of K is len(arr1), len(arr2)
     """
-    
+
     # Create outer product, calculation for kernels
     arg1 = np.outer(arr1, np.ones_like(arr2))
     arg2 = np.outer(np.ones_like(arr1), arr2)
-    
+
     # Use a kernel consisting of three parts: gaussian, exponential, linear
-    
-    K = kernel_function(arg1 - arg2, gaussian_weight=gaussian_weight, 
-                        exponential_weight=exponential_weight)
-    
+    K = kernel_function(
+        arg1 - arg2,
+        gaussian_weight=gaussian_weight,
+        exponential_weight=exponential_weight,
+    )
+
     if len(arr1) == len(arr2):
         K += np.diag(np.ones_like(arr1)) * beta_inv
-    
+
     assert K.shape == (len(arr1), len(arr2))
-    
+
     return K
 
 
@@ -53,10 +55,10 @@ gaussian_weight = 1
 exponential_weight = 0
 
 # Point to sample on
-x = np.linspace(0, 1, num=2**9)
+x = np.linspace(0, 1, num=2 ** 9)
 
 K = kernel_matrix(x, x, beta_inv, gaussian_weight, exponential_weight)
-plt.title('Kernel matrix')
+plt.title("Kernel matrix")
 plt.imshow(K)
 plt.show()
 
@@ -67,7 +69,7 @@ assert np.all(eigs >= 0)
 # Sample from multivariate normal
 mean = np.zeros_like(x)
 samples = np.random.multivariate_normal(mean, K)
-plt.title('Sampled Gaussian process')
+plt.title("Sampled Gaussian process")
 plt.plot(x, samples)
 plt.grid(True)
 plt.show()
@@ -76,17 +78,17 @@ plt.show()
 # ---------------------------------------
 # ----- GAUSSIAN PROCESS REGRESSION -----
 # ---------------------------------------
-#np.random.seed(123)
+# np.random.seed(123)
 
-x_data = np.random.rand(2**4)
+x_data = np.random.rand(2 ** 4)
 x_data = np.sort(x_data)
 t = np.sin(x_data * 10) + np.random.randn(len(x_data)) / 5
 
-x_smooth = np.linspace(-0.5, 1.2, num=2**10)
+x_smooth = np.linspace(-0.5, 1.2, num=2 ** 10)
 y_smooth = np.sin(x_smooth * 10)
 
-plt.plot(x_smooth, y_smooth, color='blue', label='True function')
-plt.scatter(x_data, t, color='blue', label='Samples with noise', alpha=0.5, s= 25)
+plt.plot(x_smooth, y_smooth, color="blue", label="True function")
+plt.scatter(x_data, t, color="blue", label="Samples with noise", alpha=0.5, s=25)
 
 beta_inv = 1e-2
 gaussian_weight = 1
@@ -122,18 +124,18 @@ for i in range(len(predicted_variance)):
     predicted_variance[i] = c[i] - K_T[i, :] @ X[:, i] + beta_inv
 
 
-plt.plot(x_smooth, mean, label='Predicted means', color='red')
-plt.fill_between(x_smooth, y1=mean - predicted_variance, 
-                 y2=mean + predicted_variance, label='Predicted variance', 
-                 color='red', alpha=0.2)
+plt.plot(x_smooth, mean, label="Predicted means", color="red")
+plt.fill_between(
+    x_smooth,
+    y1=mean - predicted_variance,
+    y2=mean + predicted_variance,
+    label="Predicted variance",
+    color="red",
+    alpha=0.2,
+)
 
 plt.legend()
 plt.grid(True)
+plt.tight_layout()
+# plt.savefig('gaussian_process_regression.pdf')
 plt.show()
-
-
-
-
-
-
-

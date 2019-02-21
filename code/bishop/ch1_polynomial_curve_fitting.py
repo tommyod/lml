@@ -60,7 +60,7 @@ class PolynomialCurveRidge(BaseEstimator, RegressorMixin):
     term, as described in Equation (1.4) in Bishop.
     """
 
-    def __init__(self, degree=1, alpha=1.):
+    def __init__(self, degree=1, alpha=1.0):
         """
         Inititalize the estimator by specifying the degree of the polynomial,
         and the regularization parameter alpha.
@@ -88,7 +88,7 @@ class PolynomialCurveRidge(BaseEstimator, RegressorMixin):
         lhs = np.dot(X_data.T, X_data) + np.eye(self.degree + 1) * self.alpha
         rhs = np.dot(X_data.T, y_data)
 
-        # Solve the linear equation. np.linalg.solve is faster than 
+        # Solve the linear equation. np.linalg.solve is faster than
         # np.linalg.lstsq, but we assume that the system of equations has
         # a unique solution here. I.e. not under- or overdetermined.
         w = np.linalg.solve(lhs, rhs)
@@ -103,7 +103,7 @@ class PolynomialCurveRidge(BaseEstimator, RegressorMixin):
         return np.dot(X_data, self.w_)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import matplotlib.pyplot as plt
 
@@ -113,23 +113,24 @@ if __name__ == '__main__':
     x_data = np.random.rand(N)
     y_data = np.sin(2 * np.pi * x_data) + np.random.randn(N) / 5
 
-    plt.title('Polynomial curve fitting with regularization')
-    plt.scatter(x_data, y_data, color='red', label=f'{N} data points')
+    plt.title("Polynomial curve fitting with regularization")
+    plt.scatter(x_data, y_data, color="red", label=f"{N} data points")
 
     degree = 8
     poly = PolynomialCurve(degree=degree)
     poly.fit(x_data, y_data)
-    x_smooth = np.linspace(0, 1, num=2**8)
-    plt.plot(x_smooth, np.sin(2 * np.pi * x_smooth), '--',  
-             label='True function')
-    plt.plot(x_smooth, poly.predict(x_smooth),
-             label=f'Degree {degree} polynomial')
+    x_smooth = np.linspace(0, 1, num=2 ** 8)
+    plt.plot(x_smooth, np.sin(2 * np.pi * x_smooth), "--", label="True function")
+    plt.plot(x_smooth, poly.predict(x_smooth), label=f"Degree {degree} polynomial")
 
     alpha = np.exp(-10)
     poly = PolynomialCurveRidge(degree=degree, alpha=alpha)
     poly.fit(x_data, y_data)
-    x_smooth = np.linspace(0, 1, num=2**8)
-    plt.plot(x_smooth, poly.predict(x_smooth),
-             label=f'Degree {degree} polynomial with regularization')
+    x_smooth = np.linspace(0, 1, num=2 ** 8)
+    plt.plot(
+        x_smooth,
+        poly.predict(x_smooth),
+        label=f"Degree {degree} polynomial with regularization",
+    )
     plt.legend()
     plt.show()

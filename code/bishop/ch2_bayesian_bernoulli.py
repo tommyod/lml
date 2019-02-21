@@ -80,24 +80,33 @@ class BayesianBernoulli(BaseEstimator):
 
 
 if __name__ == "__main__":
-    import pytest    
-    pytest.main(args=[__file__, '--doctest-modules', '-v', '--capture=sys', 
-                      '--disable-warnings'])
+    import pytest
 
-if __name__ == '__main__':
+    pytest.main(
+        args=[
+            __file__,
+            "--doctest-modules",
+            "-v",
+            "--capture=sys",
+            "--disable-warnings",
+        ]
+    )
+
+if __name__ == "__main__":
 
     # Import packages
     import matplotlib.pyplot as plt
     import random
+
     random.seed(42)
 
     # Create a model for coin tosses, see Section 2.1 in Bishop
     model = BayesianBernoulli(virtual_ones=4, virtual_zeros=4)
 
     # Plot the prior distribution before seeing any data at all
-    x = np.linspace(0, 1, num=2**8)
-    plt.title(r'Prior distribution for $\mu$')
-    plt.plot(x, model.mu.pdf(x), label='Prior distribution')
+    x = np.linspace(0, 1, num=2 ** 8)
+    plt.title(r"Prior distribution for $\mu$")
+    plt.plot(x, model.mu.pdf(x), label="Prior distribution")
 
     # Generate coin tosses
     num_batches = 5
@@ -110,10 +119,11 @@ if __name__ == '__main__':
         model.fit(coins)
 
         # Create a plot and print information
-        plt.title(r'Posterior distribution for $\mu$')
-        plt.plot(x, model.mu.pdf(x), alpha=c / num_batches,
-                 color='red', label=f'{c} batches')
-        print(f'After batch {c}, the probability of head is {model.p.mean()}')
+        plt.title(r"Posterior distribution for $\mu$")
+        plt.plot(
+            x, model.mu.pdf(x), alpha=c / num_batches, color="red", label=f"{c} batches"
+        )
+        print(f"After batch {c}, the probability of head is {model.p.mean()}")
 
     # Finally, show the plot
     plt.legend()

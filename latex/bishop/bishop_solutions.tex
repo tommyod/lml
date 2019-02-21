@@ -52,6 +52,10 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
 
+% Conditional independence
+\newcommand{\bigCI}{\mathrel{\text{\scalebox{1.07}{$\perp\mkern-10mu\perp$}}}}
+
+
 % Shortcuts for probability distributions
 \DeclareMathOperator{\N}{\mathcal{N}}
 \DeclareMathOperator{\Bern}{\operatorname{Bern}}
@@ -848,16 +852,188 @@ Three general decision approaches in decreasing order of complexity:
 
 % ----------------------------------------------------------------------------
 \subsection{Kernel methods}
+\subsection*{Introduction to kernel methods}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The \emph{dual representation} expresses a prediction $y(\vect{x}) = \vect{w}^T \vect{\phi}(\vect{x})$ entirely in terms of the $N$ seen data points by use of the \emph{kernel} $k(\vect{x}, \vect{x}') = \vect{\phi}(\vect{x})^T \vect{\phi}(\vect{x})$.
+	This is in contrast to learning weights $\vect{w}$.
+	The dual formulation of Ride regression is
+	\begin{equation}
+	\label{eqn:linear_reg_dual}
+		y(\vect{x}) = \vect{k}(\vect{x})^T \left( \vect{K} + \lambda \vect{I} \right)^{-1} \mathsf{t},
+	\end{equation}
+	where $\vect{k}(\vect{x})^T = 
+	(k(\vect{x}_1, \vect{x}),
+	k(\vect{x}_2, \vect{x}),
+	\ldots,
+	k(\vect{x}_N, \vect{x}))$
+	and $\vect{K}_{nm} = k(\vect{x}_n, \vect{x}_m)$.
+	## Typically the number of data points $N$ is much greater than the dimensionality $M$ of the features $\vect{\phi}(\vect{x})$.
+	Since \eqref{eqn:linear_reg_dual} needs to invert $\vect{K} \in \R^{N \times N}$, it's not obviously useful.
+	One advantage is that infinite dimensional feature mappings need not be computed explicitly.
+	A simple example is 
+	$\vect{\phi}(x) = (1, x, x^2, \ldots)$, which is infinite dimensional, but $k(x, x')$ becomes $(1 - x^2)^{-1}$. 
+	## A kernel is valid if it corresponds to an inner product a feature space.
+	A kernel is valid if $\vect{K}$ is positive definite for every possible $\vect{x}$.
+	Valid kernels may be constructed from other valid kernels, for instance
+	\begin{equation*}
+		k = k_1 + k_2, \qquad k = k_1 k_2, \qquad k = \exp(k_1), \qquad \ldots
+	\end{equation*}
+	This is called \emph{kernel engineering}.
+	# \emph{Kernel regression} (the \emph{Nadaraya-Watson} model) models $p(\vect{x}, t)$ as
+	\begin{equation*}
+		p(\vect{x}, t) = \frac{1}{N} \sum_{n=1}^{N} f(\vect{x} - \vect{x}_n, t- t_n).
+	\end{equation*}
+\end{easylist}
+
+\subsection*{Gaussian processes}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# A prior over weights $\vect{w} \sim p(\vect{w})$, implicitly defines a distribution over functions $y(\vect{x}) = \vect{w}^T \vect{\phi}(\vect{x})$.
+	Predictions on a finite set of values is given by $\mathsf{y} = \vect{\Phi} \vect{w}$.
+	Formulated in term of kernels, a \emph{Gaussian process} is specified by
+	\begin{equation*}
+		\E \left[ y(\vect{x}_n) y(\vect{x}_m) \right]
+		=
+		k(\vect{x}_n, \vect{x}_m)
+		= \cov \left[ \mathsf{y} \right].
+	\end{equation*}
+	# The kernel may for instance be given by
+	\begin{equation*}
+		k(\vect{x}_n, \vect{x}_m \mid \vect{\theta})
+		=
+		\phi_0 \exp \left( - \frac{\theta_1}{2}
+		\norm{\vect{x}_n - \vect{x}_m} \right)
+		+
+		\theta_2
+		+\theta_3 \vect{x}_n^T \vect{x}_m.
+	\end{equation*}
+	If $\vect{x}_n \approx \vect{x}_m$, then the kernel will be comparatively large and the covariance will be larger.
+	In other words; points that are close are more highly correlated.
+	
+	\begin{figure}[ht!]
+		\centering
+		\includegraphics[width=0.7\linewidth]{figs/gaussian_process_regression}
+		\caption{Gaussian process regression on data from $y_i = \sin(x_i) + \epsilon$.}
+		\label{fig:gaussian_process_regression}
+	\end{figure}
+	
+	
+	# In \emph{Gaussian process regression}, the predicted mean and variance is given by
+	\begin{align*}
+		\mu (X_{N+1}) &= \vect{k}^T \vect{C}_N^{-1} \mathsf{t} \\
+		\sigma^2 (X_{N+1}) &= c - \vect{k}^T \vect{C}_N^{-1} \vect{k},
+	\end{align*}
+	where $\vect{C}_N = k(\vect{x}_n, \vect{x}_m) + \beta^{-1} \delta_{nm}$ is the covariance matrix after observing $N$ points.
+\end{easylist}
+
+
+
+\subsection*{Hyperparameters and extensions}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Hyperparameters $\vect{\theta}$ in $k(\vect{x}_n, \vect{x}_m \mid \vect{\theta})$ can be optimized by maximizing the log likelihood $\ln p (\mathsf{t} \mid \vect{\theta})$, which is in general non-convex.
+	This is type 2 maximum likelihood.
+	# Gaussian processes can be used for classification, by composing the output with a sigmoid so that $y = \sigma (\vect{a}(\vect{x}))$.
+	Not analytically tractable, but approximate methods exist: (1) variational interference, (2) expectation maximization and (3) Laplace approximation.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
 \subsection{Sparse Kernel Machines}
+
+
+\subsection*{Support vector machines}
+
+	\begin{figure}[ht!]
+		\centering
+		\includegraphics[width=0.7\linewidth]{figs/Kernel_Machine.png}
+		\caption{Data which is linearly separable in the feature vector space $\vect{\phi}(\vect{x})$, but not in $\vect{x}$-space.
+			The maximum margin hyperplane is non-linear in $\vect{x}$-space.
+			Souce: Wikipedia.}
+		\label{fig:Kernel_Machine}
+	\end{figure}
+
+
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The main idea (when data is linearly separable) is to optimize $\vect{w}$ and $b$ in the equation $y(\vect{x}) = \vect{w}^T \vect{\phi} (\vect{x}) + b$ so that the separating hyperplane has a maximal margin.
+	The points closest to the margin are called \emph{support vectors}, and the hyperplane depends only on these points.
+	
+	# Lagrange multipliers and the Karush-Kuhn-Tucker (KKT) conditions are needed to solve the problem.
+	For the problem below, the Lagrangian is $L(\vect{x}, \lambda) = f(\vect{x}) - \lambda g(\vect{x})$.
+	\begin{alignat*}{3}
+	\text{Optimization problem} & & \qquad\qquad \text{KKT-conditions}\\
+		\operatorname{minimize} & \quad f(\vect{x})& \qquad\qquad g(\vect{x}) \geq 0, \lambda \geq 0 \\
+		\text{subject to}  &  \quad g(\vect{x}) \geq 0 & \qquad\qquad \lambda g(\vect{x}) = 0
+	\end{alignat*}
+	The KKT conditions must be true at the optimum.
+	They state that each constraint is either \emph{active} or \emph{inative}, and generalize Lagrange multipliers to deal with inequality constraints.
+	
+	# The \textbf{linearly separable classification problem} has Lagrange function
+	\begin{equation*}
+		L(\vect{w}, b, \vect{a}) = \frac{1}{2} \norm{\vect{w}}^2 - \sum_{n=1}^{N} a_n \left( t_n y_n - 1 \right).
+	\end{equation*}
+	Differentiating with respect to $\vect{w}$ and $b$, and substituting back into the Lagrange function yields the \emph{dual form} of the optimization problem
+	\begin{equation}
+	\label{eqn:SVM_dual}
+	\widehat{L}(\vect{a}) = \sum_{n=1}^{N} a_n -
+	\frac{1}{2}
+	\sum_{n=1}^{N} \sum_{m=1}^{N} a_n a_m t_n t_m k(\vect{x}_n, \vect{x}_m)
+	\end{equation}
+	which is expressed entirely in terms of the kernel $k(\vect{x}_n, \vect{x}_m)$ and the lagrange multipliers. 
+	The constraints are $a_n \geq 0$ and $\sum_{n} a_n t_n = 0$, and predictions are given by $y(\vect{x}) = \sum_n  a_n  t_n  k(\vect{x}_n, \vect{x}) + b$.
+	Since $a_n = 0$ when point $n$ is not a support vector (the constraint is \emph{inactive}), prediction relies only on the support vectors.
+	
+	# The \textbf{linearly inseparable classification problem} minimizes
+	\begin{equation*}
+	C \sum_{n=1}^{N} \xi_n + \frac{1}{2} \norm{\vect{w}}^2, 
+	\end{equation*}
+	where $\xi_n$ are \emph{slack variables} and the constraint is $t_n y_n \geq 1 - \xi_n$ instead of $t_n y_n \geq 1$.
+	The dual Lagrangian function $\widehat{L}(\vect{a})$ is exactly equal to Equation \eqref{eqn:SVM_dual}, but the constraints are now $ 0 \leq a_n \leq C$ (\emph{box constraints}) and $\sum_{n} a_n t_n = 0$.
+	
+	# The optimization problems above are quadratic programs (QP), and specialized methods for solving QP for SVMs exist: chunking, decomposition methods and sequential minimal optimization.
+	The problems are often large, since $k(\vect{x}_n, \vect{x}_m)$ must be evaluated for every pair of points.
+	
+	# The \textbf{regression problem} introduces a more robust error function
+	\begin{equation*}
+		\frac{1}{2} \sum_n (y_n - t_n)^2 + \frac{\lambda}{2} \norm{\vect{w}}^2
+		\quad 
+		\leftrightarrows
+		\quad
+		C \sum_n E_\epsilon \left( y_n - t_n \right) + \frac{1}{2} \norm{\vect{w}}^2,
+	\end{equation*}
+	where $E_\epsilon(\cdot)$ increases linearly outside of a margin of width $2\epsilon$.
+	Two slack variables $\xi_n \geq 0$ and $\widehat{\xi}_n \geq 0$ are introduced, and minimizing the above is equivalent to
+	\begin{equation*}
+	 \underset{\vect{\xi}, \vect{\widehat{\xi}}, \vect{w}}{\operatorname{minimize}} \quad 
+	C \sum_n (\xi_n + \widehat{\xi}_n) + \frac{1}{2} \norm{\vect{w}}^2,
+	\end{equation*}
+	 and $\widehat{L}(\vect{a}, \widehat{\vect{a}})$ is again quadratic.
+	 The resulting optimization problem is a QP.
+	 
+	 # The $\nu$-SVM is mathematically equivalent to the above, but uses a parameter $\nu$ which controls the fraction of the data points that become support vectors.
+	 This is a more intuitive parameterization.
+\end{easylist}
+
+\subsection*{Relevance vector machines}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# For regression, the model and prior are formulated as
+	\begin{align*}
+		p(t \mid \vect{x}, \vect{w}, \beta) &= \N (t \mid y (\vect{x}, \vect{w}), \beta^{-1}),
+		\quad
+		\text{where } y(\vect{x}, \vect{w}) = \sum_n w_n k(\vect{x}_n, \vect{x}) + b \\
+		p(\vect{w} \mid \vect{\alpha}) &= \prod_{i}^{M} \N (w_i \mid 0 , \alpha^{-1}_i).
+	\end{align*}
+	The name \emph{relevance vector machine} comes from the fact that automatic relevance determination is used to infer the important data points in an SVM-like function $y(\vect{x}, \vect{w})$, and these \emph{relevance vectors} are analogous to support vectors.
+	
+	
+	# The hyperparameters $\{\alpha_i \}$ and $\beta$ are efficiently determined through re-estimation equations.
+	The expectation maximization algorithm is also an option.
+	
+	# The model is typically very sparse, even more sparse than SVM, as many of the $\{\alpha_i \}$ are driven to infinity.
+	The downside is that the optimization problem is non-convex, and in general takes $\mathcal{O}(M^3)$ time, where $M= N+1$ if a SVM-like kernel is used.
+	For classification, Laplace approximation may be used to derive results.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -3072,15 +3248,316 @@ By assumption, both terms are positive, and the sum of positive terms is positiv
 
 % ----------------------------------------------------------------------------
 \subsection{Sparse Kernel Machines}
-\subsubsection*{Exercise X.Y}
+\subsubsection*{Exercise 7.4 and 7.5}
+We solve these problems, but not in the order that they're given.
+
+The distance from the margin to the nearest point is $\rho$.
+Since $\rho = t_i y_i / \norm{\vect{w}}$, where $i$ is the index of a support vector data point (there are at least two), we have
+\begin{equation*}
+	\frac{1}{\rho^2} = \frac{ \norm{\vect{w}} \norm{\vect{w}}}{(t_i y_i)^2}
+	= \vect{w}^T \vect{w}
+\end{equation*}
+where we used Equation (7.4) from the book, i.e. $t_i y_i = 1$, which is valid for data points corresponding to support vectors.
+This solves \textbf{the second part of Exercise 7.5}.
+
+We now expand the inner product and apply Equation (7.13) to get
+\begin{equation}
+\label{eqn:ch7_prob5_a}
+\frac{1}{\rho^2} 
+= \vect{w}^T \vect{w}
+=
+\sum_m a_m t_m \sum_n a_n t_n k (\vect{x}_m, \vect{x}_n)
+= \sum_m a_m t_m \left(  y(\vect{x}_m) - b \right).
+\end{equation}
+Recall that for every $(\vect{x}_n, t_n)$ data point, either
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The constraint is inactive and $a_n = 0$. The point is not a support vector.
+	# The constraint is active and $y(\vect{x}_n) t_n = 1$.
+	The point is a support vector.
+\end{easylist}
+Combining the above with Equation (7.9), we observe that
+\begin{align}
+\label{eqn:ch7_prob5_b}
+	\frac{1}{\rho^2} 
+	= \sum_m a_m t_m \left(  y_m - b \right) 
+	= \sum_m a_m t_m y_m - b \underbrace{\sum_m a_m t_m }_{0}
+	= \sum_m a_m.
+\end{align}
+In words: each term $a_m \cdot t_m y_m$ in the sum from $m=1,\ldots, N$ is either $0 \cdot t_m y_m$ or $a_m \cdot 1$, which is equal to summing over the $\{a_m \}$.
+This solves \textbf{Exercise 7.4}
+
+Finally we make the observation that 
+\begin{equation*}
+	2 \tilde{L}(\vect{a})
+	=
+	2 \sum_m a_m - \sum_m a_m t_m \sum_n a_n t_n k (\vect{x}_m, \vect{x}_n),
+\end{equation*}
+and use Equations \eqref{eqn:ch7_prob5_a} and \eqref{eqn:ch7_prob5_b} to write the second term as $\sum_m a_m$.
+This solves \textbf{the first part of Exercise 7.5}.
+We have solved the exercises.
+
+
+
+
+
+
+
+
+\subsubsection*{Exercise 7.10}
+TODO
+% see the solution to 3.18
+% Can be shown using page 93 results.
+
+
+\subsubsection*{Exercise 7.12}
+TODO
+
+
+\subsubsection*{Exercise 7.16}
+In this problem, we will omit the subscripts to ease notation.
+Differentiating $\lambda (\alpha)$ twice by making use of Equation (7.100), we obtain the second derivative, which is
+\begin{equation*}
+	\lambda '' (\alpha)
+	=
+	\frac{- \left( \frac{s}{\alpha} \right)^2 - 
+		4 \left( \frac{s^2}{\alpha} - (q^2 - s) \right)}{2 (\alpha + s)}.
+\end{equation*}
+We know that $\alpha \geq 0$, and since $\vect{C}$ is positive semidefinite, it's inverse is also positive semidefinite and so $s \geq 0$ too.
+The denominator in $\lambda '' (\alpha)$ must therefore be positive.
+
+
+The first term in the numerator is also positive, and in the stationary point when $\alpha^*  = s^2 / (q^2 - s)$ , the second term in the numerator becomes
+\begin{equation*}
+	\frac{s^2}{\alpha^*} - (q^2 - s) = s^2 \left( \frac{q^2 - s}{s^2} - (q^2 - s) \right) = 0.
+\end{equation*}
+Since $\lambda '' (\alpha^*) \leq 0$ at the stationary point, it's indeed a maximum point.
+
+% ----------------------------------------------------------------------------
+\subsection{Graphical Models}
+\subsubsection*{Exercise 8.3}
+\paragraph{Showing that $p(a, b) \neq p(a) p(b)$}
+We first show that $p(a, b) \neq p(a) p(b)$.
+To do so, we need only produce a single counterexample, i.e. that $p(a_i, b_j) \neq p(a_i) p(b_j)$, where $a_i$ and $b_j$ are possible values for $a$ and $b$ respectively. 
+We will show that $p(a=1, b=1)$ is not equal to $p(a=1) p(b=1)$.
+
+\begin{align*}
+	p(a=1) &= \sum_b \sum_c p(a=1, b, c) = 0.192 + 0.064 + 0.048 + 0.096 = 0.4 \\
+	p(b=1) &= \sum_a \sum_c p(a, b=1, c) = 0.048 + 0.216 + 0.048 + 0.096 = 0.408
+\end{align*}
+
+The join probability is given by
+\begin{equation*}
+	p(a=1, b=1) = \sum_c p(a=1, b=1, c)
+	= 0.048 + 0.096 = 0.144
+\end{equation*}
+Since $0.4 \cdot 0.408 =   0.1632 \neq 0.144$, the distribution over $a$ and $b$ is marginally dependent, i.e. $p(a, b) \neq p(a) p(b)$.
+
+\paragraph{Showing that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$}
+To show that $a$ and $b$ are marginally dependent when conditioned on $c$, we must show that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ when $c=0$ and when $c=1$. 
+
+We will only show the computation when $c=0$, since it's identical to the computation when $c=1$.
+First we start by computing
+\begin{align*}
+	p(c=0) = 0.192 + 0.048 + 0.192 + 0.048 = 0.48
+\end{align*}
+We want to find $p(a \mid c=0)$ and $p(b \mid c=0)$ for all values of $a$ and $b$.
+Using the product rule and sum rule, we obtain
+\begin{align*}
+	p(a=0 \mid c=0) &= \frac{p(a=0, c=0)}{p(c=0)} =
+	\frac{\sum_b p(a=0, b, c=0)}{p(c=0)} =
+	 \frac{0.192 + 0.048}{0.48} = 0.5  \\
+	p(a=1 \mid c=0) &=1 - p(a=0 \mid c=0) = 0.5  \\
+	p(b=0 \mid c=0) &= \frac{p(b=0, c=0)}{p(c=0)} =
+	\frac{\sum_a p(a, b=0, c=0)}{p(c=0)} =
+	\frac{0.192 + 0.192}{0.48} = 0.8  \\
+	p(b=1 \mid c=0) &= 1 - p(b=0 \mid c=0) = 0.2
+\end{align*}
+
+Next up we evaluate the joint  distribution for all values of $a$ and $b$. 
+When $c=0$, we employ Bayes theorem to write
+\begin{equation*}
+	p(a, b \mid c=0) = \frac{p(a, b, c=0)}{p(c=0)}.
+\end{equation*}
+Structuring the computations in tabular form, we obtain
+\begin{align*}
+	\frac{p(a=0, b=0, c=0)}{p(c=0)} &= \frac{0.192}{0.48} = 0.4 \\
+	\frac{p(a=0, b=1, c=0)}{p(c=0)} &= \frac{0.048}{0.48} = 0.1 \\
+	\frac{p(a=1, b=0, c=0)}{p(c=0)} &= \frac{0.192}{0.48} = 0.4 \\
+	\frac{p(a=1, b=1, c=0)}{p(c=0)} &= \frac{0.048}{0.48} = 0.1 
+\end{align*}
+For direct evaluation, we see that 
+\begin{alignat*}{3}
+	p(a=0, b=0 \mid c= 0) &= 0.4 \qquad 
+	p(a=0 \mid c= 0) p( b=0 \mid c= 0)  = 0.5 \cdot 0.8 &&= 0.4 \\
+	p(a=0, b=1 \mid c= 0) &= 0.1 \qquad 
+	p(a=0 \mid c= 0) p( b=1 \mid c= 0)  = 0.5 \cdot 0.2 &&= 0.1 \\
+	p(a=1, b=0 \mid c= 0) &= 0.4 \qquad 
+	p(a=1 \mid c= 0) p( b=0 \mid c= 0)  = 0.5 \cdot 0.8 &&= 0.4 \\
+	p(a=1, b=1 \mid c= 0) &= 0.1 \qquad 
+	p(a=1 \mid c= 0) p( b=1 \mid c= 0)  = 0.5 \cdot 0.2 &&= 0.1
+\end{alignat*}
+We have shown that $p(a, b \mid c=0) = p(a\mid c=0) p(b\mid c=0)$.
+Analogous computations when $c=1$ will show that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ in general. 
+We omit the tedious calculations, as they are indistinguishable from those shown. 
+
+
+
+
+\subsubsection*{Exercise 8.6}
+The logical OR function, $\operatorname{OR}: \{0,1\}^M \to \{0,1\}$, returns $1$ if any of the $M$ arguments are 1. 
+It only returns $0$ if \emph{every} one of the $M$ arguments are $0$.
+
+\paragraph{Reduction to the logical OR function}
+The probabilistic OR function is given by
+\begin{equation*}
+	p(y=1 \mid x_1, \ldots, x_M) = 1 - (1 - \mu_0) \prod_{i=1}^{M} \left(1 - \mu_i\right)^{x_i}.
+\end{equation*}
+Notice that when $\mu_0 = 0$ and $\mu_i = 1$ for $i=1, \ldots, M$ it reduces to
+\begin{equation*}
+p(y=1 \mid x_1, \ldots, x_M) = 1 -  \prod_{i=1}^{M} 0^{x_i}
+= \begin{dcases*}
+0 & if every $x_i = 0$ \\
+1 & else
+\end{dcases*},
+\end{equation*}
+which is exactly the logical OR function, since we take $0^0$ to be 1.
+We observe that when $0 \leq \mu_i \leq 1$, then $0 \leq (1 - \mu_0) \prod_{i=1}^{M} \left(1 - \mu_i\right)^{x_i} \leq 1$, and the returned value is between 0 and 1.
+Furthermore, if $\mu_0 \approx 0$ and $\mu_i \approx 1$ for $i=1, \ldots, M$, then the function is ``close'' to the logical OR function.
+
+\paragraph{Interpretation of the $\mu_i$s}
+We can interpret $\mu_0$ by observing that
+\begin{equation*}
+	p(y=1 \mid \vect{x} = \vect{0})
+	=
+	1 - (1 - \mu_0) = \mu_0,
+\end{equation*}
+so $\mu_0$ is the probability that $y=1$ when every $x_i = 0$.
+The logical OR has zero probability of this, so setting $\mu_0 \approx 0$ yields a function whose behavior resembles the logical OR.
+
+We can interpret the $\mu_i$s similarly by noting that
+\begin{equation*}
+p(y=1 \mid x_i = 1, \vect{x}_{\setminus \{i\}})
+=
+1 - (1 - \mu_i) = \mu_i.
+\end{equation*}
+The interpretation is that $\mu_i$ is the probability that $y=1$ when $x_i = 1$.
+
+
+
+
+\subsubsection*{Exercise 8.8}
+Recall that the meaning of the $\bigCI$ symbol:
+\begin{alignat*}{3}
+	a \bigCI b \mid d &\iff & p(a, b \mid d) &=  p(a\mid d) p( b \mid d) \\
+	a \bigCI b, c \mid d &\iff  & p(a, b, c \mid d) &=  p(a\mid d) p( b, c \mid d)
+\end{alignat*}
+We will show that the latter implies the former.
+From the sum rule, we know that
+\begin{align*}
+	p(a, b \mid d) = \sum_c p(a, b, c \mid d).
+\end{align*}
+Using the conditional independence $a \bigCI b, c \mid d$, we write
+\begin{align*}
+p(a, b \mid d) &= \sum_c p(a, b, c \mid d) \\
+&=  p(a\mid d) \sum_c  p( b, c \mid d) =  p(a\mid d)   p( b \mid d).
+\end{align*}
+We have shown that $a \bigCI b, c \mid d$ implies $a \bigCI b \mid d$.
+
+\subsubsection*{Exercise 8.11}
+This is a lengthy problem.
+We amend the graph to the following structure.
+\[\begin{tikzcd}[column sep=3em]
+\textbf{B} \text{ (Battery)} \arrow[]{dr}{}  &     & \textbf{F} \text{ (Fuel tank)} \arrow[]{dl}{} \\
+  &  \textbf{G} \text{ (Fuel Gauge) }\arrow[]{d}{} & \\
+  &  \textbf{D} \text{ (Driver's reading)} & \\
+\end{tikzcd}\]
+We split the problem into two parts:
+(1) evaluating $p(F=0 \mid D = 0)$ and
+(2) evaluating $p(F=0 \mid D = 0, B=0)$.
+
+\paragraph{Evaluating $p(F=0 \mid D = 0)$}
+From Bayes theorem, we have
+\begin{equation*}
+	p(F=0 \mid D = 0) = \frac{p(D = 0 \mid F =0) p(F=0)}{p( D = 0)}.
+\end{equation*}
+
+We evaluate these terms in turn
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The denominator $p( D = 0)$ may be evaluated using the sum rule, and the graph factorization, as
+	\begin{align*}
+		p( D = 0) &= \sum_{B, F, G} p( D = 0, B, F, G) \\
+		&= \sum_{B, F, G} p( D = 0 \mid G) p( G \mid B, F) p(B) p (F)
+		= 0.352.
+	\end{align*}
+	The sum ranges over $2^3 = 8$ terms.
+	To avoid the possibility of error when computing by hand, this sum (and every other sum in this problem) was computed in the accompanying \texttt{ch8\_problem\_11.py} script.
+	
+	# The first factor in the numerator is $p(D = 0 \mid F =0)$, which is
+	\begin{align*}
+		p(D = 0 \mid F =0) &= \sum_{B, G} p(D=0, B, G \mid F = 0) \\
+		&= \sum_{B, G} p(D = 0 \mid G) p(G \mid F =0, B) p(B)
+		= 0.748.
+	\end{align*}
+	# The second factor is simply $p(F=0) = 0.1$.
+\end{easylist}
+Combining the above, we find that
+\begin{equation*}
+p(F=0 \mid D = 0) = \frac{p(D = 0 \mid F =0) p(F=0)}{p( D = 0)}
+=
+\frac{0.748 \cdot 0.1}{0.352} = 0.2125.
+\end{equation*}
+
+
+
+\paragraph{Evaluating $P(F=0 \mid D = 0, B=0)$}
+We solve this in a slightly different way, using the product rule instead of Bayes theorem.
+In the numerator, we will have a joint distribution $p(D = 0, B=0, F =0)$ instead of the product $p(D = 0, B=0 \mid F =0) p(F =0)$.
+\begin{equation*}
+P(F=0 \mid D = 0, B=0) = \frac{p(D = 0, B=0, F =0)}{p( D = 0, B=0)}.
+\end{equation*}
+We evaluate these terms in turn
+\begin{easylist}[enumerate]
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+	# The denominator $p( D = 0, B=0)$ may be evaluated using the sum rule, and the graph factorization, as
+	\begin{align*}
+	p( D = 0, B=0) &= \sum_{F, G} p( D = 0, B = 0, F, G) \\
+	&= \sum_{F, G} p( D = 0 \mid G) p( G \mid B = 0, F) p(B=0) p (F)
+	= 0.0748.
+	\end{align*}
+
+	
+	# The numerator becomes
+	\begin{align*}
+	p(D = 0, B=0, F =0) 
+	&= \sum_{G} p(D=0, B=0, G, F = 0) \\
+	&= \sum_{G} p(D = 0 \mid G) p(G \mid F =0, B=0) p(B=0) p(F=0) \\
+	&= 0.0082
+	\end{align*}
+\end{easylist}
+Combining the above, we find that
+\begin{equation*}
+P(F=0 \mid D = 0, B=0) = \frac{p(D = 0, B=0, F =0)}{p( D = 0, B=0)}
+=
+\frac{0.0082}{0.0748} \approx 0.1096.
+\end{equation*}
+
+When the driver tells us the fuel gauge is empty, the probability of the tank actually being empty is $0.2125$.
+If we also know that the battery is flat, the probability of the tank actually being empty \emph{lowers} to $0.1096$.
+Finding out that the battery is flat explains away the observation that the driver reads the fuel gauge as empty.
+Intuitively, this is because we now have another probable reason for the gauge showing empty, which we had little prior reason to believe in.
+
+
+
+
+\subsubsection*{Exercise 8.16}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf
 \end{easylist}
 
-% ----------------------------------------------------------------------------
-\subsection{Graphical Models}
-\subsubsection*{Exercise X.Y}
+\subsubsection*{Exercise 8.21}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# sdf

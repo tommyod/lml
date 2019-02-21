@@ -51,12 +51,12 @@ class BayesianGaussian1DKnownVar(BaseEstimator):
 
         # Equation (2.141) in Bishop
         denom = N * self.sigma_sq_0 + self.var
-        self.mean_0 = ((self.var / denom) * self.mean_0 +
-                       (N * self.sigma_sq_0 / denom) * mean)
+        self.mean_0 = (self.var / denom) * self.mean_0 + (
+            N * self.sigma_sq_0 / denom
+        ) * mean
 
         # Equation (2.142) in Bishop
-        self.sigma_sq_0 = (1 / ((1 / self.sigma_sq_0) +
-                                (N / self.var)))
+        self.sigma_sq_0 = 1 / ((1 / self.sigma_sq_0) + (N / self.var))
 
     @property
     def mu(self):
@@ -68,10 +68,18 @@ class BayesianGaussian1DKnownVar(BaseEstimator):
 
 if __name__ == "__main__":
     import pytest
-    pytest.main(args=[__file__, '--doctest-modules', '-v', '--capture=sys',
-                      '--disable-warnings'])
 
-if __name__ == '__main__':
+    pytest.main(
+        args=[
+            __file__,
+            "--doctest-modules",
+            "-v",
+            "--capture=sys",
+            "--disable-warnings",
+        ]
+    )
+
+if __name__ == "__main__":
 
     # Import packages
     import matplotlib.pyplot as plt
@@ -80,23 +88,23 @@ if __name__ == '__main__':
     model = BayesianGaussian1DKnownVar(mean_0=0, sigma_sq_0=0.1)
 
     # Plot the prior distribution before seeing any data at all
-    x = np.linspace(-1.5, 1.5, num=2**8)
-    plt.title(r'Prior distribution for $\mu$')
-    plt.plot(x, model.mu.pdf(x), label='Prior distribution')
+    x = np.linspace(-1.5, 1.5, num=2 ** 8)
+    plt.title(r"Prior distribution for $\mu$")
+    plt.plot(x, model.mu.pdf(x), label="Prior distribution")
 
     N = 1
     generating_dist = stats.norm(loc=0.8, scale=np.sqrt(0.1))
     x_data = generating_dist.rvs(N, random_state=42)
-    plt.scatter(x_data, np.zeros_like(x_data), marker='|', c='r', label='Data')
+    plt.scatter(x_data, np.zeros_like(x_data), marker="|", c="r", label="Data")
     model.fit(x_data)
 
-    plt.plot(x, model.mu.pdf(x), label='Posterior distribution N = 1')
+    plt.plot(x, model.mu.pdf(x), label="Posterior distribution N = 1")
 
     N = 9
     x_data = generating_dist.rvs(N, random_state=42)
-    plt.scatter(x_data, np.zeros_like(x_data), marker='|', c='r', label='Data')
+    plt.scatter(x_data, np.zeros_like(x_data), marker="|", c="r", label="Data")
     model.fit(x_data)
-    plt.plot(x, model.mu.pdf(x), label='Posterior distribution N = 10')
+    plt.plot(x, model.mu.pdf(x), label="Posterior distribution N = 10")
 
     # Finally, show the plot
     plt.legend()
