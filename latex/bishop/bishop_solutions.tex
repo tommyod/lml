@@ -24,6 +24,12 @@
 %\usepackage[sc]{mathpazo}% A nice font, alternative to CM
 \usepackage{booktabs}
 \usepackage{fancyvrb} % fancy verbatim
+\usepackage{centernot} % For the NOT conditionally independent sign
+
+% For graphical models
+% https://stats.stackexchange.com/questions/16750/software-for-drawing-bayesian-networks-graphical-models
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
 
 % -------------------------------------------------
 % Package setup
@@ -54,7 +60,7 @@
 
 % Conditional independence
 \newcommand{\bigCI}{\mathrel{\text{\scalebox{1.07}{$\perp\mkern-10mu\perp$}}}}
-
+\newcommand{\nbigCI}{\centernot{\bigCI}}
 
 % Shortcuts for probability distributions
 \DeclareMathOperator{\N}{\mathcal{N}}
@@ -1038,9 +1044,207 @@ Three general decision approaches in decreasing order of complexity:
 
 % ----------------------------------------------------------------------------
 \subsection{Graphical Models}
+
+\begin{figure}[ht!]
+	\centering
+	\tikz{ %
+		
+		% Bottom row
+		\node[const] (var) {$\sigma^2$} ; %
+		\node[latent, right=of var] (that) {$\widehat{t}$} ; %
+		\edge {var} {that} ; %
+		\node[latent, right=of that] (xhat) {$\widehat{x}$} ; %
+		\edge {xhat} {that} ; %
+		
+		% Middle row
+		\node[obs, above=of var, yshift=.19cm] (tn) {$t_n$} ; %
+		\node[latent, above=of that] (w) {$\vect{w}$} ; %
+		\edge {w} {tn} ; %
+		\edge {w} {that} ; %
+		\edge {var} {tn} ; %
+		
+		% Top row
+		\node[latent, above=of tn] (x) {$x_n$} ; %
+		\node[const, above=of w, yshift=.25cm] (alpha) {$\alpha$} ; %
+		\edge {x} {tn} ; %
+		\edge {alpha} {w} ; %
+		
+		% Plate
+		\plate[inner sep=0.35cm] {plate1} {(x) (tn)} {N}; %
+	}
+	\label{fig:graphical_model_regression}
+	\caption{A graphical model for polynomial regression.
+		Model parameters are shown without circles (e.g. $\sigma^2$), random variables are encircled (e.g. $x_n$), observed random variables are shaded (e.g. $t_n$) and \emph{plate notation} is used to repeat the enclosed nodes.}
+\end{figure}
+
+\subsection*{Directed graphs}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# A \emph{graph} is associated with a factorization of the joint probability density function $p(\vect{x})$.
+	For instance, the graph below means that $p(\vect{x})$ can be factored as $p(x_1 \mid x_2) p(x_2) p(x_3 \mid x_2)$.
+	It imposes structure on $p(\vect{x})$ by it's \emph{lack} of edges.
+	\begin{figure}[ht!]
+		\centering
+		\tikz{
+			\node[latent] (x1) {$x_1$} ; %
+			\node[latent, right=of x1] (x2) {$x_2$} ; %
+			\node[latent, right=of x2] (x3) {$x_3$} ; %
+			\edge {x2} {x1} ; %
+			\edge {x2} {x3} ; %
+		}
+	\end{figure}
+	# Approaches to reducing the number of model parameters include:
+	## Removing edges: induces factorization properties on $p(\vect{x})$.
+	## Sharing parameters: merging parents together into a common node.
+	## Restricting the functional form: for instance assuming $p(y=1\mid \vect{x}) = \sigma \left( \vect{w}^T \vect{x} \right)$.
+
+# The three examples below demonstrate \emph{conditional independence properties} in simple directed graphs.
+Observing $c$ blocks the \emph{tail-to-tail} and \emph{head-to-tail} paths, but observing $c$ (or any descendant of $c$) unblocks the \emph{head-to-head} path.
+\begin{figure}[!htb]
+	\centering
+	\minipage{0.32\textwidth}
+	\tikz{
+		\node[latent] (x1) {$a$} ; %
+		\node[latent, right=of x1] (x2) {$c$} ; %
+		\node[latent, right=of x2] (x3) {$b$} ; %
+		\edge {x2} {x1} ; %
+		\edge {x2} {x3} ; %
+	}
+	\begin{align*}
+	a \nbigCI b &\mid \emptyset
+	\end{align*}
+	\tikz{	
+		\node[latent, below=of x1] (a) {$a$} ; %
+		\node[obs, right=of a] (b) {$c$} ; %
+		\node[latent, right=of b] (c) {$b$} ; %
+		\edge {b} {a} ; %
+		\edge {b} {c} ; %
+	}
+	\begin{align*}
+		a \bigCI b &\mid c
+	\end{align*}
+	\endminipage
+	\minipage{0.32\textwidth}
+	\tikz{
+		\node[latent] (x1) {$a$} ; %
+		\node[latent, right=of x1] (x2) {$c$} ; %
+		\node[latent, right=of x2] (x3) {$b$} ; %
+		\edge {x1} {x2} ; %
+		\edge {x2} {x3} ; %
+	}
+	\begin{align*}
+		a \nbigCI b &\mid \emptyset
+	\end{align*}
+	
+	\tikz{
+		\node[latent] (x1) {$a$} ; %
+		\node[obs, right=of x1] (x2) {$c$} ; %
+		\node[latent, right=of x2] (x3) {$b$} ; %
+		\edge {x1} {x2} ; %
+		\edge {x2} {x3} ; %
+	}
+	\begin{align*}
+	a \bigCI b &\mid c
+	\end{align*}
+	\endminipage
+	\minipage{0.32\textwidth}%
+	\tikz{
+		\node[latent] (x1) {$a$} ; %
+		\node[latent, right=of x1] (x2) {$c$} ; %
+		\node[latent, right=of x2] (x3) {$b$} ; %
+		\edge {x1} {x2} ; %
+		\edge {x3} {x2} ; %
+	}
+	\begin{align*}
+	a \bigCI b &\mid \emptyset 
+	\end{align*}
+	\tikz{
+		\node[latent] (x1) {$a$} ; %
+		\node[obs, right=of x1] (x2) {$c$} ; %
+		\node[latent, right=of x2] (x3) {$b$} ; %
+		\edge {x1} {x2} ; %
+		\edge {x3} {x2} ; %
+	}
+	\begin{align*}
+	a \nbigCI b &\mid c
+	\end{align*}
+	\endminipage
+\end{figure}
+
+# \emph{D-separation}. Consider disjoint subsets $A$, $B$ and $C$ of edges in a graph. 
+Let $C$ be observed.
+A path from $A$ to $B$ is said to be blocked if
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+## There is a tail-to-tail or head-to-tail path with a node in $C$ in the path.
+## There is a head-to-head path, where the middle not is not in $C$, nor any of it's descendants.
+\end{easylist}
+If \emph{every} path from $A$ to $B$ is blocked, then $A \bigCI B \mid C$.
+
+# A graph can be thought of as a \emph{filter}.
+The filter inputs are pdfs $p(\vect{x})$, and those factoring according to the given graph structure pass through the filter.
+For instance, $p(\vect{x}) = \prod_{i} p(x_i)$ would pass any such filter.
+The set $\mathcal{DF}$, for \emph{directed factorization}, is the set of probability density functions passing through a specific filter.
+
+# The \emph{Markov blanket} of a graph is the minimal set of nodes that isolates $x_i$ from the rest of the graph.
+In other words, $p( x_i \mid x_{\{ i \neq i\}})$ is only functionally dependent on the nodes in the Markov blanket, which consists of parents, children and co-parents when the graph is directed.
+\begin{equation*}
+	\begin{tikzcd}
+	  & x \arrow{dr} &   & x \arrow{dl} &    \\
+	x  \arrow{dr} &   & x_i \arrow{dr} \arrow{dl} &   & x \arrow{dl} \\
+	  & x &   & x &  
+	\end{tikzcd}
+\end{equation*}
+The Markov blanket in an undirected graph has a similar, but simpler structure; it only consists of the parents and children.
+\end{easylist}
+
+\subsection*{Markov random fields}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# \emph{Markov random fields} are undirected graphs whose nodes are random variables.
+	# Sets of nodes $A$ and $B$ are conditionally independent given $C$, denoted $A \bigCI B \mid C$, if removing the nodes in $C$ leaves no path from $A$ to $B$.
+	This is simpler than in the directed case, where d-separation and path blocking is more nuanced. 
+	# The factors in the factorization of $p(\vect{x})$ are functions of the maximal \emph{cliques} in the graph.
+	Cliques are subsets of nodes which are fully connected.
+	Let $\vect{x}_C$ be nodes associated with a clique $C$, then
+	\begin{equation*}
+		\underbrace{\psi_C (\vect{x}_C)}_{\text{potential function}} = \underbrace{ \exp \big(- \underbrace{E(\vect{x}_C)}_{\text{energy function}} \big)}_{\text{Boltzmann distribution}}
+	\end{equation*}
+	is the \emph{potential function} associated with a clique.
+	The joint distribution is given by
+	\begin{equation*}
+		p(\vect{x}) = \frac{1}{Z} \prod_{C} \psi_C (\vect{x}_C),
+	\end{equation*}
+	where $Z$ is a normalization constant called the \emph{partition function}.
+	
+	# A directed graph can be related to an undirected graph by \emph{moralization}.
+	This involves ``marrying the parents'' and converting directed edges to undirected edges. 
+	It represents a loss of structure.
+\end{easylist}
+
+\subsection*{Interference}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Interference on a \emph{chain} is accomplished by sending \emph{messages}; one forward and one backward.
+	This let's us evaluate marginals $p(x_n)$ efficiently.
+	If each variable has $K$ possible states, the algorithm is $\mathcal{O}(NK^2)$ instead of the naive $\mathcal{O}(K^N)$.
+	\begin{equation*}
+		\begin{tikzcd}
+		x_1 \arrow{r} & x_2 \arrow{r} & \ldots \arrow{r} & x_N
+		\end{tikzcd}
+	\end{equation*}
+	
+	# \emph{Factor graphs} comprise factor nodes and variable nodes.
+	They can be constructed from undirected trees, directed trees and directed polytrees.
+	A factor graph is bipartite, and they are used in the sum product algorithm.
+	# The \emph{sum-product algorithm} facilitates efficient computation of marginals $p(\vect{x}_s)$ in factor graphs.
+	It works by sending messages $\mu_{f \to x}(x)$ and $\mu_{x \to f}(x)$ from leaves to an arbitrary root note, then back to the leaves.
+	Marginals are then computed as
+	\begin{equation*}
+		p(x) = \prod_{s \in \operatorname{ne}(x)} \mu_{f_s \to x}(x).
+	\end{equation*}
+	# The \emph{max-sum} algorithm finds the state $\vect{x}^{\operatorname{max}}$ maximizing the joint probability function, as well as the value $p(\vect{x}^{\operatorname{max}})$.
+	The algorithm involves first sending messages from leaves to root, then \emph{backtracking} to find the state $\vect{x}^{\operatorname{max}}$.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -3336,30 +3540,34 @@ Since $\lambda '' (\alpha^*) \leq 0$ at the stationary point, it's indeed a maxi
 % ----------------------------------------------------------------------------
 \subsection{Graphical Models}
 \subsubsection*{Exercise 8.3}
-\paragraph{Showing that $p(a, b) \neq p(a) p(b)$}
+\paragraph{Showing that $p(a, b) \neq p(a) p(b)$.}
 We first show that $p(a, b) \neq p(a) p(b)$.
-To do so, we need only produce a single counterexample, i.e. that $p(a_i, b_j) \neq p(a_i) p(b_j)$, where $a_i$ and $b_j$ are possible values for $a$ and $b$ respectively. 
-We will show that $p(a=1, b=1)$ is not equal to $p(a=1) p(b=1)$.
+To do so, we only need to produce a counterexample.
+In other words, we must provide values $a_i$ and $b_j$ such that $p(a=a_i, b=b_j) \neq p(a=a_i) p(b=b_j)$. 
+Specifically, we will show that $p(a=1, b=1)$ is not equal to $p(a=1) p(b=1)$.
 
+We first compute the marginal probabilities as:
 \begin{align*}
 	p(a=1) &= \sum_b \sum_c p(a=1, b, c) = 0.192 + 0.064 + 0.048 + 0.096 = 0.4 \\
 	p(b=1) &= \sum_a \sum_c p(a, b=1, c) = 0.048 + 0.216 + 0.048 + 0.096 = 0.408
 \end{align*}
 
-The join probability is given by
+The joint probability is given by
 \begin{equation*}
 	p(a=1, b=1) = \sum_c p(a=1, b=1, c)
 	= 0.048 + 0.096 = 0.144
 \end{equation*}
-Since $0.4 \cdot 0.408 =   0.1632 \neq 0.144$, the distribution over $a$ and $b$ is marginally dependent, i.e. $p(a, b) \neq p(a) p(b)$.
+Clearly this is a counterexample, since $0.4 \cdot 0.408 =   0.1632 \neq 0.144$.
+As a result, the distribution over $a$ and $b$ is marginally dependent, i.e. $p(a, b) \neq p(a) p(b)$.
 
-\paragraph{Showing that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$}
-To show that $a$ and $b$ are marginally dependent when conditioned on $c$, we must show that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ when $c=0$ and when $c=1$. 
+\paragraph{Showing that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$.}
+To show that $a$ and $b$ are marginally independent when conditioned on $c$, we must show that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ for every value of $c$.
+In this problem, we must show that it holds for both $c=0$ and $c=1$. 
 
-We will only show the computation when $c=0$, since it's identical to the computation when $c=1$.
-First we start by computing
+We will only show the computation when $c=0$, since the computations are completely identical when $c=1$.
+First we start by computing the probability
 \begin{align*}
-	p(c=0) = 0.192 + 0.048 + 0.192 + 0.048 = 0.48
+	p(c=0) = 0.192 + 0.048 + 0.192 + 0.048 = 0.48.
 \end{align*}
 We want to find $p(a \mid c=0)$ and $p(b \mid c=0)$ for all values of $a$ and $b$.
 Using the product rule and sum rule, we obtain
@@ -3374,19 +3582,19 @@ Using the product rule and sum rule, we obtain
 	p(b=1 \mid c=0) &= 1 - p(b=0 \mid c=0) = 0.2
 \end{align*}
 
-Next up we evaluate the joint  distribution for all values of $a$ and $b$. 
-When $c=0$, we employ Bayes theorem to write
+Next we evaluate the joint  distribution for all values of $a$ and $b$. 
+When $c=0$, we use Bayes theorem to write
 \begin{equation*}
 	p(a, b \mid c=0) = \frac{p(a, b, c=0)}{p(c=0)}.
 \end{equation*}
-Structuring the computations in tabular form, we obtain
+Structuring the computations in tabular form, we obtain the following numbers:
 \begin{align*}
 	\frac{p(a=0, b=0, c=0)}{p(c=0)} &= \frac{0.192}{0.48} = 0.4 \\
 	\frac{p(a=0, b=1, c=0)}{p(c=0)} &= \frac{0.048}{0.48} = 0.1 \\
 	\frac{p(a=1, b=0, c=0)}{p(c=0)} &= \frac{0.192}{0.48} = 0.4 \\
 	\frac{p(a=1, b=1, c=0)}{p(c=0)} &= \frac{0.048}{0.48} = 0.1 
 \end{align*}
-For direct evaluation, we see that 
+Directly evaluating every possibility, we notice that indeed
 \begin{alignat*}{3}
 	p(a=0, b=0 \mid c= 0) &= 0.4 \qquad 
 	p(a=0 \mid c= 0) p( b=0 \mid c= 0)  = 0.5 \cdot 0.8 &&= 0.4 \\
@@ -3397,23 +3605,23 @@ For direct evaluation, we see that
 	p(a=1, b=1 \mid c= 0) &= 0.1 \qquad 
 	p(a=1 \mid c= 0) p( b=1 \mid c= 0)  = 0.5 \cdot 0.2 &&= 0.1
 \end{alignat*}
-We have shown that $p(a, b \mid c=0) = p(a\mid c=0) p(b\mid c=0)$.
-Analogous computations when $c=1$ will show that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ in general. 
-We omit the tedious calculations, as they are indistinguishable from those shown. 
+We have shown that $p(a, b \mid c=0) = p(a\mid c=0) p(b\mid c=0)$ for all of the $2^2=4$ possible values of $a$ and $b$.
+Analogous computations for $c=1$ reveal that $p(a, b \mid c) = p(a\mid c) p(b\mid c)$ in general. 
+We omit these tedious calculations, as they are indistinguishable from those already shown. 
 
 
 
 
 \subsubsection*{Exercise 8.6}
-The logical OR function, $\operatorname{OR}: \{0,1\}^M \to \{0,1\}$, returns $1$ if any of the $M$ arguments are 1. 
-It only returns $0$ if \emph{every} one of the $M$ arguments are $0$.
+The logical OR function, i.e. $\operatorname{OR}: \{0,1\}^M \to \{0,1\}$, returns $1$ if any one of the $M$ arguments is 1. 
+It only returns $0$ if every one of the $M$ arguments is $0$.
 
-\paragraph{Reduction to the logical OR function}
+\paragraph{Reduction to the logical OR function.}
 The probabilistic OR function is given by
 \begin{equation*}
 	p(y=1 \mid x_1, \ldots, x_M) = 1 - (1 - \mu_0) \prod_{i=1}^{M} \left(1 - \mu_i\right)^{x_i}.
 \end{equation*}
-Notice that when $\mu_0 = 0$ and $\mu_i = 1$ for $i=1, \ldots, M$ it reduces to
+Notice that when $\mu_0 = 0$ and $\mu_i = 1$ for $i=1, \ldots, M$ the above reduces to
 \begin{equation*}
 p(y=1 \mid x_1, \ldots, x_M) = 1 -  \prod_{i=1}^{M} 0^{x_i}
 = \begin{dcases*}
@@ -3422,79 +3630,80 @@ p(y=1 \mid x_1, \ldots, x_M) = 1 -  \prod_{i=1}^{M} 0^{x_i}
 \end{dcases*},
 \end{equation*}
 which is exactly the logical OR function, since we take $0^0$ to be 1.
-We observe that when $0 \leq \mu_i \leq 1$, then $0 \leq (1 - \mu_0) \prod_{i=1}^{M} \left(1 - \mu_i\right)^{x_i} \leq 1$, and the returned value is between 0 and 1.
-Furthermore, if $\mu_0 \approx 0$ and $\mu_i \approx 1$ for $i=1, \ldots, M$, then the function is ``close'' to the logical OR function.
+We observe that when $0 \leq \mu_i \leq 1$, then $0 \leq (1 - \mu_0) \prod_{i=1}^{M} \left(1 - \mu_i\right)^{x_i} \leq 1$, and the returned value is between 0 and 1 inclusive.
+Furthermore, if $\mu_0 \approx 0$ and $\mu_i \approx 1$ for $i=1, \ldots, M$, then the probabilistic OR function is ``close'' to the logical OR function.
 
-\paragraph{Interpretation of the $\mu_i$s}
+\paragraph{Interpretation of the $\mu_i$s.}
 We can interpret $\mu_0$ by observing that
 \begin{equation*}
 	p(y=1 \mid \vect{x} = \vect{0})
 	=
-	1 - (1 - \mu_0) = \mu_0,
+	1 - (1 - \mu_0) = \mu_0.
 \end{equation*}
-so $\mu_0$ is the probability that $y=1$ when every $x_i = 0$.
-The logical OR has zero probability of this, so setting $\mu_0 \approx 0$ yields a function whose behavior resembles the logical OR.
+Therefore the parameter $\mu_0$ may be interpreted as the probability that $y=1$ when every $x_i = 0$.
+The logical OR function has zero probability of this, so setting $\mu_0 \approx 0$ yields a function whose behavior resembles the logical OR.
 
 We can interpret the $\mu_i$s similarly by noting that
 \begin{equation*}
-p(y=1 \mid x_i = 1, \vect{x}_{\setminus \{i\}})
+p(y=1 \mid x_i = 1, \vect{x}_{ \{j \neq i\} }= \vect{0})
 =
 1 - (1 - \mu_i) = \mu_i.
 \end{equation*}
-The interpretation is that $\mu_i$ is the probability that $y=1$ when $x_i = 1$.
+The interpretation is that $\mu_i$ is the probability that $y=1$ when $x_i = 1$ and every other $x_j = 0$.
+In the logical OR function this probability is one, so setting $\mu_0 \approx 1$ yields a function whose behavior resembles the logical OR.
 
 
 
 
 \subsubsection*{Exercise 8.8}
-Recall that the meaning of the $\bigCI$ symbol:
+Recall that the meaning of the $\bigCI$ symbol for conditional independence:
 \begin{alignat*}{3}
 	a \bigCI b \mid d &\iff & p(a, b \mid d) &=  p(a\mid d) p( b \mid d) \\
-	a \bigCI b, c \mid d &\iff  & p(a, b, c \mid d) &=  p(a\mid d) p( b, c \mid d)
+	a \bigCI b, c \mid d &\iff  & p(a, b, c \mid d) &=  p(a\mid d) p( b, c \mid d).
 \end{alignat*}
-We will show that the latter implies the former.
+We will show that $a \bigCI b, c \mid d$ implies $a \bigCI b \mid d$.
 From the sum rule, we know that
 \begin{align*}
 	p(a, b \mid d) = \sum_c p(a, b, c \mid d).
 \end{align*}
-Using the conditional independence $a \bigCI b, c \mid d$, we write
+Appealing to the conditional independence $a \bigCI b, c \mid d$, we write the above as
 \begin{align*}
-p(a, b \mid d) &= \sum_c p(a, b, c \mid d) \\
-&=  p(a\mid d) \sum_c  p( b, c \mid d) =  p(a\mid d)   p( b \mid d).
+p(a, b \mid d) &= \sum_c p(a, b, c \mid d) =  p(a\mid d) \sum_c  p( b, c \mid d) =  p(a\mid d)   p( b \mid d).
 \end{align*}
 We have shown that $a \bigCI b, c \mid d$ implies $a \bigCI b \mid d$.
 
 \subsubsection*{Exercise 8.11}
-This is a lengthy problem.
-We amend the graph to the following structure.
+This is a lengthy problem, as the computations require some care.
+We add a \textbf{D} node to the graph given in Figure 8.21 in \cite{bishop_pattern_2011}, obtaining the following structure.
 \[\begin{tikzcd}[column sep=3em]
 \textbf{B} \text{ (Battery)} \arrow[]{dr}{}  &     & \textbf{F} \text{ (Fuel tank)} \arrow[]{dl}{} \\
   &  \textbf{G} \text{ (Fuel Gauge) }\arrow[]{d}{} & \\
-  &  \textbf{D} \text{ (Driver's reading)} & \\
+  &  \textbf{D} \text{ (Driver's reading)} & 
 \end{tikzcd}\]
-We split the problem into two parts:
-(1) evaluating $p(F=0 \mid D = 0)$ and
-(2) evaluating $p(F=0 \mid D = 0, B=0)$.
+We split the problem into three parts:
+we (1) evaluate $p(F=0 \mid D = 0)$, 
+(2) evaluate $p(F=0 \mid D = 0, B=0)$, and 
+(3) compare the results and discuss.
 
-\paragraph{Evaluating $p(F=0 \mid D = 0)$}
+\paragraph{Evaluating $p(F=0 \mid D = 0)$.}
 From Bayes theorem, we have
 \begin{equation*}
 	p(F=0 \mid D = 0) = \frac{p(D = 0 \mid F =0) p(F=0)}{p( D = 0)}.
 \end{equation*}
 
-We evaluate these terms in turn
+We evaluate the three terms in the equation above in turn.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The denominator $p( D = 0)$ may be evaluated using the sum rule, and the graph factorization, as
+	# The denominator $p( D = 0)$ may be evaluated using the sum rule, and the graph factorization property, as
 	\begin{align*}
 		p( D = 0) &= \sum_{B, F, G} p( D = 0, B, F, G) \\
 		&= \sum_{B, F, G} p( D = 0 \mid G) p( G \mid B, F) p(B) p (F)
 		= 0.352.
 	\end{align*}
 	The sum ranges over $2^3 = 8$ terms.
-	To avoid the possibility of error when computing by hand, this sum (and every other sum in this problem) was computed in the accompanying \texttt{ch8\_problem\_11.py} script.
+	To reduce the probability of error when computing by hand, this sum (and every other sum in this problem) was computed in the accompanying \texttt{ch8\_problem\_11.py} Python script.
 	
-	# The first factor in the numerator is $p(D = 0 \mid F =0)$, which is
+	# The first factor in the numerator is $p(D = 0 \mid F =0)$, which evaluates to
 	\begin{align*}
 		p(D = 0 \mid F =0) &= \sum_{B, G} p(D=0, B, G \mid F = 0) \\
 		&= \sum_{B, G} p(D = 0 \mid G) p(G \mid F =0, B) p(B)
@@ -3502,7 +3711,7 @@ We evaluate these terms in turn
 	\end{align*}
 	# The second factor is simply $p(F=0) = 0.1$.
 \end{easylist}
-Combining the above, we find that
+Combining the three results above, we find that
 \begin{equation*}
 p(F=0 \mid D = 0) = \frac{p(D = 0 \mid F =0) p(F=0)}{p( D = 0)}
 =
@@ -3511,24 +3720,25 @@ p(F=0 \mid D = 0) = \frac{p(D = 0 \mid F =0) p(F=0)}{p( D = 0)}
 
 
 
-\paragraph{Evaluating $P(F=0 \mid D = 0, B=0)$}
+\paragraph{Evaluating $P(F=0 \mid D = 0, B=0)$.}
 We solve this in a slightly different way, using the product rule instead of Bayes theorem.
 In the numerator, we will have a joint distribution $p(D = 0, B=0, F =0)$ instead of the product $p(D = 0, B=0 \mid F =0) p(F =0)$.
+Either approach would produce the same result, of course.
 \begin{equation*}
 P(F=0 \mid D = 0, B=0) = \frac{p(D = 0, B=0, F =0)}{p( D = 0, B=0)}.
 \end{equation*}
-We evaluate these terms in turn
+We evaluate the denominator and the numerator.
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# The denominator $p( D = 0, B=0)$ may be evaluated using the sum rule, and the graph factorization, as
+	# The denominator $p( D = 0, B=0)$ may be evaluated using the sum rule and the graph factorization.
+	The sum ranges over $2^2$ terms, and evaluates to
 	\begin{align*}
 	p( D = 0, B=0) &= \sum_{F, G} p( D = 0, B = 0, F, G) \\
 	&= \sum_{F, G} p( D = 0 \mid G) p( G \mid B = 0, F) p(B=0) p (F)
 	= 0.0748.
 	\end{align*}
 
-	
-	# The numerator becomes
+	# The numerator evaluates to
 	\begin{align*}
 	p(D = 0, B=0, F =0) 
 	&= \sum_{G} p(D=0, B=0, G, F = 0) \\
@@ -3536,32 +3746,138 @@ We evaluate these terms in turn
 	&= 0.0082
 	\end{align*}
 \end{easylist}
-Combining the above, we find that
+Combining the two results above above, we find that
 \begin{equation*}
 P(F=0 \mid D = 0, B=0) = \frac{p(D = 0, B=0, F =0)}{p( D = 0, B=0)}
 =
 \frac{0.0082}{0.0748} \approx 0.1096.
 \end{equation*}
 
-When the driver tells us the fuel gauge is empty, the probability of the tank actually being empty is $0.2125$.
-If we also know that the battery is flat, the probability of the tank actually being empty \emph{lowers} to $0.1096$.
-Finding out that the battery is flat explains away the observation that the driver reads the fuel gauge as empty.
-Intuitively, this is because we now have another probable reason for the gauge showing empty, which we had little prior reason to believe in.
+\paragraph{Discussion.} 
+When the driver informs us that the fuel gauge reads empty, the probability of the tank actually being empty is $0.2125$.
+If we also know that if the battery is flat, the probability of the tank actually being empty \emph{decreases} to $0.1096$.
+Finding out that the battery is flat \emph{explains away} the observation that the driver reads the fuel gauge as empty.
+Intuitively, this is because we now have another probable reason for the gauge showing empty, which we had relatively little prior reason to believe was true.
 
 
 
 
 \subsubsection*{Exercise 8.16}
+We wish to evaluate $p(x_n \mid x_{N})$ for every $n=1, 2, \ldots, N-1$.
+We will make some observations, and then sketch an algorithm.
+
+\paragraph{Observations.}
+By using the product rule and then marginalizing over every variable apart from $x_n$, we obtain the following expression for the conditional probability.
+\begin{align*}
+	p(x_n \mid x_{N}) &=
+	\sum_{x_1} \cdots \sum_{x_{n-1}} \sum_{x_{n+1}} \cdots \sum_{x_{N}}
+	\frac{p(\vect{x})}{p(x_{N})} \\
+	&=
+	\frac{1}{Z}\sum_{x_1} \cdots \sum_{x_{n-1}} \sum_{x_{n+1}} \cdots \sum_{x_{N}}
+	\psi_{1,2}(x_1, x_2)
+	\psi_{2,3}(x_2, x_3)
+	 \cdots \frac{\psi_{N-1,N}(x_{N-1}, x_N)}{p(x_{N})}.
+\end{align*}
+The equation above only differs from Equation (8.52) because of the marginal distribution $p(x_{N})$ in the denominator in the last term.
+Assuming that we know $p(x_{N})$, we group terms as in Equation (8.52), writing them as
+\begin{align*}
+	\frac{1}{Z} \mu_\alpha(x_n)
+	\underbrace{\left[ \sum_{x_{n+1}} \psi_{n,n+1}(x_{n}, x_{n+1})
+	\cdots
+	\left[ \sum_{x_{N}} \frac{\psi_{N-1,N}(x_{N-1}, x_N)}{p(x_{N})}  \right]
+	 \cdots \right]}_{\mu_\beta^*(x_n)}.
+\end{align*}
+The difference between the $\mu_\beta^*(x_n)$ introduced here and the $\mu_\beta(x_n)$ in the book is the denominator in the innermost parenthesis.
+
+\paragraph{Algorithm sketch.}
+We sketch an $\mathcal{O}(NK^2)$ algorithm which uses message passing.
 \begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=a, FinalMark1={)})
+	# The first step involves finding $p(x_{N})$.
+	Since $p(x_{N}) = \mu_\alpha(x_N) \mu_\beta(x_N) / Z = \mu_\alpha(x_N)/ Z$, we compute $\mu_\alpha(x_2)$, then $\mu_\alpha(x_3)$, and so forth by use of the recursive relationship detailed in Equation (8.55).
+	This step is $\mathcal{O}(NK^2)$, and every $\mu_\alpha(x_n)$ is stored.
+	# Having obtained $p(x_{N})$, we compute the $\mu_\beta^*(x_{n})$ by the following equations, which give an initial value and a recursive relationship.
+	\begin{align*}
+		\mu_\beta^*(x_{N-1}) & = \sum_{x_N} \frac{\psi_{N-1,N}(x_{N-1}, x_N)}{p(x_{N})} \\
+		\mu_\beta^*(x_{n}) & = \sum_{x_{n+1}} \psi_{n,n+1}(x_{n}, x_{n+1}) \mu_\beta^*(x_{n+1})
+	\end{align*}
+	This step is also $\mathcal{O}(NK^2)$, and every $\mu_\beta^*(x_{n})$ is stored.
+	# Now we can compute $p(x_n \mid x_{N})$ for every $n = 1, \ldots, N-1$ using
+	\begin{equation*}
+		p(x_n \mid x_{N}) = \frac{1}{Z} \mu_\alpha(x_n)\mu_\beta^*(x_n).
+	\end{equation*}
+	
+	Since $\sum_{x_n} p(x_n \mid x_{N}) = 1$, we compute $Z$ as $\sum_{x_n} \mu_\alpha(x_n)\mu_\beta^*(x_n)$.
 \end{easylist}
+The algorithm runs in $\mathcal{O}(NK^2)$ time, where $N$ is the number of variable nodes and $K$ is the number of states per variable.
+We propagate messages forward, then backwards, evaluate $Z$ and compute the conditional probabilities $p(x_n \mid x_{N})$.
 
 \subsubsection*{Exercise 8.21}
-\begin{easylist}[enumerate]
+The solution to this problem has somewhat dense notation.
+Drawing and working through a concrete example while reading is highly recommended.
+From the sum rule, we have
+\begin{equation*}
+	p(\vect{x}_s) = \sum_{ \vect{x} \setminus \vect{x}_s } p(\vect{x}).
+\end{equation*}
+The joint distribution $p(\vect{x})$ can be factored as the product of:
+\begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	#  $f_s(\vect{x}_s)$, the factor defined over the variables $\vect{x}_s$.
+	This factor is not marginalized out.
+	# The factors ``two steps'' away from $f_s(\vect{x}_s)$ in the graph, i.e. the ``grandchildren.''
+	More formally, for every variable node index $i \in \operatorname{ne}(f_s)$ adjacent to $f_s$, the product of the factors associated with the factor nodes $\ell \in \operatorname{ne}(x_i) \setminus f_s$.
 \end{easylist}
+We substitute this factorization of $p(\vect{x})$ into the above to obtain
+\begin{equation*}
+p(\vect{x}_s) = \sum_{ \vect{x} \setminus \vect{x}_s }
+f_s(\vect{x}_s)
+\left[ 
+\prod_{i \in \operatorname{ne}(f_s)}
+\left( 
+\prod_{\ell \in \operatorname{ne}(x_i) \setminus f_s}
+ F_\ell (x_i, X_\ell)
+ \right)
+ \right],
+\end{equation*}
+where $F_\ell (x_i, X_\ell)$ denotes the factors associated with factor node $\ell$ and it's sub-tree, adjacent to $x_i \in \vect{x}_s$.
+Next we bring the factor $f_s(\vect{x}_s)$ out of the sum, and interchange summation and products.
+Interchanging summation and products is valid since the products are over disjoint factors. 
+We obtain
+\begin{equation*}
+p(\vect{x}_s) = f_s(\vect{x}_s) 
+\prod_{i \in \operatorname{ne}(f_s)}
+\left( 
+\prod_{\ell \in \operatorname{ne}(x_i) \setminus f_s}
+\sum_{ X_\ell }
+F_\ell (x_i, X_\ell)
+\right),
+\end{equation*}
+since the variables $\vect{x} \setminus \vect{x}_s$ is the union of every set $X_\ell$. 
+Recall that the variables $X_\ell$ belong to the sub-trees associated with the factors ``two steps'' away from $f_s(\vect{x}_s)$.
+Using the definition of $\mu_{f_\ell \to x_i}(x_i)$ from Equation (8.64) followed by Equation (8.69), we obtain
+\begin{align*}
+	p(\vect{x}_s) &= f_s(\vect{x}_s) 
+	\prod_{i \in \operatorname{ne}(f_s)}
+	\left( 
+	\prod_{\ell \in \operatorname{ne}(x_i) \setminus f_s}
+	\sum_{ X_\ell }
+	F_\ell (x_i, X_\ell)
+	\right) \\
+	&= f_s(\vect{x}_s) 
+	\prod_{i \in \operatorname{ne}(f_s)}
+	\left( 
+	\prod_{\ell \in \operatorname{ne}(x_i) \setminus f_s}
+	\mu_{f_\ell \to x_i}(x_i)
+	\right) \\
+	&=
+	f_s(\vect{x}_s) 
+	\prod_{i \in \operatorname{ne}(f_s)}
+	\mu_{x_i \to f_s}(x_i).
+\end{align*}
+This is equivalent to Equation (8.72), which is what we wanted to show.
+
+
+
 
 % ----------------------------------------------------------------------------
 \subsection{Mixture Models and EM}
