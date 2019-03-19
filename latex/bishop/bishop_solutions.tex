@@ -105,109 +105,14 @@ This document contains some notes and solutions to the book TODO.
 \clearpage
 \section{Chapter notes}
 
-% ----------------------------------------------------------------------------
-\subsection{Introduction}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+Below are some comments on the text.
 
-% ----------------------------------------------------------------------------
-\subsection{Probability Distributions}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Linear Models for Regression}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Linear Models for Classification}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Neural networks}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Kernel methods}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
 	# Page 306 introduces $\mathsf{t} = (t_1, \ldots, t_N)^{\operatorname{T}}$.
 	On the following page $\mathsf{t}_N$ is defined as $(t_1, \ldots, t_N)^{\operatorname{T}}$.
 	Perhaps confusingly, both $\mathsf{t}$ and $\mathsf{t}_N$ are used interchangeably after this; but they refer to the same vector.
 \end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Sparse Kernel Machines}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Graphical Models}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Mixture Models and EM}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Approximate Interference}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Sampling Methods}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Continuous Latent Variables}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Sequential Data}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-\subsection{Combining Models}
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
-
-% ----------------------------------------------------------------------------
-
-
 
 
 
@@ -955,11 +860,10 @@ Three general decision approaches in decreasing order of complexity:
 		\includegraphics[width=0.7\linewidth]{figs/Kernel_Machine.png}
 		\caption{Data which is linearly separable in the feature vector space $\vect{\phi}(\vect{x})$, but not in $\vect{x}$-space.
 			The maximum margin hyperplane is non-linear in $\vect{x}$-space.
-			Souce: Wikipedia.}
+			Source: Wikipedia.}
 		\label{fig:Kernel_Machine}
 	\end{figure}
-
-
+	
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
 	# The main idea (when data is linearly separable) is to optimize $\vect{w}$ and $b$ in the equation $y(\vect{x}) = \vect{w}^T \vect{\phi} (\vect{x}) + b$ so that the separating hyperplane has a maximal margin.
@@ -973,7 +877,7 @@ Three general decision approaches in decreasing order of complexity:
 		\text{subject to}  &  \quad g(\vect{x}) \geq 0 & \qquad\qquad \lambda g(\vect{x}) = 0
 	\end{alignat*}
 	The KKT conditions must be true at the optimum.
-	They state that each constraint is either \emph{active} or \emph{inative}, and generalize Lagrange multipliers to deal with inequality constraints.
+	They state that each constraint is either \emph{active} or \emph{inactive}, and generalize Lagrange multipliers to deal with inequality constraints.
 	
 	# The \textbf{linearly separable classification problem} has Lagrange function
 	\begin{equation*}
@@ -1249,9 +1153,102 @@ The Markov blanket in an undirected graph has a similar, but simpler structure; 
 
 % ----------------------------------------------------------------------------
 \subsection{Mixture Models and EM}
+
+
+\subsection*{$K$-means and mixtures of Gaussians}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# In $K$-means classification, the EM algorithm minimizes the objective function
+	\begin{equation*}
+		J = \sum_{n=1}^{N} \sum_{k=1}^{K} r_{nk} \norm{\vect{x}_n - \vect{\mu}_k}^2.
+	\end{equation*}
+	## The \textbf{expectation step} re-assigns points $\vect{x}_n$ to clusters via $r_{nk} \in \{0, 1\}^K$.
+	## The \textbf{maximization step} re-computes the $k$ prototypes $\{ \vect{\mu}_k \}$.
+	
+	# \emph{Mixtures of Gaussians} are given by the equation
+	\begin{equation*}
+		p(\vect{x}) = \sum_{k=1}^{K} \pi_k \N (\vect{x} \mid \vect{\mu}_k, \vect{\Sigma}_k)
+	\end{equation*}
+	where $\pi_k$ are the \emph{mixing coefficients}.
+	If $p(z_{k} = 1) = \pi_k$, we obtain the model below.
+	For every $\vect{x}_n$, there is a latent (unobserved) $\vect{z}_n$ corresponding to which mixture $\vect{x}_n$ is from.
+	For instance, if $\vect{z}_n = (0, 1, \ldots)$, then $\vect{x}_n$ is drawn from mixture number $2$.
+	
+	\begin{center}
+		\tikz{
+			% Random variables
+			\node[latent] (z) {$\vect{z}_n$} ; %
+			\node[obs, below=of z] (x) {$\vect{x}_n$} ; %
+			\edge {z} {x} ; %
+			\plate[inner sep=0.35cm] {plate1} {(x) (z)} {N}; %
+			
+			% Parameters
+			\node[const, left=of z] (pi) {$\pi_k$} ; %
+			\node[const, left=of x] (musig) {$\vect{\mu}_k, \vect{\Sigma}_k$} ; %
+			\edge {pi} {z} ; %
+			\edge {musig} {x} ; %
+			\plate[inner sep=0.35cm] {plate1} {(pi) (musig)} {K}; %
+		}
+	\end{center}
+		## The EM algorithm for Gaussian mixtures is the following.
+		### The \textbf{expectation step} evaluates the \emph{responsibilities} $\gamma(z_{nk})$, defined as the posterior probabilities $\gamma(z_{nk}) := p(z_{nk} = 1 \mid \vect{x}_n)$.
+		### The \textbf{maximization step} re-computes the $\pi_k, \vect{\mu}_k, \vect{\Sigma}_k$ (functions of $\gamma(z_{nk})$).
+
+	
+\end{easylist}
+
+
+\subsection*{The expectation-maximization (EM) algorithm}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The goal is to maximize the log likelihood $\ln p(\vect{X} \mid \vect{\theta})$.
+	If this is difficult, but maximizing $\ln p(\vect{X}, \vect{Z} \mid \vect{\theta})$ is easier, then the EM algorithm is applicable.
+	## The \textbf{expectation step} evaluates the posterior probability of the latent variables $\vect{Z}$ given $\vect{X}$ and $\vect{\theta}^{\text{old}}$.
+	These are the responsibilities denoted by $\gamma$ above.
+	\begin{equation*}
+		p(\vect{Z} \mid \vect{X}, \vect{\theta}^{\text{old}})
+		=
+		\frac{
+			p(\vect{Z} , \vect{X} \mid \vect{\theta}^{\text{old}})
+			}{
+			\sum_{\vect{Z}} p(\vect{Z} , \vect{X} \mid \vect{\theta}^{\text{old}})}
+	\end{equation*}
+	## The \textbf{maximization step} maximizes the expectation of the complete data log-likelihood over the posterior probability of the latent variables.
+	\begin{align*}
+		\vect{\theta}^{\text{new}} &= \underset{\vect{\theta}}{\arg \max} \quad 
+		Q(\vect{\theta}, \vect{\theta}^{\text{old}})
+		\\
+		Q(\vect{\theta}, \vect{\theta}^{\text{old}}) &= 
+		\E_{\vect{Z}}
+		\underbrace{ \left[ 
+			\ln p(\vect{Z} , \vect{X} \mid \vect{\theta}^{\text{old}})
+			\right]
+			}_{\text{complete data log-likelihood}}
+		= \sum_{\vect{Z}}
+		p(\vect{Z} \mid \vect{X}, \vect{\theta}^{\text{old}})
+		  \ln p(\vect{Z} , \vect{X} \mid \vect{\theta}^{\text{old}})
+	\end{align*}
+	The maximization can often be accomplished by setting derivatives to zero.
+	
+	# The general EM algorithm maximizes $\ln p(\vect{X} \mid \vect{\theta})$, which can be decomposed as
+	\begin{equation*}
+		\ln p(\vect{X} \mid \vect{\theta})
+		=
+		\mathcal{L}(q, \vect{\theta})
+		+
+		\operatorname{KL}(q ||  p).
+	\end{equation*}
+	## The \textbf{expectation step} maximizes the functional $\mathcal{L}(q, \vect{\theta})$ with respect to the distribution $q(\vect{Z})$ while keeping $\vect{\theta}$ constant.
+	This amounts to minimizing $\operatorname{KL}(q ||  p)$, since $\ln p(\vect{X} \mid \vect{\theta})$ is not a function of $q(\vect{Z})$.
+	The Kullback–Leibler divergence $\operatorname{KL}(q ||  p)$ is minimized when $q(\vect{Z}) = p(\vect{Z} \mid \vect{X}, \vect{\theta})$.
+	## The \textbf{maximization step} maximizes the functional $\mathcal{L}(q, \vect{\theta})$ with respect to $\vect{\theta}$ while $q(\vect{Z})$ is held constant.
+	This causes $\ln p(\vect{X} \mid \vect{\theta})$ to increase.
+	
+	# Examples of EM include 
+	$K$-means,
+	mixtures of Gaussian distributions,
+	mixtures of Bernoulli distributions (latent class analysis)
+	and EM for Bayesian linear regression.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -3881,14 +3878,542 @@ This is equivalent to Equation (8.72), which is what we wanted to show.
 
 % ----------------------------------------------------------------------------
 \subsection{Mixture Models and EM}
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+
+\subsubsection*{Exercise 9.2}
+Recall the general Robbins-Monro algorithm:
+given $p(\theta, z)$ we compute the root of
+the \emph{regression function}
+\begin{equation*}
+	f(\theta) = \E_z \left[ z \mid \theta \right]
+	= \int z p (z \mid \theta) \, d\theta
+\end{equation*}
+by iterating the recursive equation
+\begin{equation}
+\label{eqn:robbins_monro}
+	\theta^{N} = \theta^{N-1} - a_{N-1} z \left( \theta^{N-1} \right).
+\end{equation}
+
+In this case, let's consider $\theta$ as a specific $\vect{\mu}_k$.
+We fixate $k$, and consider the points in the data stream $\vect{x}_1, \vect{x}_2, \vect{x}_3, \ldots$ for which $r_{nk} = 1$, i.e. points which are closest to cluster $k$.
+
+The cluster prototype $\vect{\mu}_k$ which is closest to a point $\vect{x}_n$  is a function of the previously seen data $\vect{x}_1, \vect{x}_2, \ldots, \vect{x}_{n-1}$, but upon seeing a data point $\vect{x}_n$ we can always compute the closest cluster.
+In other words, we assume that we know which data points belong to $k$, but remark that we do not really know this ``ahead of time.''
+We wish to find the root of
+\begin{equation*}
+	\sum_{\vect{x}_n \mid k} \left( \vect{x}_n - \vect{\mu}_k \right).
+\end{equation*}
+where $\vect{x}_n \mid k$ denotes the data points that are assigned to cluster $k$.
+Let $N_k$ be the total number of data points falling closest to $\vect{\mu}_k$.
+As $N_k$ goes to infinity, we have
+\begin{equation*}
+	- \lim_{N_k \to \infty} \frac{1}{N_k} \sum_{\vect{x}_k \mid k} \left( \vect{x}_n - \vect{\mu}_k \right)
+	= - \int 
+	\left( \vect{x} - \vect{\mu}_k \right) p(\vect{x} \mid k) \, d \vect{x}
+	= \E \left[ - \left( \vect{x} - \vect{\mu}_k \right) \mid k \right],
+\end{equation*}
+so clearly we're trying to minimize a regression function.
+We now identify $\vect{\mu}_k$ as $\theta$ and $-\left( \vect{x} - \vect{\mu}_k \right)$ as $z$ in Equation \eqref{eqn:robbins_monro}, which leads us to the desired sequential update rule
+\begin{equation*}
+	\vect{\mu}_k^{\text{new}} = 
+	\vect{\mu}_k^{\text{old}} 
+	+ \eta_n \left( \vect{x} - \vect{\mu}_k \right).
+\end{equation*}
+
+\subsubsection*{Exercise 9.4}
+Recall that in the original EM algorithm in Section 9.3 we wish to maximize $p(\vect{X} \mid \vect{\theta})$ with respect to $\vect{\theta}$.
+In other words, we want to compute
+\begin{equation*}
+	\max_{\vect{\theta}} \ln p(\vect{X} \mid \vect{\theta})
+	=
+	\max_{\vect{\theta}} \ln \left( \sum_{\vect{Z}} p(\vect{X}, \vect{Z} \mid \vect{\theta}) \right)
+\end{equation*}
+but we settle for maximizing $\E_{\vect{Z}} \left[ \ln p(\vect{X}, \vect{Z} \mid \vect{\theta}) \right]$ instead.
+
+In this problem, we wish to maximize $p(\vect{\theta} \mid \vect{X} ) \propto p(\vect{X} \mid \vect{\theta}) p(\vect{\theta})$ with respect to $\vect{\theta}$.
+In other words, we want to compute
+\begin{equation*}
+\max_{\vect{\theta}} \ln \left( p(\vect{X} \mid \vect{\theta})  p(\vect{\theta}) \right)
+=
+\max_{\vect{\theta}} \ln \left(  \sum_{\vect{Z}} p(\vect{X}, \vect{Z} \mid \vect{\theta}) p(\vect{\theta}) \right)
+\end{equation*}
+but we settle for maximizing $\E_{\vect{Z}} \left[ \ln   p(\vect{X}, \vect{Z} \mid \vect{\theta}) p(\vect{\theta})  \right]$ instead.
+Expanding the logarithm and writing out the expected value explicitly, the expression becomes
+\begin{equation*}
+	\sum_{\vect{Z}} p(\vect{Z} \mid \vect{X}, \vect{\theta})
+	\left( \ln p(\vect{X}, \vect{Z} \mid \vect{\theta}) + \ln p(\vect{\theta})  \right)
+	=
+	Q + \ln p(\vect{\theta}).
+\end{equation*}
+The \textbf{E step} remains the same, since the expected value is to be taken over the same posterior distribution $p(\vect{Z} \mid \vect{X}, \vect{\theta} )$ as in the case when we're maximizing the likelihood $p(\vect{X} \mid \vect{\theta})$.
+The \textbf{M step} is altered from maximizing $Q$ to maximizing $Q + \ln p(\vect{\theta})$, since we wish to maximize $p(\vect{X} \mid \vect{\theta}) p(\vect{\theta})$ and not $p(\vect{X} \mid \vect{\theta})$.
+
+
+
+\subsubsection*{Exercise 9.10}
+Applying the product rule to the conditional probability yields
+\begin{equation*}
+	p(\vect{x}_b \mid \vect{x}_a) = 
+	\frac{p(\vect{x}_b, \vect{x}_a)}{p(\vect{x}_a)} 
+	=
+	\frac{p(\vect{x})}{p(\vect{x}_a)}.
+\end{equation*}
+We already have an expression for the numerator, given in the problem statement.
+The denominator found by substituting the definition and applying the sum rule.
+\begin{equation*}
+	p(\vect{x}_a)
+	=
+	\sum_{\vect{x}_b} p(\vect{x}_a, \vect{x}_b)
+	= \sum_{\vect{x}_b} \sum_{j=1}^{K} \pi_j p( \vect{x}_a, \vect{x}_b \mid j )
+	=
+	 \sum_{j=1}^{K} \pi_j  p( \vect{x}_a \mid j ).
+\end{equation*}
+Substituting this into the above fraction and diving every term in the sum,
+we obtain
+\begin{equation*}
+	p(\vect{x}_b \mid \vect{x}_a) = 
+	\frac{\sum_{k=1}^{K} \pi_k  p( \vect{x}_a, \vect{x}_b \mid k )}
+	{\sum_{j=1}^{K} \pi_j  p( \vect{x}_a \mid j )}
+	= \sum_{k=1}^{K} \left( \frac{\pi_k}{\sum_{j=1}^{K} \pi_j  p( \vect{x}_a \mid j )} \right)  p( \vect{x} \mid k ).
+\end{equation*}
+From the expression above we observe that the mixing coefficients in the conditional distribution become $\pi_k / \left( \sum_{j=1}^{K} \pi_j  p( \vect{x}_a \mid j ) \right)$, while the component densities remain unchanged.
+
+Notice that if $\vect{x}_a = \vect{x}$ and $\vect{x}_b = \emptyset$, the above reduces to the original expression for $p(\vect{x})$.
+
+
+\subsubsection*{Exercise 9.12}
+In this problem we use the notation $p (\vect{x} \mid \vect{\mu}_k)$ instead of $p (\vect{x} \mid k)$.
+Furthermore, we will assume that by ``denote the mean and covariance of $p (\vect{x} \mid k)$ as $\vect{\mu}_k$ and $\vect{\Sigma}_k$'' the problem text is interpreted as stating that 
+$\E \left[ \vect{x} \mid \vect{\mu}_k \right] = \vect{\mu}_k$
+and
+$\cov \left[ \vect{x} \mid \vect{\mu}_k \right] = \vect{\Sigma}_k$.
+In other words, the expected value and variance is taken over the variable $\vect{x}$.
+
+\paragraph{The mean.} The expected value of the mixture distribution is readily found to be
+\begin{align*}
+	\E [\vect{x}] = \sum_{\vect{x}}  \vect{x} p (\vect{x})
+	& = \sum_{\vect{x}}  \vect{x} \sum_{k=1}^{K} \pi_k p (\vect{x} \mid \vect{\mu}_k)
+	= \sum_{k=1}^{K} \pi_k \sum_{\vect{x}}  \vect{x}  p (\vect{x} \mid \vect{\mu}_k) \\
+	&= \sum_{k=1}^{K} \pi_k \E \left[ \vect{x} \mid \vect{\mu}_k \right]
+	= \sum_{k=1}^{K} \pi_k \vect{\mu}_k.
+\end{align*}
+
+\paragraph{The covariance.} To evaluate the covariance of the mixture distribution, recall Equation (1.42) in \cite{bishop_pattern_2011}, which states the covariance identity
+\begin{equation*}
+	\cov \left[ \vect{x}\right] = \E \left[ \vect{x} \vect{x}^T \right]
+	- \E \left[ \vect{x} \right] \E \left[ \vect{x} \right]^T.
+\end{equation*}
+We explore the last term $\E \left[ \vect{x} \vect{x}^T \right]$, since we've already found that $\E [\vect{x}] = \sum_{k=1}^{K} \pi_k \vect{\mu}_k$ in the previous sub-problem.
+
+In turn we use the definition of the expected value, then the definition of $p (\vect{x})$, the definition of the conditional expected value, the covariance identity, and finally the variables given in the problem statement:
+\begin{align*}
+	\E \left[ \vect{x} \vect{x}^T \right] &= \sum_{\vect{x}} p (\vect{x}) \vect{x} \vect{x}^T = \sum_{\vect{x}} \left( \sum_{k=1}^{K} \pi_k p (\vect{x} \mid \vect{\mu}_k) \right) \vect{x} \vect{x}^T \\
+	&= \sum_{k=1}^{K} \pi_k \sum_{\vect{x}} p (\vect{x} \mid \vect{\mu}_k) \vect{x} \vect{x}^T
+	= \sum_{k=1}^{K} \pi_k \E \left[ \vect{x} \vect{x}^T \mid \vect{\mu}_k \right] \\
+	&= \sum_{k=1}^{K} \pi_k \left( \cov \left[ \vect{x} \mid \vect{\mu}_k \right] + \E \left[ \vect{x} \mid \vect{\mu}_k \right] \E \left[ \vect{x} \mid \vect{\mu}_k \right]^T \right) \tag{covariance identity}\\
+	&= \sum_{k=1}^{K} \pi_k \left( \vect{\Sigma}_k + \vect{\mu}_k \vect{\mu}_k^T \right)
+\end{align*}
+Combining the above expression for $\E \left[ \vect{x} \vect{x}^T \right]$ with the covariance identity yields Equation (9.50) from the book, and this is what the problem asked us to show.
+
+\subsubsection*{Exercise 9.14}
+In general, from the sum and product rule, we know that
+\begin{equation*}
+	p(\vect{x} \mid \vect{\mu}, \vect{\pi})
+	=
+	\sum_{\vect{z}}
+	\underbrace{p(\vect{x} \mid \vect{z}, \vect{\mu})
+	p(\vect{z} \mid \vect{\pi})}_{p(\vect{x}, \vect{z} \mid  \vect{\mu}, \vect{\pi})}.
+\end{equation*}
+By substituting the expressions for $p(\vect{x} \mid \vect{z}, \vect{\mu})$ and $p(\vect{z} \mid \vect{\pi})$, we see that
+\begin{equation*}
+p(\vect{x} \mid \vect{\mu}, \vect{\pi})
+=
+	\sum_{\vect{z}} 
+	\underbrace{\left( \prod_{k=1}^{K} p (\vect{x} \mid \vect{\mu}_k )^{z_k} \right)}_{p(\vect{x} \mid \vect{z}, \vect{\mu})}
+	\underbrace{\left( \prod_{k=1}^{K} \pi_k^{z_k} \right)}_{p(\vect{z} \mid \vect{\pi})}
+	=
+	\sum_{\vect{z}}  \prod_{k=1}^{K} \left[ p (\vect{x} \mid \vect{\mu}_k ) \pi_k \right]^{z_k}.
+\end{equation*}
+The sum is taken over states of $\vect{z}$, which are unit vectors, e.g. $(1, 0, 0, \ldots)$, $(0, 1, 0, \ldots)$ and $(0, 0, 1, \ldots)$ and so forth.
+There are $K$ such states, and therefore $K$ terms in the sum.
+In the first term of the sum, i.e. the first state of $\vect{z}$, the only term in the product which is not $1$ is $p (\vect{x} \mid \vect{\mu}_1 ) \pi_1$.
+Likewise, the second term becomes $p (\vect{x} \mid \vect{\mu}_2 ) \pi_2$ and the third $p (\vect{x} \mid \vect{\mu}_3 ) \pi_3$ and so forth.
+Therefore only one factor is each product remain, yielding
+\begin{equation*}
+p(\vect{x} \mid \vect{\mu}, \vect{\pi})
+=
+	\sum_{\vect{z}}  \prod_{k=1}^{K} \left[ p (\vect{x} \mid \vect{\mu}_k ) \pi_k \right]^{z_k}
+	=
+	\sum_{k=1}^{K} p (\vect{x} \mid \vect{\mu}_k ) \pi_k.
+\end{equation*}
+The equation above is the result which the problem asked us to show.
+
+\subsubsection*{Exercise 9.18}
+We keep the results of Exercise 9.4 in mind: we know the \textbf{E step} will be unchanged in the sense that we take expected value over the same distribution $p(\vect{Z} \mid \vect{X}, \vect{\theta})$.
+The problem is finding the expected value and maximizing it, i.e. finding explicit equations for $\vect{pi}$ and the $\vect{\mu}_k$ which maximize the expected complete-data log likelihood.
+
+\paragraph{The expected value.} The expectation becomes
+\begin{equation*}
+	\E_{\vect{Z}} \left[ \ln p (\vect{X}, \vect{Z} \mid \vect{\mu}, \vect{\pi}) + \ln p(\vect{\mu}, \vect{\pi}) \right]
+	=
+	\E_{\vect{Z}} \left[ \ln p (\vect{X}, \vect{Z} \mid \vect{\mu}, \vect{\pi})  \right]
+	+
+	\ln p(\vect{\mu}, \vect{\pi}).
+\end{equation*}
+Let's investigate the last term, which is due to the priors over the model parameters.
+While $\vect{\pi}$ is a $K$-dimensional vector, $\vect{\pi}$ represents a set of $K$ vectors $\vect{\mu} = \{ \vect{\mu}_1, \ldots, \vect{\mu}_K \}$.
+
+The vector $\vect{\pi} = ( \pi_1, \ldots, \pi_K )$ is subject to the constraint $\sum_k \pi_k = 1$.
+The probability of $\vect{\pi}$ is given by Equation (2.38) for the Dirichlet distribution from the book, i.e.
+\begin{equation}
+\label{eqn:ch9_prob18_prior_pi}
+	p(\vect{\pi} \mid \vect{\alpha}) = \frac{\Gamma(\alpha_0)}{\Gamma(\alpha_1) \cdots \Gamma(\alpha_K)}
+	\prod_{k=1}^{K} \pi_k^{\alpha_k - 1}
+	\propto \prod_{k=1}^{K} \pi_k^{\alpha_k - 1}.
+\end{equation}
+
+In the set of vectors $\vect{\mu} = \{ \vect{\mu}_1, \ldots, \vect{\mu}_K \}$, the individual vectors $\vect{\mu}_i$ and $\vect{\mu}_j$ are independent, so we can factor the joint distribution as
+$p(\vect{\mu}) = p(\vect{\mu}_1) \cdots p(\vect{\mu}_K)$.
+We assume that the entries of the $k$th vector $\vect{\mu}_k$ are independent given $a_k$ and $b_k$, so that $p(\mu_{ki} \mid a_k, b_k)$ is given by Equation (2.13), i.e.
+\begin{equation*}
+	p(\mu_{ki} \mid a_k, b_k) = 
+	\frac{\Gamma(a_k + b_k)}{\Gamma(a_k ) \Gamma( b_k)}
+	\mu_{ki}^{a_k-1}(1 - \mu_{ki})^{b_k-1}
+	\propto \mu_{ki}^{a_k-1}(1 - \mu_{ki})^{b_k-1}
+\end{equation*}
+and therefore
+\begin{equation*}
+	p(\vect{\mu}_k \mid a_k, b_k) = 
+	\prod_{i=1}^{D}
+	p( \mu_{ki} \mid a_k, b_k)
+	\propto
+	\prod_{i=1}^{D}
+	\mu_{ki}^{a_k-1}(1 - \mu_{ki})^{b_k-1}.
+\end{equation*}
+Combining the equation above with the factorization $p(\vect{\mu}) = p(\vect{\mu}_1) \cdots p(\vect{\mu}_K)$, we observe that the probability of the set $\vect{\mu} = \{ \vect{\mu}_1, \ldots, \vect{\mu}_K \}$ becomes
+\begin{equation}
+	\label{eqn:ch9_prob18_prior_mu}
+	p(\vect{\mu}) = p(\vect{\mu}_1) \cdots p(\vect{\mu}_K)
+	\propto
+	\prod_{k=1}^{K}
+	\prod_{i=1}^{D}
+	\mu_{ki}^{a_k-1}(1 - \mu_{ki})^{b_k-1}.
+\end{equation}
+
+Note that we have ignored multiplicative constants independent of $\vect{\pi}$ and the $\vect{\mu}_k$s, since when we take logarithms these constants will become additive.
+Additive constants disappear upon differentiating, and can safely be ignored as they will play no role in the following maximization step.
+
+Finally we take the logarithm of $p(\vect{\mu}, \vect{\pi}) = p(\vect{\mu}) p(\vect{\pi})$.
+Using Equations \eqref{eqn:ch9_prob18_prior_pi} and \eqref{eqn:ch9_prob18_prior_mu} for the priors over $\vect{\pi}$ and $\vect{\mu}$, we then obtain:
+\begin{align*}
+	\ln p(\vect{\mu}, \vect{\pi}) &= \ln \left( p(\vect{\mu}) p(\vect{\pi}) \right) = \ln p(\vect{\mu}) + \ln p(\vect{\pi}) \\
+	\ln  p(\vect{\pi} \mid \vect{\alpha}) & \propto \sum_{k=1}^{K} (\alpha_k - 1) \ln \pi_k \\
+	\ln p(\vect{\mu}) & \propto   
+	\sum_{k=1}^{K}
+	\sum_{i=1}^{D}
+	(a_k - 1) \ln \mu_{ki}
+	+
+	(b_k - 1) \ln (1 - \mu_{ki})
+\end{align*}
+
+
+\paragraph{The maximization.} 
+We ignore constants and explicitly give the equation for the complete-data log likelihood, which becomes
+\begin{align}
+\begin{split}
+\label{eqn:ch9_prob18_complete_ll_exp}
+&\E_{\vect{Z}} \left[ \ln p (\vect{X}, \vect{Z} \mid \vect{\mu}, \vect{\pi})  \right]
++
+\ln p(\vect{\mu}, \vect{\pi}) \\
+&= 
+	\sum_{n=1}^{N}
+	\sum_{k=1}^{k}
+	\gamma(z_{nk})
+	\left[ 
+	\ln \pi_k
+	+
+	\sum_{i=1}^{D}
+	x_{ni} \ln \mu_{ki} + (1- x_{ni}) \ln (1 - \mu_{ki})
+	 \right] \\
+	 &+ \sum_{k=1}^{K} (\alpha_k - 1) \ln \pi_k
+	 + 
+	 \sum_{k=1}^{K}
+	 \sum_{i=1}^{D}
+	 (a_k - 1) \ln \mu_{ki}
+	 +
+	 (b_k - 1) \ln (1 - \mu_{ki}).
+	 \end{split}
+\end{align}
+Notice that the first term with the double sum is identical to Equation (9.55) in the book.
+
+\paragraph{Maximizing w.r.t. $\vect{\pi}$.} 
+We introduce a Lagrange multiplier for the constraint $\sum_k \pi_k = 1$, and then differentiate \eqref{eqn:ch9_prob18_complete_ll_exp} with respect to $\pi_k$ to obtain
+\begin{equation*}
+	\sum_{n} \gamma(z_{nk}) \frac{1}{\pi_k}
+	+
+	(\alpha_k - 1) \frac{1}{\pi_k}
+		+ \lambda
+		=0.
+\end{equation*}
+Multiplying by $\pi_k$, summing both sides over $k=1, \ldots, K$ and using $\sum_k \pi_k = 1$ lets us solve for the Lagrange multiplier $\lambda$.
+Substituting this back into the equation and using Equation (9.57) from the book and the fact that $\sum_k N_k = N$ then yields the solution
+\begin{equation*}
+	\pi_k = \frac{N_k + \alpha_k - 1}{N + \sum_j (\alpha_j - 1)}
+	=
+	\frac{N_k + \alpha_k - 1}{N + \alpha_0 - K}.
+\end{equation*}
+Notice the similarity with Equation (9.60), which represents the same equation with no prior $p(\vect{\pi} \mid \vect{\alpha})$.
+In fact, if we set $(\alpha_1, \ldots, \alpha_K) = (1, \ldots, 1)$, then $\alpha_0 = \sum_k \alpha_k = K$ and the expression above reduces exactly to Equation (9.60).
+
+\paragraph{Maximizing w.r.t. $\vect{\mu}_k$.} 
+We differentiate Equation \eqref{eqn:ch9_prob18_complete_ll_exp} above with respect to $\mu_{ki}$:
+\begin{equation*}
+	\sum_n \gamma(z_{nk}) 
+	\left( 
+	\frac{x_{ni}}{\mu_{ki}}
+	-
+	\frac{1 - x_{ni}}{1 - \mu_{ki}}
+	\right)
+	+
+	\frac{a_k - 1}{\mu_{ki}}
+	 -
+	 \frac{b_k - 1}{1 - \mu_{ki}} = 0
+\end{equation*}
+The common denominator is $\mu_{ki}(1 - \mu_{ki})$.
+Multiplying the fractions to obtain a common denominator and then multiplying both sides of the equation by it yields
+\begin{equation*}
+	\sum_n \gamma(z_{nk})  \left( x_{ni} - \mu_{ki} \right)
+	+
+	(a_k - 1) + \mu_{ki}(2 - a_k - b_k) = 0.
+\end{equation*}
+We solve for $\mu_{ki}$ and make use of Equations (9.57) and (9.58), to get
+\begin{equation*}
+	\mu_{ki} = \frac{\sum_n \gamma(z_{nk}) x_{ni} + (a_k - 1)  }
+	{N_k + (a_k - 1) + (b_k - 1)}
+	\quad \text{or} \quad 
+	\vect{\mu}_k = \frac{N_k \bar{\vect{x}}_k + (a_k - 1)  }
+	{N_k + (a_k - 1) + (b_k - 1)}.
+\end{equation*}
+Notice that if $a_k = b_k= 1$, then this reduces to the equation with no prior.
+
+
+
+
 
 % ----------------------------------------------------------------------------
 \subsection{Approximate Interference}
+
+\subsubsection*{Exercise 10.4}
+The kullback leibler divergence is defined as
+\begin{equation*}
+	KL(p || q) = - \int p(\vect{x}) 
+	\ln \left( \frac{p(\vect{x})}{q(\vect{x})} \right)
+	\, d \vect{x}
+\end{equation*}
+In this problem $q(\vect{x}) = \N (\vect{x} \mid \vect{\mu}, \vect{\Sigma})$, and therefore
+\begin{align*}
+	\partial_{\vect{\mu}} q(\vect{x}) & = \vect{\Sigma}^{-1} 
+	\left( \vect{x} - \vect{\mu} \right) q(\vect{x}) \\
+	\partial_{\vect{\Sigma}} \ln q(\vect{x}) &=
+	- \frac{1}{2} \vect{\Sigma}^{-T}
+	+  \frac{1}{2} \vect{\Sigma}^{T}
+	\left( \vect{x} - \vect{\mu} \right)
+	\left( \vect{x} - \vect{\mu} \right)^{T}
+	\vect{\Sigma}^{-T}.
+\end{align*}
+The first equation is differentiation of a quadratic form with respect to the vector, which is straightforward.
+The second equation is more involved, and is from \emph{the matrix cookbook}\footnote{\url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}}.
+
+Differentiating the KL divergence with respect to $\vect{\mu}$ and setting it equal to zero yields
+\begin{equation*}
+\int p(\vect{x}) \vect{\Sigma}^{-1} \vect{x} \, d \vect{x}
+=
+\int p(\vect{x}) \vect{\Sigma}^{-1} \vect{\mu} \, d \vect{x}.
+\end{equation*}
+Taking constants out of the integrals and multiplying with $\vect{\Sigma}$ (which we assume to be invertible) yields $\vect{\mu} = \int p(\vect{x}) \vect{x} \, d \vect{x}$ as desired.
+
+Next we differentiate with respect to  $\vect{\Sigma}$ and set it equal to zero, giving
+\begin{equation*}
+	\int p(\vect{x}) 
+	\vect{\Sigma}^{-T}
+	+  p(\vect{x})  \vect{\Sigma}^{T}
+	\left( \vect{x} - \vect{\mu} \right)
+	\left( \vect{x} - \vect{\mu} \right)^{T}
+	\vect{\Sigma}^{-T}
+	\, d \vect{x} = \vect{0}.
+\end{equation*}
+Right-multiplying by $\vect{\Sigma}^{-T}$ and using $\vect{\Sigma}^{T} = \vect{\Sigma}$, we solve for $\vect{\Sigma}^{-1}$ and obtain
+\begin{equation*}
+	\vect{\Sigma}^{-1} = \int 
+	p(\vect{x})  
+	\left( \vect{x} - \vect{\mu} \right)
+	\left( \vect{x} - \vect{\mu} \right)^{T}
+	\, d \vect{x}
+	= \E\left[ \left( \vect{x} - \vect{\mu} \right)
+	\left( \vect{x} - \vect{\mu} \right)^{T} \right]
+	= \cov[\vect{x}].
+\end{equation*}
+
+
+\subsubsection*{Exercise 10.8}
+The mean of the variational posterior distribution for $\tau$ is given by
+\begin{equation*}
+	\E[\tau] = \frac{a_N}{b_N}
+\end{equation*}
+We will examine both of these terms as $N \to \infty$.
+Clearly $a_N \simeq N / 2$ as $N$ goes to infinity.
+
+The expression for $b_N$ requires some more care.
+By the linearly of the expected value
+\begin{equation*}
+b_N \simeq 
+	\frac{1}{2}
+	\left[
+	\sum_{n=1}^{N} \left( x_n^2 - 2 x_n \E [\mu] + \E [\mu^2 ] \right)
+	+
+	\lambda_0 \left( 
+	\E [\mu^2 ] - 2 \mu_0 \E [\mu] + \mu_0^2
+	 \right)
+	\right].
+\end{equation*}
+As $N \to \infty$, we see that $\E [\mu] = \bar{x}$ and (from Equation (1.50) in the book)
+\begin{equation*}
+	\E [\mu^2] = \mu^2 + \lambda_N^{-1}
+	\simeq \bar{x}^2 +
+	\frac{1}{(\lambda_0 +N) \E [\tau]}
+	\simeq
+	\bar{x}^2.
+\end{equation*}
+From this, we observe that 
+\begin{equation*}
+b_N \simeq 
+\frac{1}{2}
+\left[
+\sum_{n=1}^{N} \left( x_n - \bar{x} \right)^2
++
+\lambda_0 \left( 
+\bar{x} - \mu_0
+\right)^2
+\right]
+\simeq 
+\frac{1}{2}
+\sum_{n=1}^{N} \left( x_n - \bar{x} \right)^2,
+\end{equation*}
+where the final asymptotic equality holds because $(\bar{x} - \mu_0)^2$ does not grow as $N \to \infty$.
+Substituting these we see that the expected value of the variational posterior distribution over the precision asymptotically equals the sample variance, i.e.
+\begin{equation*}
+	\frac{1}{\E[\tau]} = \frac{b_N}{a_N} \simeq \frac{1}{N} 
+	\sum_{n=1}^{N} \left( x_n - \bar{x} \right)^2.
+\end{equation*}
+Furthermore, we see that
+\begin{equation*}
+\var[\tau] = \frac{a_N}{b_N^2} =  \frac{\E[\tau]}{b_N} \simeq 0
+\end{equation*}
+since $\E[\tau]$ converges but $b_N$ grows as $N \to \infty$.
+
+
+
+\subsubsection*{Exercise 10.11}
+
+\subsubsection*{Exercise 10.12}
+Starting from Equation (10.43)
+\begin{equation*}
+	\ln q^{\star}(\vect{Z})
+	=
+	\E_{\vect{\pi}, \vect{\mu}, \vect{\Lambda}} [
+	\ln 
+	p(X, Z, \pi, \mu, \Lambda)
+	]
+	+ \text{const}
+\end{equation*}
+we go to (10.44) by noticing that only $p(Z\mid \pi)$ and $p(X \mid Z, \mu, \Lambda)$ in (10.41) are functions of $Z$.
+We have
+\begin{equation*}
+	\E_{\vect{\pi}} [
+	\ln 
+	p(Z\mid \pi)
+	]
+	=
+	\E_{\vect{\pi}}
+	\left[ 
+	\ln
+	\prod_{n=1}^{N}
+	\prod_{k=1}^{K} \pi_k^{z_{nk}}
+	 \right]
+	 =
+	 \E_{\vect{\pi}}
+	 \left[ 
+	 \sum_{n=1}^{N}
+	 \sum_{k=1}^{K} z_{nk} \ln \pi_k
+	 \right]
+	 =
+	 \sum_{n=1}^{N}
+	 \sum_{k=1}^{K} z_{nk} 
+	 \E_{\vect{\pi}}
+	 \left[ 
+	 \ln \pi_k
+	 \right]
+\end{equation*}
+and since $\ln p(x_n, z_n \mid, \mu, \Lambda) \propto \ln \abs{\vect{\Lambda}_k} - D \ln (2 \pi) - \E \left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right]$ we have
+\begin{align*}
+\E_{\vect{\mu}, \vect{\Lambda}} [
+\ln 
+p(X \mid Z, \mu, \Lambda)
+]
+&=
+\E_{\vect{\mu}, \vect{\Lambda}}
+\left[ 
+\ln
+\prod_{n=1}^{N}
+\prod_{k=1}^{K}
+\N (x_n \mid \mu_k, \Lambda_k^{-1})
+^{z_{nk}}
+\right] \\
+&= 
+\E_{\vect{\mu}, \vect{\Lambda}}
+\left[ 
+\sum_{n=1}^{N}
+\sum_{k=1}^{K}
+z_{nk} \ln
+\N (x_n \mid \mu_k, \Lambda_k^{-1})
+\right] \\
+&= 
+\sum_{n=1}^{N}
+\sum_{k=1}^{K}
+z_{nk}
+ \left( \frac{1}{2} \E_{ \vect{\Lambda}} [\ln \abs{\vect{\Lambda}_k}]
+	- 
+	\frac{D}{2} \ln (2 \pi)
+	-
+	\frac{1}{2} \E_{\vect{\mu}, \vect{\Lambda}} 
+	\left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right] \right) 
+\end{align*}
+Combining the expressions for $\E_{\vect{\pi}} [ \ln  p(Z\mid \pi) ]$ and $\E_{\vect{\mu}, \vect{\Lambda}} [ \ln  p(X \mid Z, \mu, \Lambda)]$ yields Equation (10.46) in the book.
+
+In going from Equation (10.47) to (10.48), we wish to choose a normalization constant $C$ so that
+\begin{equation*}
+	C \sum_{ \vect{z}_n } p (\vect{z}_n) = 
+	C \sum_{z_{nk} \in \vect{z}_n} 
+	\left( \prod_{k=1}^{K} \rho_{nk}^{z_{nk}} \right)
+	=C \sum_{k=1}^{K} \rho_{nk} 
+	= 1.
+\end{equation*}
+Multiplying with $C$ takes us from (10.47) to (10.48).
+
+\subsubsection*{Exercise 10.19}
+
+\subsubsection*{Exercise 10.23}
+
+\subsubsection*{Exercise 10.28}
+
+\subsubsection*{Exercise 10.34}
+
+
+
+
+
+
+
+
 \subsubsection*{Exercise X.Y}
 \begin{easylist}[enumerate]
 	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
