@@ -272,11 +272,11 @@ Estimates for the parameters $\vect{\theta} = (\mu, \sigma^2)$ can be obtained b
 	\end{equation*}
 \end{easylist}
 Three general decision approaches in decreasing order of complexity:
-(1) interference with class conditional probabilities $p(\vect{x} | \Class_j)$,
-(2) interference with posterior class probabilities $p(\Class_j | \vect{x})$ and
+(1) inference with class conditional probabilities $p(\vect{x} | \Class_j)$,
+(2) inference with posterior class probabilities $p(\Class_j | \vect{x})$ and
 (3) discriminant function.
 \[\begin{tikzcd}[column sep=6em]
-\vect{x} \arrow[]{r}{\text{interference}} 
+\vect{x} \arrow[]{r}{\text{inference}} 
 \arrow[swap, bend right = 20]{rr}{\text{discriminant function}} 
 & p(\Class_k , \vect{x}) \arrow[]{r}{\text{decision}} & \Class_k
 \end{tikzcd}\]
@@ -399,7 +399,7 @@ Three general decision approaches in decreasing order of complexity:
 
 
 
-\subsubsection*{Bayesian interference}
+\subsubsection*{Bayesian inference}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
 	# Gaussian variables.
@@ -640,7 +640,7 @@ Three general decision approaches in decreasing order of complexity:
 		 \vect{A} = \left. - \nabla \nabla \ln f(\vect{z}) \right|_{\vect{z} = \vect{z}_0}
 	\end{equation*}
 	# One application of Laplace approximation is Bayesian logistic regression, which is generally intractable.
-	Using the Laplace approximation, an approximation to exact Bayesian interference is possible.
+	Using the Laplace approximation, an approximation to exact Bayesian inference is possible.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -846,7 +846,7 @@ Three general decision approaches in decreasing order of complexity:
 	# Hyperparameters $\vect{\theta}$ in $k(\vect{x}_n, \vect{x}_m \mid \vect{\theta})$ can be optimized by maximizing the log likelihood $\ln p (\mathsf{t} \mid \vect{\theta})$, which is in general non-convex.
 	This is type 2 maximum likelihood.
 	# Gaussian processes can be used for classification, by composing the output with a sigmoid so that $y = \sigma (\vect{a}(\vect{x}))$.
-	Not analytically tractable, but approximate methods exist: (1) variational interference, (2) expectation maximization and (3) Laplace approximation.
+	Not analytically tractable, but approximate methods exist: (1) variational inference, (2) expectation maximization and (3) Laplace approximation.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -1126,10 +1126,10 @@ The Markov blanket in an undirected graph has a similar, but simpler structure; 
 	It represents a loss of structure.
 \end{easylist}
 
-\subsection*{Interference}
+\subsection*{Inference}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# Interference on a \emph{chain} is accomplished by sending \emph{messages}; one forward and one backward.
+	# Inference on a \emph{chain} is accomplished by sending \emph{messages}; one forward and one backward.
 	This let's us evaluate marginals $p(x_n)$ efficiently.
 	If each variable has $K$ possible states, the algorithm is $\mathcal{O}(NK^2)$ instead of the naive $\mathcal{O}(K^N)$.
 	\begin{equation*}
@@ -1252,10 +1252,65 @@ The Markov blanket in an undirected graph has a similar, but simpler structure; 
 \end{easylist}
 
 % ----------------------------------------------------------------------------
-\subsection{Approximate Interference}
+\subsection{Approximate Inference}
+
+The goal of approximate inference is to find the posterior distribution over the latent variables, i.e. $p(\vect{Z} \mid \vect{X})$, and take expectations with respect to this distribution.
+
+The two approaches are either:
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Stochastic: converge eventually, but often slow in practice, e.g. sampling.
+	# Deterministic: approximate $p(\vect{Z} \mid \vect{X})$ analytically, .e.g. variational inference.
+	This approach is ``exactly wrong,'' but often tractable. 
+	Uses a set of re-estimation equations.
+\end{easylist}
+
+\subsection*{Variational inteference and factorized distributions}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The log model evidence (marginal probability) $\ln p(\vect{X})$ can be decomposed as
+	\begin{equation*}
+		\ln p(\vect{X}) = \mathcal{L}(q) + \operatorname{KL}(q || p),
+	\end{equation*}
+	where $\operatorname{KL}(q || p)$ is the Kullback-Leibler divergence of $q(\vect{Z})$ with respect to $p(\vect{Z} \mid \vect{X})$.
+	Recall that the distribution $q(\vect{Z})$ is arbitrary---the decomposition holds for any choice of $q(\vect{Z})$.
+	Variational inference restricts the functional form of $q(\vect{Z})$ and maximizes $\mathcal{L}(q)$, which is equivalent to by minimizing the KL divergence $\operatorname{KL}(q || p)$.
+	# The technique of \emph{factorized distributions} assumes that $q(\vect{Z})$ factors as $\prod_{i=1}^{M} q_i (\vect{Z}_i)$, and the minimizer for a single factor is given by
+	\begin{equation*}
+		\ln q_j^{\star} (\vect{Z}_j) = \underset{i\neq j}{\E} 
+		\left[ \ln p(\vect{Z}, \vect{X}) \right] + \text{const}
+		= \int \ln p(\vect{Z}, \vect{X}) \prod_{i \neq j}^{M} q(\vect{Z}_i) \, d \vect{Z}_i
+		+ \text{const}
+		,
+	\end{equation*}
+	where the expectation $\underset{i\neq j}{\E}[\cdot]$ is taken with respect to all the $M$ groups of variables in the factorized distribution $q(\vect{Z}) = \prod_{i=1}^{M} q_i (\vect{Z}_i)$ except the $j$th.
+	## This leads to coupled \emph{re-estimation} equations, since the optimal $q_j (\vect{Z}_j)$ is dependent on the other factors.
+	The equations are solved by cycling through the groups of variables and solving each in turn.
+	## Additional \emph{induced factorizations} may naturally arise from interactions between the assumed factorizations $\prod_i q_i (\vect{Z}_i)$ and the conditionally independent properties of the true joint distribution $p(\vect{Z}, \vect{X})$.
+	# If we minimize the reverse KL divergence $\operatorname{KL}(p || q)$ instead of $\operatorname{KL}(q || p)$, we get the simple analytical solution
+	\begin{equation*}
+		q_j^{\star} (\vect{Z}_j) = \int p(\vect{Z}) \, \prod_{i \neq j}  d \vect{Z}_j = p(\vect{Z}_j).
+	\end{equation*}
+	However, minimizing the reversed KL leads to averaging over several modes of the posterior $p(\vect{Z} \mid \vect{X})$, which in the context of mixtures yields bad solutions.
+\end{easylist}
+
+\subsection*{Examples of factorized distributions}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# Some examples using factorized distributions given in the text are (1) univariate Gaussians (for tutorial purposes), (2) mixtures of Gaussians, (3) general model comparison and (3) linear regression.
+	## Approximating the predictive distribution $p(\widehat{\vect{x}} \mid \vect{X})$ of possible unobserved values is possible, and evaluating the variational lower bound $\mathcal{L}(q)$ is also possible (this bound should never decrease, and provides a practical check that the math and convergence is correct).
+	# The assumed factorization in mixtures of Gaussians is
+	\begin{equation*}
+		q(\vect{Z}, \vect{\pi}, \vect{\mu}, \vect{\Lambda})
+		=
+		\underbrace{q(\vect{Z})}_{\text{variables}}
+		\underbrace{q(\vect{\pi}, \vect{\mu}, \vect{\Lambda})}_{\text{parameters}},
+	\end{equation*}
+	and this approach of grouping variables and parameters separately leads to good results when the distributions are members of the exponential family.
+	Variables (\emph{extensive}) scale with observed data, while parameters (\emph{intensive}) do not.
+	# There are several advantages of variational inference compared to EM.
+	For mixture models of Gaussians singularities vanish when appropriate priors are used, and the model learns the optimal value of $K$ automatically.
+	Since there are $K!$ symmetries, proper regularization must be used however.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -4200,14 +4255,14 @@ Notice that if $a_k = b_k= 1$, then this reduces to the equation with no prior.
 
 
 % ----------------------------------------------------------------------------
-\subsection{Approximate Interference}
+\subsection{Approximate Inference}
 
 \subsubsection*{Exercise 10.4}
-The kullback leibler divergence is defined as
+The (reversed) Kullback-Leibler divergence is defined as
 \begin{equation*}
 	KL(p || q) = - \int p(\vect{x}) 
-	\ln \left( \frac{p(\vect{x})}{q(\vect{x})} \right)
-	\, d \vect{x}
+	\ln  \frac{p(\vect{x})}{q(\vect{x})}
+	\, d \vect{x}.
 \end{equation*}
 In this problem $q(\vect{x}) = \N (\vect{x} \mid \vect{\mu}, \vect{\Sigma})$, and therefore
 \begin{align*}
@@ -4220,8 +4275,8 @@ In this problem $q(\vect{x}) = \N (\vect{x} \mid \vect{\mu}, \vect{\Sigma})$, an
 	\left( \vect{x} - \vect{\mu} \right)^{T}
 	\vect{\Sigma}^{-T}.
 \end{align*}
-The first equation is differentiation of a quadratic form with respect to the vector, which is straightforward.
-The second equation is more involved, and is from \emph{the matrix cookbook}\footnote{\url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}}.
+The first equation is essentially differentiation of a quadratic form with respect to the vector, which we assume is known and straightforward.
+The second equation is more involved, and the result presented here is taken from \emph{the matrix cookbook}\footnote{\url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}}.
 
 Differentiating the KL divergence with respect to $\vect{\mu}$ and setting it equal to zero yields
 \begin{equation*}
@@ -4229,9 +4284,9 @@ Differentiating the KL divergence with respect to $\vect{\mu}$ and setting it eq
 =
 \int p(\vect{x}) \vect{\Sigma}^{-1} \vect{\mu} \, d \vect{x}.
 \end{equation*}
-Taking constants out of the integrals and multiplying with $\vect{\Sigma}$ (which we assume to be invertible) yields $\vect{\mu} = \int p(\vect{x}) \vect{x} \, d \vect{x}$ as desired.
+Taking constants out of the integrals and left-multiplying with $\vect{\Sigma}$ (which we assume to be invertible) yields $\vect{\mu} = \int p(\vect{x}) \vect{x} \, d \vect{x}$, which solves the first part of the problem.
 
-Next we differentiate with respect to  $\vect{\Sigma}$ and set it equal to zero, giving
+To solve the second part, we differentiate with respect to  $\vect{\Sigma}$ and equate the result to zero:
 \begin{equation*}
 	\int p(\vect{x}) 
 	\vect{\Sigma}^{-T}
@@ -4241,7 +4296,7 @@ Next we differentiate with respect to  $\vect{\Sigma}$ and set it equal to zero,
 	\vect{\Sigma}^{-T}
 	\, d \vect{x} = \vect{0}.
 \end{equation*}
-Right-multiplying by $\vect{\Sigma}^{-T}$ and using $\vect{\Sigma}^{T} = \vect{\Sigma}$, we solve for $\vect{\Sigma}^{-1}$ and obtain
+Right-multiplying by $\vect{\Sigma}^{-T}$ and using $\vect{\Sigma}^{T} = \vect{\Sigma}$, we then solve for $\vect{\Sigma}^{-1}$ and obtain
 \begin{equation*}
 	\vect{\Sigma}^{-1} = \int 
 	p(\vect{x})  
@@ -4262,9 +4317,10 @@ The mean of the variational posterior distribution for $\tau$ is given by
 We will examine both of these terms as $N \to \infty$.
 Clearly $a_N \simeq N / 2$ as $N$ goes to infinity.
 
-The expression for $b_N$ requires some more care.
-By the linearly of the expected value
-\begin{equation*}
+The expression for $b_N$ requires more finesse.
+By the linearity of the expected value
+\begin{equation}
+\label{eqn:ch10_prob8}
 b_N \simeq 
 	\frac{1}{2}
 	\left[
@@ -4274,8 +4330,8 @@ b_N \simeq
 	\E [\mu^2 ] - 2 \mu_0 \E [\mu] + \mu_0^2
 	 \right)
 	\right].
-\end{equation*}
-As $N \to \infty$, we see that $\E [\mu] = \bar{x}$ and (from Equation (1.50) in the book)
+\end{equation}
+As $N \to \infty$, we see that $\E [\mu] = \bar{x}$, and that (from Equation (1.50) in the book)
 \begin{equation*}
 	\E [\mu^2] = \mu^2 + \lambda_N^{-1}
 	\simeq \bar{x}^2 +
@@ -4283,7 +4339,7 @@ As $N \to \infty$, we see that $\E [\mu] = \bar{x}$ and (from Equation (1.50) in
 	\simeq
 	\bar{x}^2.
 \end{equation*}
-From this, we observe that 
+Substituting the expressions for $\E [\mu]$ and $\E [\mu^2]$ back into Equation \eqref{eqn:ch10_prob8} yields
 \begin{equation*}
 b_N \simeq 
 \frac{1}{2}
@@ -4298,13 +4354,15 @@ b_N \simeq
 \frac{1}{2}
 \sum_{n=1}^{N} \left( x_n - \bar{x} \right)^2,
 \end{equation*}
-where the final asymptotic equality holds because $(\bar{x} - \mu_0)^2$ does not grow as $N \to \infty$.
-Substituting these we see that the expected value of the variational posterior distribution over the precision asymptotically equals the sample variance, i.e.
+where the final asymptotic equality holds because $(\bar{x} - \mu_0)^2$ remains constant as $N \to \infty$.
+We are now in a position to see that the expected value of the variational posterior distribution over the precision, i.e. $1 / \E[\tau]$, asymptotically equals the sample variance.
+In other words, we have
 \begin{equation*}
 	\frac{1}{\E[\tau]} = \frac{b_N}{a_N} \simeq \frac{1}{N} 
 	\sum_{n=1}^{N} \left( x_n - \bar{x} \right)^2.
 \end{equation*}
-Furthermore, we see that
+Using the above, we readily observe that $\var[\tau]$ goes to zero.
+We have 
 \begin{equation*}
 \var[\tau] = \frac{a_N}{b_N^2} =  \frac{\E[\tau]}{b_N} \simeq 0
 \end{equation*}
@@ -4313,51 +4371,98 @@ since $\E[\tau]$ converges but $b_N$ grows as $N \to \infty$.
 
 
 \subsubsection*{Exercise 10.11}
+We will make two assumptions in this problem: 
+(1) a Lagrange multiplier can be used to optimize a \emph{functional} $F[y]$ in the same way that it is used to optimize a \emph{function} $y(x)$, and
+(2) the variation $\delta F[y] / \delta y$ can be taken irrespective of whether the function $y(x)$ is defined over real numbers of integers.
+We assume these to be true, but a rigorous approach would be to investigate these assumptions thoroughly---which we will not.
+
+The functional we wish to optimize becomes
+\begin{equation*}
+	F[q(m)]
+	=
+	\sum_{m}
+	\sum_{\vect{Z}}
+	q\left(\vect{Z} \mid m \right)
+	q(m)
+	\ln \left[
+	\frac{p(\vect{Z}, \vect{X}, m)}{q\left(\vect{Z} \mid m \right)
+		q(m)}
+	\right]
+	+ \lambda \left( \sum_{m} q(m) -1 \right).
+\end{equation*}
+Taking the variation with respect to $q(m)$ and requiring that the functional derivative vanishes gives the equation
+\begin{equation*}
+	\sum_{\vect{Z}}
+	q\left(\vect{Z} \mid m \right)
+	\ln \left[
+	\frac{p(\vect{Z}, \vect{X} \mid m)}{q\left(\vect{Z} \mid m \right)}
+	\right]
+	+
+	\sum_{\vect{Z}}
+	q\left(\vect{Z} \mid m \right)
+	\ln \left[
+	\frac{p( m)}{q(m)}
+	\right]
+	-
+	\sum_{\vect{Z}} q\left(\vect{Z} \mid m \right) + \lambda = 0
+\end{equation*}
+where we have used $p(\vect{Z}, \vect{X} , m) = p(\vect{Z}, \vect{X} \mid m) p( m)$.
+The first term is $\mathcal{L}_m$, in the second only the logarithm remains when we perform the sum (since the probability mass function sums to unity).
+The equation above therefore becomes
+\begin{equation*}
+	\mathcal{L}_m +  \ln 
+	\frac{p( m)}{q(m)}
+	-1
+	+\lambda = 0,
+\end{equation*}
+which means that $q(m) = p(m) e^{ \lambda - 1 + \mathcal{L}_m}
+\propto p(m) e^{\mathcal{L}_m}$, which we wanted to show.
 
 \subsubsection*{Exercise 10.12}
-Starting from Equation (10.43)
+We detail some of the steps going from Equation (10.41) to (10.49).
+Starting with
 \begin{equation*}
 	\ln q^{\star}(\vect{Z})
 	=
-	\E_{\vect{\pi}, \vect{\mu}, \vect{\Lambda}} [
+	\E_{\vect{\vect{\pi}}, \vect{\mu}, \vect{\Lambda}} [
 	\ln 
-	p(X, Z, \pi, \mu, \Lambda)
+	p(\vect{X}, \vect{Z}, \vect{\pi}, \vect{\mu}, \vect{\Lambda})
 	]
 	+ \text{const}
 \end{equation*}
-we go to (10.44) by noticing that only $p(Z\mid \pi)$ and $p(X \mid Z, \mu, \Lambda)$ in (10.41) are functions of $Z$.
-We have
+we obtain Equation (10.44) by noticing that only $p(\vect{Z}\mid \vect{\pi})$ and $p(\vect{X} \mid \vect{Z}, \vect{\mu}, \vect{\Lambda})$ in (10.41) are functions of $\vect{Z}$.
+The expected value of the first term becomes
 \begin{equation*}
-	\E_{\vect{\pi}} [
+	\E_{\vect{\vect{\pi}}} [
 	\ln 
-	p(Z\mid \pi)
+	p(\vect{Z}\mid \vect{\pi})
 	]
 	=
-	\E_{\vect{\pi}}
+	\E_{\vect{\vect{\pi}}}
 	\left[ 
 	\ln
 	\prod_{n=1}^{N}
-	\prod_{k=1}^{K} \pi_k^{z_{nk}}
+	\prod_{k=1}^{K} \vect{\pi}_k^{z_{nk}}
 	 \right]
 	 =
 	 \E_{\vect{\pi}}
 	 \left[ 
 	 \sum_{n=1}^{N}
-	 \sum_{k=1}^{K} z_{nk} \ln \pi_k
+	 \sum_{k=1}^{K} z_{nk} \ln \vect{\pi}_k
 	 \right]
 	 =
 	 \sum_{n=1}^{N}
 	 \sum_{k=1}^{K} z_{nk} 
 	 \E_{\vect{\pi}}
 	 \left[ 
-	 \ln \pi_k
+	 \ln \vect{\pi}_k
 	 \right]
 \end{equation*}
-and since $\ln p(x_n, z_n \mid, \mu, \Lambda) \propto \ln \abs{\vect{\Lambda}_k} - D \ln (2 \pi) - \E \left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right]$ we have
+and since $\ln p(\vect{x}_n, \vect{z}_n \mid, \vect{\mu}, \vect{\Lambda}) \propto \ln \abs{\vect{\Lambda}_k} - D \ln (2 \pi) - \E \left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right]$ the expected value of the second term becomes
 \begin{align*}
 \E_{\vect{\mu}, \vect{\Lambda}} [
 \ln 
-p(X \mid Z, \mu, \Lambda)
+p(\vect{X} \mid \vect{Z}, \vect{\mu}, \vect{\Lambda})
 ]
 &=
 \E_{\vect{\mu}, \vect{\Lambda}}
@@ -4365,7 +4470,7 @@ p(X \mid Z, \mu, \Lambda)
 \ln
 \prod_{n=1}^{N}
 \prod_{k=1}^{K}
-\N (x_n \mid \mu_k, \Lambda_k^{-1})
+\N (\vect{x}_n \mid \vect{\mu}_k, \vect{\Lambda}_k^{-1})
 ^{z_{nk}}
 \right] \\
 &= 
@@ -4374,20 +4479,20 @@ p(X \mid Z, \mu, \Lambda)
 \sum_{n=1}^{N}
 \sum_{k=1}^{K}
 z_{nk} \ln
-\N (x_n \mid \mu_k, \Lambda_k^{-1})
+\N (\vect{x}_n \mid \vect{\mu}_k, \vect{\Lambda}_k^{-1})
 \right] \\
 &= 
 \sum_{n=1}^{N}
 \sum_{k=1}^{K}
 z_{nk}
- \left( \frac{1}{2} \E_{ \vect{\Lambda}} [\ln \abs{\vect{\Lambda}_k}]
+ \frac{1}{2} \left(  \E_{ \vect{\Lambda}} [\ln \abs{\vect{\Lambda}_k}]
 	- 
-	\frac{D}{2} \ln (2 \pi)
+	D \ln (2 \pi)
 	-
-	\frac{1}{2} \E_{\vect{\mu}, \vect{\Lambda}} 
-	\left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right] \right) 
+	 \E_{\vect{\mu}, \vect{\Lambda}} 
+	\left[ (\vect{x}_n - \vect{\mu})^T \vect{\Lambda}_k (\vect{x}_n - \vect{\mu}) \right] \right) .
 \end{align*}
-Combining the expressions for $\E_{\vect{\pi}} [ \ln  p(Z\mid \pi) ]$ and $\E_{\vect{\mu}, \vect{\Lambda}} [ \ln  p(X \mid Z, \mu, \Lambda)]$ yields Equation (10.46) in the book.
+Combining the expressions for the two terms $\E_{\vect{\pi}} [ \ln  p(Z\mid \vect{\pi}) ]$ and $\E_{\vect{\mu}, \vect{\Lambda}} [ \ln  p(\vect{X} \mid \vect{Z}, \vect{\mu}, \vect{\Lambda})]$ yields Equation (10.46) in the book.
 
 In going from Equation (10.47) to (10.48), we wish to choose a normalization constant $C$ so that
 \begin{equation*}
@@ -4397,7 +4502,10 @@ In going from Equation (10.47) to (10.48), we wish to choose a normalization con
 	=C \sum_{k=1}^{K} \rho_{nk} 
 	= 1.
 \end{equation*}
+This ensures normalization.
 Multiplying with $C$ takes us from (10.47) to (10.48).
+
+We have explained the major steps going from Equation (10.41) to (10.49).
 
 \subsubsection*{Exercise 10.19}
 
@@ -4408,17 +4516,6 @@ Multiplying with $C$ takes us from (10.47) to (10.48).
 \subsubsection*{Exercise 10.34}
 
 
-
-
-
-
-
-
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
 
 % ----------------------------------------------------------------------------
 \subsection{Sampling Methods}
