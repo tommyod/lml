@@ -1313,6 +1313,30 @@ The two approaches are either:
 	Since there are $K!$ symmetries, proper regularization must be used however.
 \end{easylist}
 
+\subsection*{Local variational methods and expectation propagation}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# \emph{Local variational methods} bound (typically univariate) functions by means of simpler functions.
+	An example is bounding convex functions $y(x)$ using a tangent linear function.
+	When $\eta$ is the slope parameterizing the tangent and $-g(\eta)$ is the intercept, convex duality states that
+	\begin{equation*}
+		g(\eta) = \max_x \left\{ \eta x - f(x) \right\}
+		\qquad 
+		f(x) = \max_\eta \left\{ \eta x - g(\eta) \right\}.
+	\end{equation*}
+	If $y(x)$ is not convex, suitable transformations may be used.
+	
+	# To see how local variational methods can be applied, consider the integral
+	\begin{equation*}
+		I = \underbrace{\int \sigma(a) p (a) \, da}_{\text{intractable}} \geq 
+		\underbrace{\int f(a, \xi) p (a) \, da}_{\text{tractable}} = F(\xi).
+	\end{equation*}
+	We can optimize $F(\xi)$ for it's maximizer $\xi^{\star}$, but note that this does not optimize $f(a, \xi) p (a)$ for every value of $a$, so it will in general not be an exact bound.
+	# \emph{Expectation propagation} minimizes the reverse Kullback Leibler divergence. 
+	It's an iterate algorithm which cycles through factors, optimizing them one-by-one.
+	
+\end{easylist}
+
 % ----------------------------------------------------------------------------
 \subsection{Sampling Methods}
 \begin{easylist}[itemize]
@@ -4508,6 +4532,235 @@ Multiplying with $C$ takes us from (10.47) to (10.48).
 We have explained the major steps going from Equation (10.41) to (10.49).
 
 \subsubsection*{Exercise 10.19}
+
+We immediately integrate out $q(\vect{\pi}) = \operatorname{Dir}(\vect{q} \mid \vect{\alpha})$, leaving us with
+\begin{equation*}
+	\iint \pi_k
+	\N \left( \widehat{\vect{x}} \mid \vect{\mu}_k , \vect{\Lambda}_k^{-1} \right)
+	\underbrace{\N \left( \vect{\mu}_k \mid \vect{m}_k , (\beta_k \vect{\Lambda}_k )^{-1} \right)
+		\mathcal{W}
+		\left( \vect{\Lambda}_k \mid \vect{W}_k, \nu_k \right)}_{q(\vect{\mu}_k,\vect{\Lambda}_k )}
+	\, d \vect{\mu}_k
+	\, d \vect{\Lambda}_k
+\end{equation*}
+where the explicit form of $q(\vect{\mu}_k,\vect{\Lambda}_k )$ is given by Equation (10.59) in the book.
+
+We then structure the integral as
+\begin{equation*}
+	\pi_k \int 
+	\mathcal{W}
+	\left( \vect{\Lambda}_k \mid \vect{W}_k, \nu_k \right)
+	\left[
+	\int
+		\N \left( \widehat{\vect{x}} \mid \vect{\mu}_k , \vect{\Lambda}_k^{-1} \right)
+		\N \left( \vect{\mu}_k \mid \vect{m}_k , (\beta_k \vect{\Lambda}_k )^{-1} \right)
+	\, d \vect{\mu}_k
+	\right]
+	\, d \vect{\Lambda}_k
+\end{equation*}
+and since $p(\widehat{\vect{x}}) = 
+\int p(\widehat{\vect{x}} \mid \vect{\mu}_k)
+ p(\vect{\mu}_k) \, d \vect{\mu}_k$ we appeal to Equations (2.113), (2.114) and (2.115) for the marginal distribution $p(\widehat{\vect{x}})$.
+After some work we then obtain 
+\begin{equation}
+\label{eqn:ch10_prob19}
+\pi_k \int 
+\mathcal{W}
+\left( \vect{\Lambda}_k \mid \vect{W}_k, \nu_k \right)
+\N \left( \widehat{\vect{x}} \mid \vect{m}_k , 
+\vect{\Lambda}_k^{-1} + \beta^{-1} \vect{\Lambda}_k^{-1} \right)
+\, d \vect{\Lambda}_k
+\end{equation}
+
+\paragraph{The one dimensional case}
+Let's consider first a one dimensional case of \eqref{eqn:ch10_prob19}.
+We ignore the constant $\pi_k$ and drop the subscript on $k$ to ease notation.
+The Wishart distribution reduces to the gamma distribution, and in a single dimension we have
+\begin{equation*}
+	\mathcal{W}
+	\left( \lambda \mid w, \nu \right)
+	=
+	\operatorname{Gam}(\lambda \mid a = \nu / 2, b = w^{-1}/2)
+\end{equation*}
+so that Equation \eqref{eqn:ch10_prob19} becomes
+\begin{equation*}
+\int_0^{\infty}
+\operatorname{Gam}(\lambda \mid a = \nu / 2, b = w^{-1}/2)
+\N \left( x \mid m , 
+\lambda^{-1} (1 + \beta^{-1}) \right)
+\, d \lambda.
+\end{equation*}
+
+Using Equations (2.42) and (2.146) for the Normal distribution and the Gamma distribution respectively, the integral explicitly becomes
+\begin{equation}
+\label{eqn:ch10_prob19_b}
+\frac{1}{\Gamma(\nu/2)}
+\left( \frac{1}{2} w^{-1} \right)^{\nu / 2}
+\frac{1}{(2 \pi (1 + \beta^{-1}))^{1/2}}
+\int_0^{\infty}
+\lambda^{(\nu - 1)/2}
+\exp\left( - \frac{1}{2} w^{-1} \lambda 
+- \frac{1}{2} \frac{\lambda(x - m)^2 }{1 + \beta^{-1}}
+\right)
+\, d \lambda.
+\end{equation}
+Following Equation (2.158) in the book, we change variables to
+\begin{equation*}
+	z = \lambda \underbrace{\left[  \frac{1}{2} w^{-1} +  \frac{1}{2} \frac{(x - m)^2 }{1 + \beta^{-1}} \right]}_{\alpha} 
+\end{equation*}
+and use the gamma function $\Gamma(\cdot)$, defined by Equation (1.141) to obtain
+\begin{equation*}
+	\frac{1}{\Gamma (\nu/2)}
+	\left( \frac{1}{2} w^{-1} \right)^{\nu / 2}
+	(2 \pi (1 + \beta^{-1}))^{-1/2}
+	\alpha^{- \nu / 2 - 1/2}
+	\underbrace{\int_0^{\infty} z ^{\frac{\nu - 1}{2}} \exp(-z) \, d z}_{\Gamma(\nu / 2 + 1/2)}.
+\end{equation*}
+Rearranging the factors and multiplying with $1$ (last factor), we obtain
+\begin{equation*}
+\frac{\Gamma(\nu / 2 + 1/2)}{\Gamma (\nu/2)}
+\left(\frac{1}{2 w}\right)^{\nu / 2}
+\left(\frac{1}{2 \pi}\right)^{1 / 2}
+\left(\frac{\beta + 1}{\beta}\right)^{-1/2}
+\alpha^{- \nu / 2 - 1/2}
+\left(\frac{\beta + 1}{\beta}\right)^{-\nu/2 - 1/2 + \nu/2 + 1/2}
+\end{equation*}
+we now pull the last factor into the others, obtaining
+\begin{equation*}
+\frac{\Gamma(\nu / 2 + 1/2)}{\Gamma (\nu/2)}
+\left(\frac{\beta + 1}{\beta 2 w}\right)^{\nu / 2}
+\left(\frac{1}{2 \pi}\right)^{1 / 2}
+\left[  \frac{\beta + 1}{\beta 2 w} +  \frac{(x - m)^2}{2} \right]^{- \nu / 2 - 1/2}.
+\end{equation*}
+We compare this with the last term in (2.158) and identifying the term as
+\begin{equation*}
+	\lambda = a / b = \frac{\nu \beta w}{1 + \beta}
+	\qquad
+	\nu =  2a = \nu
+\end{equation*}
+This is indeed equal to
+\begin{equation*}
+	\operatorname{St}(x \mid \mu, \frac{\nu \beta w}{1 + \beta}, \nu ),
+\end{equation*}
+which is a one-dimensional variant of (10.81) and (10.82).
+
+\paragraph{The $D$-dimensional case}
+We now move to the general case of \eqref{eqn:ch10_prob19}, and again we ignore the constant $\pi_k$ and drop the subscript on $k$ to ease notation.
+
+Using Equations (2.155) and (2.43) for the definition of the Wishart distribution and Gaussian, the integral explicitly becomes
+\begin{align*}
+\frac{B}{(2 \pi)^{D/2}}
+	\int &  \abs{\vect{\Lambda}}^{(\nu - D - 1)/2}
+	\exp \left( - \frac{1}{2} \operatorname{Tr} (\vect{W}^{-1} \vect{\Lambda}) \right)
+	\frac{1}{\abs{\vect{\Lambda}^{-1}}^{1/2} (1 + \beta^{-1})^{1/2}} \\
+	& \exp \left( 
+	- \frac{1}{2 (1 + \beta^{-1})} ( \widehat{\vect{x}} - \vect{m} )^T
+	  \vect{\Lambda} 
+	 ( \widehat{\vect{x}} - \vect{m} )  \right)
+	 \, d \vect{\Lambda}.
+\end{align*}
+We decompose $\vect{\Lambda}$ as into it's eigenvalues and eigenvectors
+\begin{equation*}
+	\vect{\Lambda} = \vect{U} \vect{E} \vect{U}^T
+	= \sum_i^D \lambda_i \vect{u}_i \vect{u}_i^T
+\end{equation*}
+and since $\vect{\Lambda}$ is positive definite every eigenvalue is non-negative.
+\begin{align*}
+	d \vect{\Lambda} &= d \vect{\Lambda} (?) \\
+	\abs{\vect{\Lambda}^{-1}}^{1/2} &= \prod_{i}^{D} \lambda_i^{-1/2} \\
+	\abs{\vect{\Lambda}} &= \prod_{i}^{D} \lambda_i  \\
+	\operatorname{tr}\left( \vect{W}^{-1} \vect{\Lambda} \right) &= \sum_i^D \lambda_i \vect{u}_i^T \vect{W}^{-1} \vect{u}_i  \\
+	( \widehat{\vect{x}} - \vect{m} )^T
+	\vect{\Lambda} 
+	( \widehat{\vect{x}} - \vect{m} )
+	&= 
+	\sum_i^D \lambda_i
+	\underbrace{( \widehat{\vect{x}} - \vect{m} )^T
+		\vect{u}_i}_{y_i}
+	( \widehat{\vect{x}} - \vect{m} )
+	\vect{u}_i^T
+	= \sum_i^D \lambda_i y_i^2
+\end{align*}
+
+Wishart becomes
+\begin{align*}
+  \abs{\vect{\Lambda}}^{(\nu - D - 1)/2}
+\exp \left( - \frac{1}{2} \operatorname{Tr} (\vect{W}^{-1} \vect{\Lambda}) \right) 
+=
+\prod_{i}^{D} \lambda_i^{(\nu - D - 1)/2}
+\exp \left( - \frac{1}{2} \lambda_i \vect{u}_i^T \vect{W}^{-1} \vect{u}_i \right)
+\end{align*}
+
+Gaussian becomes
+\begin{equation*}
+	\exp \left( 
+	- \frac{1}{2 (1 + \beta^{-1})} ( \widehat{\vect{x}} - \vect{m} )^T
+	\vect{\Lambda} 
+	( \widehat{\vect{x}} - \vect{m} )  \right)
+	=
+	\prod_{i}^{D} \exp \left( 
+	\frac{-\lambda_i y_i^2}{2 (1 + \beta^{-1})}  
+	\right)
+\end{equation*}
+
+The integral becomes
+\begin{align*}
+\frac{B}{(2 \pi)^{D/2}}
+\frac{1}{ (1 + \beta^{-1})^{1/2}}
+\prod_i^D & \int   
+\lambda_i^{(\nu - D)/2}
+\exp \left( 
+- \frac{1}{2} \lambda_i \vect{u}_i^T \vect{W}^{-1} \vect{u}_i
+-\frac{\lambda_i y_i^2}{2 (1 + \beta^{-1})} 
+ \right)
+\, d \lambda_i
+\end{align*}
+Solving yields
+\begin{align*}
+\frac{B}{(2 \pi)^{D/2}}
+\frac{1}{ (1 + \beta^{-1})^{1/2}}
+\prod_i^D & 
+\left( \frac{1}{2} \vect{u}_i^T \vect{W}^{-1} \vect{u}_i + 
+\frac{ y_i^2}{2 (1 + \beta^{-1})} 
+\right)^{\frac{\nu - D}{2} + 1}
+\Gamma \left( \frac{D - \nu }{2} - 1 \right)
+\end{align*}
+
+I AM STUCK HERE.
+
+1D case
+\begin{equation}
+\frac{1}{\Gamma(\nu/2)}
+\left( \frac{1}{2} w^{-1} \right)^{\nu / 2}
+\frac{1}{(2 \pi (1 + \beta^{-1}))^{1/2}}
+\int_0^{\infty}
+\lambda^{(\nu - 1)/2}
+\exp\left( - \frac{1}{2} w^{-1} \lambda 
+- \frac{1}{2} \frac{\lambda(x - m)^2 }{1 + \beta^{-1}}
+\right)
+\, d \lambda.
+\end{equation}
+
+
+Want to show
+
+\begin{equation*}
+	\frac{\Gamma((\nu + 1 - D)/2)}{\Gamma((\nu + 1)/2 - D)}
+	\frac{\abs{\vect{W}}^{1/2}}{\pi^{D/2}}
+	\left(\frac{\beta}{1 + \beta}\right) \frac{1}{(\nu + 1 - D)^D}
+	\left[ 1 + \Delta^2 \right]^{D - \frac{\nu + 1}{2}}
+\end{equation*}
+where 
+\begin{equation*}
+	\Delta^2 = 
+	\frac{\beta}{1 + \beta}
+	( \widehat{\vect{x}} - \vect{m} )^T
+	\vect{W}
+	( \widehat{\vect{x}} - \vect{m} )
+\end{equation*}
+
+
+
 
 \subsubsection*{Exercise 10.23}
 
