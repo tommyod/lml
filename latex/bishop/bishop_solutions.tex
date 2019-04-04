@@ -1334,14 +1334,75 @@ The two approaches are either:
 	We can optimize $F(\xi)$ for it's maximizer $\xi^{\star}$, but note that this does not optimize $f(a, \xi) p (a)$ for every value of $a$, so it will in general not be an exact bound.
 	# \emph{Expectation propagation} minimizes the reverse Kullback Leibler divergence. 
 	It's an iterate algorithm which cycles through factors, optimizing them one-by-one.
-	
 \end{easylist}
 
 % ----------------------------------------------------------------------------
 \subsection{Sampling Methods}
+
+
+\subsection*{Basics}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# We want to evaluate expectations such as
+	\begin{equation*}
+		\E \left[ f \right] =
+		\int f(\vect{z}) p (\vect{z}) \, d \vect{z}
+		\simeq 
+		\frac{1}{L} \sum_{\ell = 1}^{L} f \left( \vect{z}^{\ell}\right)
+	\end{equation*}
+	where $\vect{z}^{1}, \vect{z}^{2}, \ldots, \vect{z}^{L}$ are samples drawn from $p(\vect{z})$.
+	
+	# If the indefinite integral of the desired probability distribution can be inverted, then a uniform sampler $p_y(y)$ can be used to find $q_z(z)$
+	by transformation.
+	\[\begin{tikzcd}[column sep=6em]
+	\underset{\text{uniform}}{p_y(y)} \arrow[bend left = 20]{r}{f} & \underset{\text{desired}}{q_z(z)} \arrow[ bend left = 20]{l}{h}
+	\end{tikzcd}\]
+	
+	# \emph{Rejection sampling} uses a proposal distribution $kq(z)$ to sample from $\widetilde{p}(z)$.
+	The proposal function is not normalized, and completely envelopes $\widetilde{p}(z)$.
+	
+	\begin{easylist}[enumerate]
+		\ListProperties(Space=\listSpace, Space*=\listSpace)
+	## A value $z_0$ is drawn from the proposal function $q(z)$.
+	## A value $u_0$ is uniformly drawn from $\left[0, kq(z)\right]$.
+	## If $u_0 \leq \widetilde{p}(z)$, the sample $z_0$ is kept.
+	   If not, it's discarded.
+	\end{easylist}
+
+	
+		\begin{figure}[ht!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{figs/rejection.png}
+			\caption{Rejection sampling visualized with $\widetilde{p}(z)$ in blue and $kq(z)$ in black.
+				Source: \url{https://theclevermachine.files.wordpress.com}}
+			\label{fig:rejection}
+		\end{figure}
+		
+		\emph{Adaptive rejection sampling} constructs the proposal function on the fly (typically piecewise linear in $\ln p(z)$).
+		Sampled point which are not accepted are used to refine the proposal function.
+		
+	\end{easylist}
+		\begin{easylist}[itemize]
+			\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# \emph{Importance sampling} computes expectations without sampling from $\widetilde{p}(z)$.
+	A proposal function $\widetilde{q}(z)$ is used, and the success depends crucially on how close $\widetilde{q}(z)$ is to $\widetilde{p}(z)$.
+	\begin{equation*}
+		\E [f] = \int f(\vect{z}) p(\vect{z}) \, d \vect{z}
+		\simeq \frac{1}{L} \sum_{\ell = 1}^{L} \frac{p(\vect{z}^\ell)}{q(\vect{z}^\ell)} f(\vect{z}^\ell)
+		= \frac{1}{L} \sum_{\ell = 1}^{L} w_\ell f(\vect{z}^\ell)
+	\end{equation*}
+	The weights $w_\ell$ measure how close the distributions are.
+	In general the distributions need not be normalized.
+	
+	# \emph{Sampling importance-resampling} uses a samling distribution $q(\vect{z})$, but unlike in rejection sampling we need not find a constant $k$.
+	First $L$ samples are drawn from $q(\vect{z})$, then for each $\vect{z}^\ell$ a weight $w_\ell = p(\vect{z})/q(\vect{z})$ is assigned.
+	New samples are then drawn (bootstrapped) from the distribution given by the samples $\vect{z}^1, \ldots, \vect{z}^\ell$ and corresponding weights $w_1, \ldots, w_\ell$.
+\end{easylist}
+
+\subsection*{Markov Chain Monte Carlo}
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# TODO
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -4763,20 +4824,74 @@ where
 
 
 \subsubsection*{Exercise 10.23}
+TODO
 
 \subsubsection*{Exercise 10.28}
+TODO
 
 \subsubsection*{Exercise 10.34}
+TODO
 
 
 
 % ----------------------------------------------------------------------------
 \subsection{Sampling Methods}
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+
+\subsubsection*{Exercise 11.4}
+Start with Equations (11.10) and (11.11), square them and add them together.
+The result is the following relationship between $(z_1, z_2)$ and $(y_1, y_2)$.
+\begin{equation*}
+	r^2 = z_1^2 + z_2^2 = \exp \left( -\frac{1}{2} \left( y_1^2 + y_2^2 \right)  \right)
+\end{equation*}
+Multiply and divide by $z_1^2 + z_2^2$ on the right hand side, equate terms and take square roots to get the equations
+\begin{equation*}
+	z_1 = y_1 \frac{\exp \left( -\frac{1}{4} \left( y_1^2 + y_2^2 \right)  \right)}{\left(y_1^2 + y_2^2\right)^{1/2}}
+	\quad
+	z_2 = y_2 \frac{\exp \left( -\frac{1}{4} \left( y_1^2 + y_2^2 \right)  \right)}{\left(y_1^2 + y_2^2\right)^{1/2}}.
+\end{equation*}
+Differentating yields the following equations
+\begin{align*}
+\frac{\partial z_i}{\partial y_i}
+&=
+	\frac{\left(y_{j}^{2} - y_{i}^{4}/2 -  y_{i}^{2} y_{j}^{2}/2 \right) \exp \left( -\frac{1}{4} \left( y_i^2 + y_j^2 \right)  \right)}{\left(y_{i}^{2} + y_{j}^{2}\right)^{3/2}} \\
+	\frac{\partial z_i}{\partial y_j}
+	&=
+	- \frac{y_{i} y_{j} \left(y_{i}^{2} /2 + y_{j}^{2} /2 + 1\right) \exp \left( -\frac{1}{4} \left( y_i^2 + y_j^2 \right)  \right)}{\left(y_{i}^{2} + y_{j}^{2}\right)^{3/2}}.
+\end{align*}
+Notice the symmetry $(y_i, y_j) \leftrightarrow (y_j, y_i)$.
+Symbolic manipulations will reveal that the absolute value of the determinant then becomes
+\begin{equation*}
+	\abs{\frac{\partial (z_1, z_2)}{\partial (y_1, y_2)}}
+	=
+	\abs{ \frac{\partial z_1}{\partial y_1} \frac{\partial z_2}{\partial y_2}
+		- \frac{\partial z_1}{\partial y_2} \frac{\partial z_2}{\partial y_1} }
+	=
+	\frac{1}{2} \exp \left( -\frac{1}{2} \left( y_i^2 + y_j^2 \right)  \right)
+\end{equation*}
+which corresponds perfectly with Equation (11.12).
+
+\subsubsection*{Exercise 11.7}
+The following diagram shows the change of variables and the associated probability density functions.
+\[\begin{tikzcd}[column sep=6em]
+p_y(y) \arrow[bend left = 20]{r}{f} & q_z(z) \arrow[ bend left = 20]{l}{h}
+\end{tikzcd}\]
+In this problem $p_y(y)$ is uniform on $(0, 1)$ and $z = f(y) = b \tan (y) + c$.
+The inverse is simply $y = h(z) = \tan^{-1}\left( (z- c) / b \right)$.
+We wish to find $q_z(z)$, which we do by evaluating
+\begin{equation*}
+q_z(z) = \frac{d y}{d z} = \frac{d }{d z} \left( \tan^{-1}\left( \frac{z - c}{b} \right) \right)
+=
+\frac{1}{1 + \left( \frac{z - c}{b} \right)^2} \frac{1}{b}.
+\end{equation*}
+Here $c$ is a shift parameter and $b$ is a scale parameter.
+Multiplying by $k$ and ignoring the last factor $1/b$ allows the unnormalized distribution to completely overlap the gamma distribution in Figure 11.5.
+
+
+\subsubsection*{Exercise 10.23}
+TODO
+
+\subsubsection*{Exercise 10.23}
+TODO
 
 % ----------------------------------------------------------------------------
 \subsection{Continuous Latent Variables}
