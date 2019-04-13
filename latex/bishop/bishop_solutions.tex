@@ -1343,73 +1343,236 @@ The two approaches are either:
 \subsection*{Basics}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# We want to evaluate expectations such as
+	# The purpose of sampling methods is often to evaluate expectations such as
 	\begin{equation*}
 		\E \left[ f \right] =
 		\int f(\vect{z}) p (\vect{z}) \, d \vect{z}
 		\simeq 
 		\frac{1}{L} \sum_{\ell = 1}^{L} f \left( \vect{z}^{\ell}\right)
 	\end{equation*}
-	where $\vect{z}^{1}, \vect{z}^{2}, \ldots, \vect{z}^{L}$ are samples drawn from $p(\vect{z})$.
+	where $\{ \vect{z}^{1}, \vect{z}^{2}, \ldots, \vect{z}^{L} \}$ are samples drawn from the probability density function $p(\vect{z})$.
+	We assume that no analytical expression for the integral $\int f(\vect{z}) p (\vect{z}) \, d \vect{z}$ exists.
 	
 	# If the indefinite integral of the desired probability distribution can be inverted, then a uniform sampler $p_y(y)$ can be used to find $q_z(z)$
 	by transformation.
+	A software implementation of uniform sampling from $p_y(y)$ is almost always available.
 	\[\begin{tikzcd}[column sep=6em]
 	\underset{\text{uniform}}{p_y(y)} \arrow[bend left = 20]{r}{f} & \underset{\text{desired}}{q_z(z)} \arrow[ bend left = 20]{l}{h}
 	\end{tikzcd}\]
 	
 	# \emph{Rejection sampling} uses a proposal distribution $kq(z)$ to sample from $\widetilde{p}(z)$.
-	The proposal function is not normalized, and completely envelopes $\widetilde{p}(z)$.
+	The proposal function is not normalized, and $kq(z) \geq \widetilde{p}(z)$ for every value of $z$.
 	
 	\begin{easylist}[enumerate]
 		\ListProperties(Space=\listSpace, Space*=\listSpace)
 	## A value $z_0$ is drawn from the proposal function $q(z)$.
-	## A value $u_0$ is uniformly drawn from $\left[0, kq(z)\right]$.
+	## A value $u_0$ is uniformly drawn from the interval $\left[0, kq(z_0)\right]$.
 	## If $u_0 \leq \widetilde{p}(z)$, the sample $z_0$ is kept.
 	   If not, it's discarded.
 	\end{easylist}
-
 	
-		\begin{figure}[ht!]
-			\centering
-			\includegraphics[width=0.5\linewidth]{figs/rejection.png}
-			\caption{Rejection sampling visualized with $\widetilde{p}(z)$ in blue and $kq(z)$ in black.
-				Source: \url{https://theclevermachine.files.wordpress.com}}
-			\label{fig:rejection}
-		\end{figure}
-		
-		\emph{Adaptive rejection sampling} constructs the proposal function on the fly (typically piecewise linear in $\ln p(z)$).
-		Sampled point which are not accepted are used to refine the proposal function.
+	\begin{figure}[ht!]
+		\centering
+		\includegraphics[width=0.5\linewidth]{figs/rejection.png}
+		\caption{Rejection sampling visualized with $\widetilde{p}(z)$ in blue and $kq(z)$ in black.
+			Source: \url{https://theclevermachine.files.wordpress.com}}
+		\label{fig:rejection}
+	\end{figure}
+	
+	\emph{Adaptive rejection sampling} constructs the proposal function on the fly (typically piecewise linear in $\ln p(z)$).
+	Sampled points which are not accepted are used to refine the proposal function.
 		
 	\end{easylist}
 		\begin{easylist}[itemize]
 			\ListProperties(Space=\listSpace, Space*=\listSpace)
 	# \emph{Importance sampling} computes expectations without sampling from $\widetilde{p}(z)$.
-	A proposal function $\widetilde{q}(z)$ is used, and the success depends crucially on how close $\widetilde{q}(z)$ is to $\widetilde{p}(z)$.
+	A proposal function $\widetilde{q}(z)$ is used, and the success of the algorithm depends crucially on how close $\widetilde{q}(z)$ is to $\widetilde{p}(z)$.
 	\begin{equation*}
 		\E [f] = \int f(\vect{z}) p(\vect{z}) \, d \vect{z}
 		\simeq \frac{1}{L} \sum_{\ell = 1}^{L} \frac{p(\vect{z}^\ell)}{q(\vect{z}^\ell)} f(\vect{z}^\ell)
 		= \frac{1}{L} \sum_{\ell = 1}^{L} w_\ell f(\vect{z}^\ell)
 	\end{equation*}
-	The weights $w_\ell$ measure how close the distributions are.
-	In general the distributions need not be normalized.
+	The weights $w_\ell$ measure how close the distributions are at $\vect{z}^\ell$.
+	Notice that in general the distributions are not required to be normalized.
 	
-	# \emph{Sampling importance-resampling} uses a samling distribution $q(\vect{z})$, but unlike in rejection sampling we need not find a constant $k$.
-	First $L$ samples are drawn from $q(\vect{z})$, then for each $\vect{z}^\ell$ a weight $w_\ell = p(\vect{z})/q(\vect{z})$ is assigned.
-	New samples are then drawn (bootstrapped) from the distribution given by the samples $\vect{z}^1, \ldots, \vect{z}^\ell$ and corresponding weights $w_1, \ldots, w_\ell$.
+	# \emph{Sampling importance-resampling} uses a sampling distribution $q(\vect{z})$.
+	The use of a sampling distribution is similar to rejection sampling, but we need not determine the constant $k$ required for $kq(z) \geq \widetilde{p}(z)$ in rejection sampling.
+	
+	Initially $L$ samples are drawn from $q(\vect{z})$, and then for each $\vect{z}^\ell$ a weight $w_\ell = p(\vect{z})/q(\vect{z})$ is assigned.
+	New samples are then drawn (bootstrapped) from the distribution given by the samples $\vect{z}^1, \ldots, \vect{z}^L$ and corresponding probabilities $w_1, \ldots, w_L$.
 \end{easylist}
 
-\subsection*{Markov Chain Monte Carlo}
+\subsection*{MCMC, Gibbs sampling and Hybrid Monte Carlo}
 \begin{easylist}[itemize]
 	\ListProperties(Space=\listSpace, Space*=\listSpace)
-	# TODO
+	# The \emph{Markov Chain Monte Carlo} (MCMC) sampler moves around on the p.d.f. $p(\vect{z})$ by means of a symmetric proposal distribution $q(\vect{z} \mid \vect{z}^\tau)$.
+	A proposed point $\vect{z}^\star$ is accepted with acceptance probability $A(\vect{z}^\star, \vect{z}^\tau)$ given by 
+	\begin{equation*}
+		A(\vect{z}^\star, \vect{z}^\tau)
+		=
+		\min 
+		\left( 1,
+		\frac{\widetilde{p}(\vect{z}^\star)}{\widetilde{p}(\vect{z}^\tau)}
+		\right).
+	\end{equation*}
+	If a point is not accepted, the previous point is again; this leads to duplicates of the same point.
+	The effective sample size can be much lower than the apparent sample size due to the potentially high correlation of the samples, especially if $p(\vect{z})$ is multimodal, highly correlated or complicated in other ways.
+	## The \emph{Metropolis Hastings} algorithm does not require the proposal distribution to be symmetric.
+	The acceptance probability for a possible transition $k$ is
+		\begin{equation*}
+		A_k(\vect{z}^\star, \vect{z}^\tau)
+		=
+		\min 
+		\left( 1,
+		\frac{\widetilde{p}(\vect{z}^\star) q_k(\vect{z}^\tau \mid \vect{z}^\star)}
+		{\widetilde{p}(\vect{z}^\tau) q_k(\vect{z}^\star \mid \vect{z}^\tau)}
+		\right).
+		\end{equation*}
+		
+	## \emph{Gibbs sampling} cycles through the conditional probabilities $p(z_i \mid \vect{z}_{\setminus i})$ in turn and samples new $z_i$s.
+	It's a special case of the Metropolis Hastings algorithm, and the pratical applicability depends on being able to sample from $p(z_i \mid \vect{z}_{\setminus i})$.
+	If this is not analytically feasible, simpler sampling algorithms can be used as sub-routines.
+	
+	# \emph{Hybrid Monte Carlo} moves over the probability density function by viewing it as a dynamical system.
+	This reduces random walk behavior.
+	The system's \emph{Hamiltonian} function is given by
+	\begin{equation*}
+		H(\vect{z}, \vect{r}) = \underbrace{E(\vect{z})}_{\text{potential}} + \underbrace{K(\vect{r})}_{\text{kinetic}},
+	\end{equation*}
+	where $\vect{r}$ is the momentum (velocity times mass in physics) and $\vect{z}$ the state.
+	## \emph{Leapfrog integration} integrates along a path where the Hamiltonian is constant, i.e. $\partial_t H = 0$, and the new proposed state is accepted with probability
+	\begin{equation*}
+		\min 
+		\left( 1,
+		\exp \left[ H(\vect{z}, \vect{r}) - H(\vect{z}^\star, \vect{r}^\star) \right]
+		\right).
+	\end{equation*}
 \end{easylist}
+
+		\begin{figure}[ht!]
+			\centering
+			\includegraphics[width=0.5\linewidth]{figs/HMC.png}
+			\caption{A Hybrid Monte Carlo step: the black dotted path shows the leapfrog integration path.
+				Source: \url{https://chi-feng.github.io/mcmc-demo/app.html}}
+			\label{fig:HMC}
+		\end{figure}
 
 % ----------------------------------------------------------------------------
 \subsection{Continuous Latent Variables}
+
+
+\subsection*{Principal Component Analysis (PCA)}
 \begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# The goal of PCA is to project $D$-dimensional data to $M \leq D$ dimensions.
+	This is achieved by solving either one of the following equivalent optimization problems, whose analytical solution is an eigenvalue decomposition of the data covariance matrix.
+	## Maximize the variance of the projected data.
+	## Minimize the squared distance from the data $\vect{x}_n$ to it's projection $\tilde{\vect{x}}_n$, i.e.
+	\begin{equation*}
+		J = \frac{1}{N} \sum_{n=1}^{N} \norm{\vect{x}_n - \tilde{\vect{x}}_n}^2.
+	\end{equation*}
+	# Applications of PCA include 
+	## Visualization of data when $M=2$.
+	## Compression of data when $M < D$.
+	## Whitening the data (diagonalizing the covariance matrix) when $M=D$ 
+	
+	# Various algorithms exist for solving the eigenvalue problem, which has computational cost proportional to either $\mathcal{O}(D^3)$ or $\mathcal{O}(N^3)$.
+	The SVD can be used for greater numerical stability, iterate algorithms exist, and sparse algorithms also exist.
+\end{easylist}
+
+\subsection*{Probabilistic Principal Component Analysis (PPCA)}
+
+\begin{center}
+	\tikz{ %
+		
+		% Bottom row
+		\node[const] (mu) {$\vect{\mu}$} ; %
+		\node[obs, right=of mu] (xn) {$\vect{x}_n$} ; %
+		\edge {mu} {xn} ; %
+		\node[const, right=of xn] (W) {$\vect{W}$} ; %
+		\edge {W} {xn} ; %
+		
+		% Middle row
+		\node[const, above=of mu, yshift=.19cm] (var) {$\sigma^2$} ; %
+		\node[latent, right=of var] (zn) {$\vect{z}_n$} ; %
+		\edge {var} {xn} ; %
+		\edge {zn} {xn} ; %
+		
+		% Plate
+		\plate[inner sep=0.35cm] {plate1} {(zn) (xn)} {N}; %
+	}
+\end{center}
+
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# PPCA is a probabilistic model with a continuous $M$-dimensional latent variable $z$.
+	The prior over the latent variable $\vect{z}$ and the conditional probability over the observed variable $\vect{x}$ respectively given by
+	\begin{equation}
+	\label{eqn:PPCA}
+		p(\vect{z}) = \N \left(\vect{z} \mid \vect{0}, \vect{I} \right)
+		\qquad
+		p(\vect{x} \mid \vect{z})
+		=
+		\N \left(\vect{x} \mid \vect{W} \vect{z} + \vect{\mu}, \sigma^2 \vect{I} \right).
+	\end{equation}
+	The model is generative, and we can think of $\vect{x}$ as being generated by
+	\begin{equation*}
+	\vect{x} = 
+	\vect{W} \vect{z} + \vect{\mu} + \vect{\epsilon},
+	\quad \text{where} \quad 
+	\vect{\epsilon} = 
+	\N \left(\vect{\epsilon} \mid \vect{0}, \sigma^2 \vect{I} \right).
+	\end{equation*}
+	This is a particular instance of the \emph{linear-Gaussian} framework.
+	Both the marginal distribution $p(\vect{x})$ and the posterior $p(\vect{z} \mid \vect{x})$ can be found analytically, and they are both governed by Gaussian distributions.
+	
+	# If we let $\sigma^2 \to 0$, we recover the standard PCA model.
+	
+	# Some advantages of the probabilistic formulation include: 
+	an iterative EM-algorithm that is sometimes computationally preferable, 
+	automatic determination of $M$ from the data via automatic relevance determination, 
+	existence of a likelihood function and 
+	being able to run the model generatively.
+	
+	# \emph{Factor analysis} is a generalization of PPCA.
+	The constant diagonal covariance $\sigma^2 \vect{I}$ in Equation \eqref{eqn:PPCA} for PPCA is replaced by an arbitrary diagonal covariance $\vect{\Psi}$.
+	The posterior then becomes becomes
+	\begin{equation*}
+	p(\vect{x} \mid \vect{z})
+	=
+	\N \left(\vect{x} \mid \vect{W} \vect{z} + \vect{\mu}, \vect{\Psi} \right).
+	\end{equation*}
+	The \emph{independent variance} of $\vect{x}$ given $\vect{z}$ is explained by $\vect{\Psi}$, and the \emph{covariance between variables} is explained by $\vect{W}$.
+	No analytical solution is available, but the iterative EM-algorithm can be used to compute a maximum likelihood solution for the parameters $\vect{W}$ and $\vect{\Psi}$.
+\end{easylist}
+
+
+\subsection*{Kernel PCA and non-linear latent variable analysis}
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figs/autoencoder.png}
+	\caption{A dense autoencoder network with 4 layers of weights.
+		Source: Wikipedia.}
+	\label{fig:autoencoder}
+\end{figure}
+		
+		
+\begin{easylist}[itemize]
+	\ListProperties(Space=\listSpace, Space*=\listSpace)
+	# \emph{Kernel PCA} performs PCA in an $M$-dimensional feature space mapped to by a feature map $\vect{\phi}:\R^D \to  \R^M$.
+	However, the dot product $\vect{\phi}(\vect{x}_n)^T \vect{\phi}(\vect{x}_m)$ is never explicitly computed, instead the kernel function $k (\vect{x}, \vect{x}') = \vect{\phi}(\vect{x})^T \vect{\phi}(\vect{x}')$ is used.
+	The computation involves the eigendecomposition of a $N \times N$ matrix, where $N$ is the number of observations---so it can be computationally expensive.
+	# \emph{Independent component analysis} (ICA) decomposes a multivariate signal into independent non-Gaussian signals.
+	Non-linearity and non-Gaussianity are related, since a general density can be obtained by a non-linear transformation of a Gaussian.
+	# \emph{Autoencoders} (or auto-associative neural networks) perform non-linear PCA when the number of layers with weights are $4$.
+	With $2$ layers of weights, the optimal solution to the objective function (minimizing the sum-of-squares) is the PCA---even when the activation functions are non-linear.
+	# Some other methods for modeling non-linear manifolds are: 
+	principal curves, 
+	multidimensional scaling, 
+	local linear embedding, 
+	isometric feature mappings and 
+	self-organizing maps.
 \end{easylist}
 
 % ----------------------------------------------------------------------------
@@ -4838,18 +5001,18 @@ TODO
 \subsection{Sampling Methods}
 
 \subsubsection*{Exercise 11.4}
-Start with Equations (11.10) and (11.11), square them and add them together.
-The result is the following relationship between $(z_1, z_2)$ and $(y_1, y_2)$.
+We start with Equations (11.10) and (11.11), square them and add them together.
+The result is the following relationship between variables $(z_1, z_2)$ and $(y_1, y_2)$.
 \begin{equation*}
 	r^2 = z_1^2 + z_2^2 = \exp \left( -\frac{1}{2} \left( y_1^2 + y_2^2 \right)  \right)
 \end{equation*}
-Multiply and divide by $z_1^2 + z_2^2$ on the right hand side, equate terms and take square roots to get the equations
+Substitute the equation above back into Equations (11.10) and (11.11) to obtain
 \begin{equation*}
 	z_1 = y_1 \frac{\exp \left( -\frac{1}{4} \left( y_1^2 + y_2^2 \right)  \right)}{\left(y_1^2 + y_2^2\right)^{1/2}}
 	\quad
 	z_2 = y_2 \frac{\exp \left( -\frac{1}{4} \left( y_1^2 + y_2^2 \right)  \right)}{\left(y_1^2 + y_2^2\right)^{1/2}}.
 \end{equation*}
-Differentating yields the following equations
+Differentiating these equations yield the following relations
 \begin{align*}
 \frac{\partial z_i}{\partial y_i}
 &=
@@ -4868,7 +5031,7 @@ Symbolic manipulations will reveal that the absolute value of the determinant th
 	=
 	\frac{1}{2} \exp \left( -\frac{1}{2} \left( y_i^2 + y_j^2 \right)  \right)
 \end{equation*}
-which corresponds perfectly with Equation (11.12).
+which corresponds perfectly with Equation (11.12) and solves the problem.
 
 \subsubsection*{Exercise 11.7}
 The following diagram shows the change of variables and the associated probability density functions.
@@ -4876,7 +5039,7 @@ The following diagram shows the change of variables and the associated probabili
 p_y(y) \arrow[bend left = 20]{r}{f} & q_z(z) \arrow[ bend left = 20]{l}{h}
 \end{tikzcd}\]
 In this problem $p_y(y)$ is uniform on $(0, 1)$ and $z = f(y) = b \tan (y) + c$.
-The inverse is simply $y = h(z) = \tan^{-1}\left( (z- c) / b \right)$.
+The inverse of $f(y)$ is simply $y = h(z) = \tan^{-1}\left( (z- c) / b \right)$.
 We wish to find $q_z(z)$, which we do by evaluating
 \begin{equation*}
 q_z(z) = \frac{d y}{d z} = \frac{d }{d z} \left( \tan^{-1}\left( \frac{z - c}{b} \right) \right)
@@ -4885,21 +5048,80 @@ q_z(z) = \frac{d y}{d z} = \frac{d }{d z} \left( \tan^{-1}\left( \frac{z - c}{b}
 \end{equation*}
 Here $c$ is a shift parameter and $b$ is a scale parameter.
 Multiplying by $k$ and ignoring the last factor $1/b$ allows the unnormalized distribution to completely overlap the gamma distribution in Figure 11.5.
+This is required in rejection sampling.
 
 
-\subsubsection*{Exercise 10.23}
-TODO
+\subsubsection*{Exercise 11.12}
+The standard Gibbs sampler is not ergodic in this case, and would not sample from the shown mixture distribution correctly.
+Instead it would get stuck on one of the two distributions.
+To see this, notice that $p(x_1 \mid x_2)$ and $p(x_2 \mid x_1)$ are both zero outside of the initial distribution in the mixture, hence the standard Gibbs sampler has no way of moving from one distribution to the other and is forever stuck.
 
-\subsubsection*{Exercise 10.23}
-TODO
+\subsubsection*{Exercise 11.15}
+Starting from Equation (11.58) in the book, we see that
+\begin{equation*}
+	\frac{d z_i}{d \tau} = \frac{\partial H}{\partial r_i}
+	= \frac{\partial}{\partial r_i} \left[ E(\vect{z}) + K(\vect{r}) \right]
+	= \frac{\partial K(\vect{r})}{\partial r_i} = r_i.
+\end{equation*}
+Where we have used Equations (11.56) and (11.57).
+The first term in the chain of equalities above equals the last, showing that (11.53) is indeed equivalent to (11.58).
+
+The next sub problem is trivial, since we have
+\begin{equation*}
+	\frac{\partial H}{\partial z_i}
+	= \frac{\partial}{\partial z_i} \left[ E(\vect{z}) + K(\vect{r}) \right]
+	=  \frac{\partial E(\vect{z})}{\partial z_i}.
+\end{equation*}
 
 % ----------------------------------------------------------------------------
 \subsection{Continuous Latent Variables}
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+\subsubsection*{Exercise 12.6}
+The node $\vect{x}$ can be split up into nodes $x_1, \ldots, x_D$ since the covariance $\sigma^2 \vect{I}$ is diagonal.
+Hence the paths from $x_i$ to $x_j$ when $i \neq j$ are tail-to-tail at the observed node $\vect{z}$, the path is blocked and therefore the conditional independence $x_i \bigCI x_j \mid \vect{z}$ holds.
+Algebraically, the distribution $p(\vect{x} \mid \vect{z})$ factorizes into $p(x_1 \mid \vect{z}) \cdots p(x_D \mid \vect{z})$ due to the diagonal covariance.
+
+\subsubsection*{Exercise 12.10}
+Differentiating Equation (12.43) for the log likelihood once yields
+\begin{equation*}
+	\vect{C}^{-1} \sum_n (\vect{x}_n - \vect{\mu}),
+\end{equation*}
+and equating this to $\vect{0}$ and solving yields $\vect{\mu}_\text{ML}$.
+Differentiating again we obtain
+\begin{equation*}
+ -\sum_n\vect{C}^{-1} = -N \vect{C}^{-1}.
+\end{equation*}
+A quadratic form $-\vect{y}^T \vect{C}^{-1} \vect{y}$ has a unique maximum at $\vect{y} = \vect{0}$ if $\vect{C}^{-1}$ is positive definite.
+The inverse of $\vect{C}^{-1}$ is clearly positive definite, since from (12.36)
+\begin{equation*}
+	\vect{y}^T \vect{C} \vect{y} = 
+	\left( \vect{W}^T \vect{y} \right)^T \left( \vect{W}^T \vect{y} \right)
+	+
+	\sigma^2 \vect{y}^T\vect{y} >0 \text{ when } \vect{y} \neq \vect{0}.
+\end{equation*}
+The inverse of a positive definite matrix is also positive definite, which can be shown by writing the matrix in it's eigendecomposition.
+Since $\vect{C}^{-1}$ is positive definite $-\vect{y}^T \vect{C}^{-1} \vect{y}$ is always negative except for when $\vect{y} = \vect{0}$. 
+Hence the maximum likelihood solution $\vect{\mu}_\text{ML}$ represents a unique maximum.
+
+\subsubsection*{Exercise 12.13}
+TODO
+
+\subsubsection*{Exercise 12.14}
+We consider first when $M = D - 1$ in Equation (12.51), then we have
+\begin{align*}
+	D(D-1) + 1 - \frac{(D-1)(D-2)}{2} &=
+	D(D-1) + 1 - \frac{(D-1)D}{2} + (D-1) \\
+	&= \frac{(D-1)D}{2} + D = \frac{(D+1)D}{2} = D + (D-1) + \cdots + 1
+\end{align*}
+which recovers the standard result for the degrees of freedom in symmetric a $D \times D$ matrix.
+
+When $M=0$ Equation (12.51) simply equals $1$.
+This represents the degrees of freedom in the a Gaussian with isotropic covariance matrix $\sigma^2 \vect{I}$.
+
+\subsubsection*{Exercise 12.18}
+TODO
+
+\subsubsection*{Exercise 12.23}
+TODO
 
 % ----------------------------------------------------------------------------
 \subsection{Sequential Data}
