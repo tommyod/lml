@@ -35,13 +35,14 @@
 % Package setup
 % -------------------------------------------------
 
-\newcommand{\Title}{Solutions to\\``Pattern Recognition and Machine Learning''\\by Bishop}
+\newcommand{\Title}{\vspace*{-4em}Solutions to\\``Pattern Recognition and Machine Learning''\\by Bishop}
 %\newcommand{\Subtitle}{A summary of main ideas and concepts}
 \newcommand{\Author}{\texttt{tommyod} @ github}
 \newcommand{\listSpace}{-0.5em}% Global list space
 
 \title{\Title}
 \author{\Author}
+\date{Finished May 2, 2019.\\Last updated \today.}
 
 % Shortcuts for sets and other stuff in mathematics
 \newcommand{\Q}{\mathbb{Q}}
@@ -84,10 +85,26 @@
 % Document start
 % -------------------------------------------------
 \begin{document}
-	
 \maketitle
 \begin{abstract}
-This document contains some notes and solutions to the book TODO.
+\noindent This document contains solutions to selected exercises from the book ``Pattern Recognition and Machine Learning'' by Christopher M. Bishop.
+
+Written in 2006, PRML is one of the most popular books in the field of machine learning.
+It's clearly written, never boring and exposes the reader to details without being terse or dry.
+At the time of writing, the book has close to 36 000 citations according to Google.
+
+While short chapter summaries are included in this document, they are not intended to substitute the book in any way.
+The summaries will largely be meaningless without the book, which I recommend buying if you're interested in the subject.
+The solutions and notes were typeset in \LaTeX{} to facilitate my own learning process.
+
+I hope you find my solutions helpful if you are stuck. 
+Remember to make an attempt at solving the problems yourself before peeking.
+More likely than not, the solutions can be improved by a reader such as yourself. 
+If you would like to contribute, please submit a pull request at \url{https://github.com/tommyod/lml/}.
+
+Several similar projects exist: there's an official solution manual, a repository with many solutions at \url{https://github.com/GoldenCheese/PRML-Solution-Manual} and a detailed errata located at \url{https://github.com/yousuketakada/prml_errata}.
+
+
 
 \begin{figure}[ht!]
 	\centering
@@ -102,17 +119,17 @@ This document contains some notes and solutions to the book TODO.
 {\small \tableofcontents}
 
 
-\clearpage
-\section{Chapter notes}
-
-Below are some comments on the text.
-
-\begin{easylist}[itemize]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# Page 306 introduces $\mathsf{t} = (t_1, \ldots, t_N)^{\operatorname{T}}$.
-	On the following page $\mathsf{t}_N$ is defined as $(t_1, \ldots, t_N)^{\operatorname{T}}$.
-	Perhaps confusingly, both $\mathsf{t}$ and $\mathsf{t}_N$ are used interchangeably after this; but they refer to the same vector.
-\end{easylist}
+%\clearpage
+%\section{Chapter notes}
+%
+%Below are some comments on the text.
+%
+%\begin{easylist}[itemize]
+%	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+%	# Page 306 introduces $\mathsf{t} = (t_1, \ldots, t_N)^{\operatorname{T}}$.
+%	On the following page $\mathsf{t}_N$ is defined as $(t_1, \ldots, t_N)^{\operatorname{T}}$.
+%	Perhaps confusingly, both $\mathsf{t}$ and $\mathsf{t}_N$ are used interchangeably after this; but they refer to the same vector.
+%\end{easylist}
 
 
 
@@ -5366,60 +5383,60 @@ and solving this yields
 which is exactly the same as Equation (13.23).
 
 
-\subsubsection*{Exercise 13.11}
-TODO
-
-
-
-\subsubsection*{Exercise 13.13}
-TODO
-
-
-
-
-\subsubsection*{Exercise 13.19}
-TODO
-
-
-
-
-\subsubsection*{Exercise 13.22}
-TODO
-
-
-
-
-\subsubsection*{Exercise 13.28}
-TODO
-
-
-
-
-
-% ----------------------------------------------------------------------------
-\subsection{Combining Models}
-\subsubsection*{Exercise 14.5}
-TODO
-
-
-\subsubsection*{Exercise 14.8}
-TODO
-
-
-\subsubsection*{Exercise 14.10}
-TODO
-
-
-\subsubsection*{Exercise 14.14}
-TODO
-
-
-
-\subsubsection*{Exercise X.Y}
-\begin{easylist}[enumerate]
-	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
-	# sdf
-\end{easylist}
+%\subsubsection*{Exercise 13.11}
+%TODO
+%
+%
+%
+%\subsubsection*{Exercise 13.13}
+%TODO
+%
+%
+%
+%
+%\subsubsection*{Exercise 13.19}
+%TODO
+%
+%
+%
+%
+%\subsubsection*{Exercise 13.22}
+%TODO
+%
+%
+%
+%
+%\subsubsection*{Exercise 13.28}
+%TODO
+%
+%
+%
+%
+%
+%% ----------------------------------------------------------------------------
+%\subsection{Combining Models}
+%\subsubsection*{Exercise 14.5}
+%TODO
+%
+%
+%\subsubsection*{Exercise 14.8}
+%TODO
+%
+%
+%\subsubsection*{Exercise 14.10}
+%TODO
+%
+%
+%\subsubsection*{Exercise 14.14}
+%TODO
+%
+%
+%
+%\subsubsection*{Exercise X.Y}
+%\begin{easylist}[enumerate]
+%	\ListProperties(Space=\listSpace, Space*=\listSpace, Numbers1=l, FinalMark1={)})
+%	# sdf
+%\end{easylist}
 
 % ----------------------------------------------------------------------------
 
