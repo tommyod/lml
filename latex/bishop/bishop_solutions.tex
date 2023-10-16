@@ -2626,7 +2626,7 @@ This is easy to see, since $\gamma := \vect{\phi}(\vect{x})^T \vect{S}_N \vect{\
 \end{equation*}
 
 
-\subsubsection*{Exercise 3.16 (Unfinished)}
+\subsubsection*{Exercise 3.16}
 Evaluating the integral is straightforward
 
 \begin{align*}
@@ -2646,11 +2646,7 @@ Evaluating the integral is straightforward
 The logarithm of the above expression, as a function of $\mathsf{t}$, should be proportional to the quadratic form $\mathsf{t}^T \left(\vect{I}\beta^{-1}
 + \vect{\Phi} \vect{\Phi}^T \alpha^{-1}  \right) \mathsf{t}$.
 We must show that this matches with $E(\vect{m}_M)$ in Equation (3.86).
-I failed to show this, below is my attempt.
-% TODO
 
-
-\paragraph{The below is unfinished work}
 We expand Equation (3.82) to
 \begin{equation*}
 	E(\vect{m}_N)
@@ -2673,16 +2669,48 @@ Substituting $\vect{m}_N = \beta \vect{A}^{-1} \vect{\Phi}^T \mathsf{t}$ into th
 	\mathsf{t}
 \end{equation*}
 
-I also know that
+The identity
 \begin{equation*}
-	\vect{A}^{-1} = \left( \beta \vect{\Phi}^T \vect{\Phi} + \vect{I} \alpha \right)^{-1} = 
-	\alpha^{-1} \vect{\Phi}^T
-	\left( \alpha^{-1} \vect{\Phi} \vect{\Phi}^T +\beta{-1}\vect{I} \right)
-	\beta^{-1} \vect{\Phi}^{-T},
+	\begin{pmatrix}
+		A & B \\
+		C & D \\
+	\end{pmatrix}^{-1}
+	=
+	\begin{pmatrix}
+		A^{-1} + A^{-1} B M C A^{-1} & -A^{-1} B M \\
+		- M C A^{-1}                 & M
+	\end{pmatrix}
 \end{equation*}
-by Equation (C.5) from the Appendix, but I am unable to show that this reduces to the result above.
+with $M = (D - C A^{-1} B)^{-1}$ the Schur complement w.r.t. $A$ is readily verified. 
+(This equation is similar to Equation (2.76) where the inverse was expressed by the Schur complement w.r.t. $D$)
 
-
+Equations (2.104) and (2.105) give precision and covariance matrices for the joint distribution $(\vect{w}, \mathsf{t})$
+\begin{align*}
+	\operatorname{prec}(\vect{w}, \mathsf{t})
+	&=
+	\begin{pmatrix}
+		\vect{I} \alpha + \vect{\Phi}\vect{\Phi}^T \beta & - \vect{\Phi}^T \beta \\
+		- \vect{\Phi} \beta								 & \vect{I} \beta
+	\end{pmatrix}^{-1}
+	=:
+	\begin{pmatrix}
+		A & B \\
+		C & D
+	\end{pmatrix} \\
+	\operatorname{prec}(\vect{w}, \mathsf{t})^{-1}
+	&=
+	\begin{pmatrix}
+		\vect{I} \alpha^{-1}    & \vect{\Phi}^T \alpha^{-1} \\
+		\vect{\Phi} \alpha^{-1} & \vect{I} \beta^{-1} + \vect{\Phi}\vect{\Phi}^T \alpha^{-1}
+	\end{pmatrix}^{-1} 
+	=
+	\begin{pmatrix}
+		A & B \\
+		C & D
+	\end{pmatrix}^{-1}
+\end{align*}
+Writing the lower right block of the precision matrix's inverse directly and by means of the Schur complement w.r.t. $D$ gives
+$ \vect{I} \beta^{-1} + \vect{\Phi} \vect{\Phi}^T \alpha^{-1} = ( \beta \vect{I} - \beta^2 \vect{\Phi} A^{-1} \vect{\Phi}^T )^{-1} $
 
 
 \subsubsection*{Exercise 3.20}
